@@ -12,10 +12,10 @@ import {
 
 const AuthContext = createContext({
   currentUser: null,
-  signup: () => {},
-  login: () => {},
-  loginWithGoogle: () => {},
-  logout: () => {},
+  signup: async () => {},
+  login: async () => {},
+  loginWithGoogle: async () => {},
+  logout: async () => {},
   loading: false,
 })
 

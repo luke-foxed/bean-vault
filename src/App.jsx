@@ -7,9 +7,9 @@ import {
   Navigate,
 } from 'react-router-dom'
 import { AuthProvider, useAuth } from './providers/auth_provider'
-import { Login } from './pages/login'
 import { Signup } from './pages/signup'
 import { Home } from './pages/home'
+import { Login } from './pages/login'
 
 export default function App() {
   return (
