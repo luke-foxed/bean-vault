@@ -1,5 +1,6 @@
 import '@mantine/core/styles.css'
-import { MantineProvider } from '@mantine/core'
+import '@mantine/notifications/styles.css'
+import { createTheme, MantineProvider } from '@mantine/core'
 import {
   BrowserRouter as Router,
   Route,
@@ -8,29 +9,37 @@ import {
 } from 'react-router-dom'
 import { AuthProvider, useAuth } from './providers/auth_provider'
 import { Signup } from './pages/signup'
-import { Home } from './pages/home'
 import { Login } from './pages/login'
+import { Home } from './pages/home'
+import { NotifcationProvider } from './providers/notifcation_provider'
+
+const theme = createTheme({
+  fontFamily: 'Gowun Dodum, sans-serif',
+  headings: { fontFamily: 'Gowun Dodum, sans-serif' },
+})
 
 export default function App() {
   return (
-    <AuthProvider>
-      <MantineProvider>
-        <Router>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/singup" element={<Signup />} />
-            <Route
-              path="/"
-              element={
-                <PrivateRoute>
-                  <Home />
-                </PrivateRoute>
-              }
-            />
-          </Routes>
-        </Router>
-      </MantineProvider>
-    </AuthProvider>
+    <MantineProvider theme={theme}>
+      <NotifcationProvider>
+        <AuthProvider>
+          <Router>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route
+                path="/"
+                element={
+                  <PrivateRoute>
+                    <Home />
+                  </PrivateRoute>
+                }
+              />
+            </Routes>
+          </Router>
+        </AuthProvider>
+      </NotifcationProvider>
+    </MantineProvider>
   )
 }
 

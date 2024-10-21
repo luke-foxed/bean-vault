@@ -8,5 +8,10 @@ export function Home() {
     await logout()
   }
 
-  return <Center><h1>Welcome back, {currentUser.email} </h1><Button onClick={handleClickLogout}>Logout</Button></Center>
+  return (
+    <Center>
+      <h1>Welcome back, {currentUser.email} </h1>
+      <Button onClick={handleClickLogout}>Logout</Button>
+    </Center>
+  )
 }
