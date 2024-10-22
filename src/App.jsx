@@ -8,10 +8,11 @@ import {
   Navigate,
 } from 'react-router-dom'
 import { AuthProvider, useAuth } from './providers/auth_provider'
-import { Signup } from './pages/signup'
-import { Login } from './pages/login'
-import { Home } from './pages/home'
+import Signup from './pages/signup'
+import Login from './pages/login'
+import Home from './pages/home'
 import { NotifcationProvider } from './providers/notifcation_provider'
+import Navbar from './components/navbar'
 
 const theme = createTheme({
   fontFamily: 'Gowun Dodum, sans-serif',
@@ -23,23 +24,30 @@ export default function App() {
     <MantineProvider theme={theme}>
       <NotifcationProvider>
         <AuthProvider>
-          <Router>
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route
-                path="/"
-                element={
-                  <PrivateRoute>
-                    <Home />
-                  </PrivateRoute>
-                }
-              />
-            </Routes>
-          </Router>
+          <AppRouter />
         </AuthProvider>
       </NotifcationProvider>
     </MantineProvider>
+  )
+}
+
+function AppRouter() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route
+          path="/"
+          element={
+            <PrivateRoute>
+              <Navbar />
+              <Home />
+            </PrivateRoute>
+          }
+        />
+      </Routes>
+    </Router>
   )
 }
 

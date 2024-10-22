@@ -1,11 +1,12 @@
 import { createContext, useContext } from 'react'
 import { Notifications, notifications } from '@mantine/notifications'
+import { IconX } from '@tabler/icons-react'
 
-const NOTIFY_COLOR_MAP = {
-  info: 'blue',
-  error: 'red',
-  success: 'green',
-  warning: 'yellow',
+const NOTIFY_MAP = {
+  error: {
+    icon: <IconX />,
+    color: 'red',
+  },
 }
 
 const NotificationContext = createContext({
@@ -18,13 +19,25 @@ export const useNotify = () => useContext(NotificationContext)
 
 export const NotifcationProvider = ({ children }) => {
   const notify = (type, title, message) => {
-    const color = NOTIFY_COLOR_MAP[type]
+    const { color, icon } = NOTIFY_MAP[type]
     return notifications.show({
       color,
+      icon,
       message,
       title,
-      radius: 'lg',
+      radius: 'xl',
       position: 'bottom-right',
+      withBorder: true,
+      autoClose: false,
+      styles: () => ({
+        title: {
+          fontSize: '20px',
+          fontWeight: 'bold',
+        },
+        description: {
+          fontSize: '18px',
+        },
+      }),
     })
   }
 
@@ -36,7 +49,7 @@ export const NotifcationProvider = ({ children }) => {
 
   return (
     <>
-      <Notifications />
+      <Notifications style={{ fontSize: '40px !important' }} />
       <NotificationContext.Provider value={value}>
         {children}
       </NotificationContext.Provider>

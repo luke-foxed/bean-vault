@@ -12,12 +12,12 @@ import { useForm } from '@mantine/form'
 import { useAuth } from '../../providers/auth_provider'
 import { Link, useNavigate } from 'react-router-dom'
 import { IconAt, IconBrandGoogle, IconLockOpen } from '@tabler/icons-react'
-import './styles.css'
+import './style.module.css'
 
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 const PASSWORD_REGEX = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/
 
-export function Login() {
+export default function Login() {
   const { login, loginWithGoogle, currentUser } = useAuth()
   const navigate = useNavigate()
   const form = useForm({
@@ -86,7 +86,15 @@ export function Login() {
             Login With Google
           </Button>
           <Text ta="center" c="dimmed" p="5">
-            Don&apos;t have an account? <Link to="/signup">Sign Up</Link>
+            Don&apos;t have an account?{' '}
+            <Text span c="blue">
+              <Link
+                to="/signup"
+                style={{ textDecoration: 'none', color: 'inherit' }}
+              >
+                Sign Up
+              </Link>
+            </Text>
           </Text>
         </Paper>
       </form>

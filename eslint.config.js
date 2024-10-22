@@ -44,7 +44,7 @@ export default [
       indent: ['error', 2, { SwitchCase: 1 }],
       'jsx-quotes': ['error', 'prefer-double'],
       'key-spacing': ['error', { beforeColon: false, afterColon: true }],
-      'linebreak-style': ['error', 'windows'],
+      'linebreak-style': ['error', 'unix'],
       'no-console': ['warn'],
       'no-multiple-empty-lines': ['error', { max: 1, maxEOF: 0 }],
       'no-trailing-spaces': ['error'],

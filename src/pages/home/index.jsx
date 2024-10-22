@@ -1,7 +1,7 @@
 import { Button, Center } from '@mantine/core'
-import { useAuth } from '../providers/auth_provider'
+import { useAuth } from '../../providers/auth_provider'
 
-export function Home() {
+export default function Home() {
   const { currentUser, logout } = useAuth()
 
   const handleClickLogout = async () => {
@@ -9,7 +9,7 @@ export function Home() {
   }
 
   return (
-    <Center>
+    <Center mt={200}>
       <h1>Welcome back, {currentUser.email} </h1>
       <Button onClick={handleClickLogout}>Logout</Button>
     </Center>

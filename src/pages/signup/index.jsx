@@ -12,12 +12,12 @@ import { useForm } from '@mantine/form'
 import { useAuth } from '../../providers/auth_provider'
 import { useNavigate } from 'react-router-dom'
 import { IconAt, IconLockOpen } from '@tabler/icons-react'
-import './styles.css' // Adjust the path according to your file structure
+import './style.module.css'
 
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 const PASSWORD_REGEX = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/
 
-export function Signup() {
+export default function Signup() {
   const { signup, currentUser } = useAuth()
   const navigate = useNavigate()
   const form = useForm({
