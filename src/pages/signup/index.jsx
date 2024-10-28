@@ -40,10 +40,11 @@ export default function Signup() {
 
   return (
     <Center style={{ height: '100vh' }}>
-      <Stack>
-        <form onSubmit={form.onSubmit(handleSubmit)}>
-          <Title ta="center">Welcome to BeanVault!</Title>
-          <Paper shadow="md" p={30} radius="lg">
+      <form onSubmit={form.onSubmit(handleSubmit)}>
+        <Title ta="center">Welcome to BeanVault!</Title>
+
+        <Paper shadow="md" p={30} radius="lg">
+          <Stack gap={10}>
             <TextInput
               radius="lg"
               label="Email"
@@ -60,19 +61,18 @@ export default function Signup() {
               label="Password"
               placeholder="Your password"
               required
-              mt="md"
               key={form.key('password')}
               leftSection={
                 <IconLockOpen style={{ width: rem(18), height: rem(18) }} />
               }
               {...form.getInputProps('password')}
             />
-            <Button fullWidth type="submit" mt="md" variant="light">
+            <Button fullWidth type="submit" variant="light">
               Sign Up
             </Button>
-          </Paper>
-        </form>
-      </Stack>
+          </Stack>
+        </Paper>
+      </form>
     </Center>
   )
 }

@@ -7,6 +7,7 @@ import {
   Button,
   rem,
   Center,
+  Stack,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { useAuth } from '../../providers/auth_provider'
@@ -45,57 +46,60 @@ export default function Login() {
   return (
     <Center style={{ height: '100vh' }}>
       <form onSubmit={form.onSubmit(handleSubmit)}>
+        <Title ta="center">BeanVault</Title>
         <Paper shadow="md" p={30} radius="lg" w={400}>
-          <Title ta="center">BeanVault</Title>
-          <TextInput
-            radius="lg"
-            label="Email"
-            placeholder="you@email.com"
-            required
-            key={form.key('email')}
-            leftSection={<IconAt style={{ width: rem(18), height: rem(18) }} />}
-            {...form.getInputProps('email')}
-          />
-          <PasswordInput
-            radius="lg"
-            label="Password"
-            placeholder="Your password"
-            required
-            mt="md"
-            key={form.key('password')}
-            leftSection={
-              <IconLockOpen style={{ width: rem(18), height: rem(18) }} />
-            }
-            {...form.getInputProps('password')}
-          />
-          <Button fullWidth type="submit" mt="md" variant="light">
-            Log In
-          </Button>
-          <Text ta="center" c="dimmed" p="5">
-            OR
-          </Text>
-          <Button
-            onClick={handleClickGoogle}
-            fullWidth
-            leftSection={
-              <IconBrandGoogle style={{ width: rem(18), height: rem(18) }} />
-            }
-            variant="light"
-            color="rgba(240, 91, 91, 1)"
-          >
-            Login With Google
-          </Button>
-          <Text ta="center" c="dimmed" p="5">
-            Don&apos;t have an account?{' '}
-            <Text span c="blue">
-              <Link
-                to="/signup"
-                style={{ textDecoration: 'none', color: 'inherit' }}
-              >
-                Sign Up
-              </Link>
+          <Stack gap={10}>
+            <TextInput
+              radius="lg"
+              label="Email"
+              placeholder="you@email.com"
+              required
+              key={form.key('email')}
+              leftSection={
+                <IconAt style={{ width: rem(18), height: rem(18) }} />
+              }
+              {...form.getInputProps('email')}
+            />
+            <PasswordInput
+              radius="lg"
+              label="Password"
+              placeholder="Your password"
+              required
+              key={form.key('password')}
+              leftSection={
+                <IconLockOpen style={{ width: rem(18), height: rem(18) }} />
+              }
+              {...form.getInputProps('password')}
+            />
+            <Button fullWidth type="submit" variant="light">
+              Log In
+            </Button>
+            <Text ta="center" c="dimmed">
+              OR
             </Text>
-          </Text>
+            <Button
+              onClick={handleClickGoogle}
+              fullWidth
+              leftSection={
+                <IconBrandGoogle style={{ width: rem(18), height: rem(18) }} />
+              }
+              variant="light"
+              color="rgba(240, 91, 91, 1)"
+            >
+              Login With Google
+            </Button>
+            <Text ta="center" c="dimmed">
+              Don&apos;t have an account?{' '}
+              <Text span c="blue">
+                <Link
+                  to="/signup"
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                >
+                  Sign Up
+                </Link>
+              </Text>
+            </Text>
+          </Stack>
         </Paper>
       </form>
     </Center>

@@ -49,7 +49,7 @@ export const NotifcationProvider = ({ children }) => {
 
   return (
     <>
-      <Notifications style={{ fontSize: '40px !important' }} />
+      <Notifications />
       <NotificationContext.Provider value={value}>
         {children}
       </NotificationContext.Provider>

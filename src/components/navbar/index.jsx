@@ -1,9 +1,11 @@
 import { AppShell, Burger, Group, Title, UnstyledButton } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import classes from './style.module.css';
+import { useNavigate } from 'react-router-dom';
 
 export default function Navbar() {
   const [opened, { toggle }] = useDisclosure()
+  const navigate = useNavigate()
 
   return (
     <AppShell
@@ -21,16 +23,36 @@ export default function Navbar() {
           <Group justify="space-between" style={{ flex: 1 }}>
             <Title order={2}>BeanVault</Title>
             <Group ml="xl" gap={0} visibleFrom="sm">
-              <UnstyledButton className={classes.control}>Coffee</UnstyledButton>
-              <UnstyledButton className={classes.control}>Admin</UnstyledButton>
+              <UnstyledButton
+                onClick={() => navigate('/coffee')}
+                className={classes.control}
+              >
+                Coffee
+              </UnstyledButton>
+              <UnstyledButton
+                onClick={() => navigate('/admin')}
+                className={classes.control}
+              >
+                Admin
+              </UnstyledButton>
             </Group>
           </Group>
         </Group>
       </AppShell.Header>
 
       <AppShell.Navbar py="md" px={4}>
-        <UnstyledButton className={classes.control}>Coffee</UnstyledButton>
-        <UnstyledButton className={classes.control}>Admin</UnstyledButton>
+        <UnstyledButton
+          onClick={() => navigate('/coffee')}
+          className={classes.control}
+        >
+          Coffee
+        </UnstyledButton>
+        <UnstyledButton
+          onClick={() => navigate('/admin')}
+          className={classes.control}
+        >
+          Admin
+        </UnstyledButton>
       </AppShell.Navbar>
     </AppShell>
   )

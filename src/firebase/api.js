@@ -6,7 +6,7 @@ import {
   signOut,
 } from 'firebase/auth'
 
-import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { collection, doc, getDoc, getDocs, setDoc } from 'firebase/firestore'
 import { auth, db } from './config'
 
 // auth based endpoints
@@ -37,4 +37,13 @@ export const firebaseLogout = async () => {
 // firestore based endpoints
 export const firebaseFetchUser = async (userUID) => {
   return (await getDoc(doc(db, 'users', userUID))).data()
+}
+
+export const fetchCoffeeItems = async () => {
+  const coffeeSnapshot = await getDocs(collection(db, 'coffee'))
+  const coffeeList = coffeeSnapshot.docs.map((doc) => ({
+    id: doc.id, // Include the document ID
+    ...doc.data(), // Spread the rest of the document data
+  }))
+  return coffeeList
 }

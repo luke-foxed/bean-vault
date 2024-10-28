@@ -30,17 +30,21 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const fetchedUser = await firebaseFetchUser(user.uid)
-        setCurrentUser({ ...user, role: fetchedUser?.role || 'viewer' })
-      } else {
-        setCurrentUser(null)
+      try {
+        if (user) {
+          const fetchedUser = await firebaseFetchUser(user.uid)
+          setCurrentUser({ ...user, role: fetchedUser?.role || 'viewer' })
+        } else {
+          setCurrentUser(null)
+        }
+      } catch (error) {
+        notify('error', 'Error', error?.message ?? 'There was an error with your request')
       }
       setLoading(false)
     })
 
     return unsubscribe
-  }, [])
+  }, [notify])
 
   const wrapAction = async (actionCallback) => {
     setLoading(true)
