@@ -1,11 +1,12 @@
 import '@mantine/core/styles.css'
 import '@mantine/notifications/styles.css'
-import { createTheme, MantineProvider } from '@mantine/core'
+import { Alert, createTheme, LoadingOverlay, MantineProvider, Paper } from '@mantine/core'
 import {
   BrowserRouter as Router,
   Route,
   Routes,
   Navigate,
+  Outlet,
 } from 'react-router-dom'
 import { AuthProvider, useAuth } from './providers/auth_provider'
 import Signup from './pages/signup'
@@ -18,6 +19,8 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 import Admin from './pages/admin'
 import AdminUsers from './pages/admin/admin_users'
 import AdminCoffees from './pages/admin/admin_coffees'
+import NewCoffee from './pages/coffee/new_coffee'
+import { IconInfoCircle } from '@tabler/icons-react'
 
 const theme = createTheme({
   fontFamily: 'Gowun Dodum, sans-serif',
@@ -53,49 +56,49 @@ function AppRouter() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        {/* private routes */}
-        <Route
-          path="/"
-          element={
-            <PrivateRoute>
-              <Home />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/coffee"
-          element={
-            <PrivateRoute>
-              <Coffee />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/admin"
-          element={
-            <PrivateRoute>
-              <Admin />
-            </PrivateRoute>
-          }
-        >
-          <Route path="coffee" element={<AdminCoffees />} />
-          <Route path="users" element={<AdminUsers />} />
-          <Route index element={<AdminCoffees />} />
+
+        {/* Private routes */}
+        <Route element={<PrivateRoute />}>
+          <Route index element={<Home />} />
+          <Route path="/coffee" element={<Coffee />} />
+        </Route>
+
+        <Route element={<PrivateRoute adminRoute />}>
+          <Route path="/coffee/new" element={<NewCoffee />} />
+          <Route path="/admin" element={<Admin />}>
+            <Route path="coffee" element={<AdminCoffees />} />
+            <Route path="users" element={<AdminUsers />} />
+          </Route>
         </Route>
       </Routes>
     </Router>
   )
 }
 
-function PrivateRoute({ children }) {
-  const { currentUser, loading } = useAuth()
+function PrivateRoute({ adminRoute = false }) {
+  const { currentUser, isAdmin, loading } = useAuth()
 
-  if (loading) return <div>Loading...</div>
+  if (!currentUser) return <Navigate to="/login" />
 
-  return currentUser ? (
-    <PrivateLayout>{children}</PrivateLayout>
-  ) : (
-    <Navigate to="/login" />
+  return (
+    <PrivateLayout>
+      <LoadingOverlay visible={loading} overlayProps={{ color: '#000' }} />
+      {(adminRoute && isAdmin) || !adminRoute ? (
+        <Outlet />
+      ) : (
+        <Paper mt={200} p="20px" shadow="md" radius="lg">
+          <Alert
+            variant="light"
+            color="yellow"
+            radius="lg"
+            title="Access Restricted"
+            icon={<IconInfoCircle />}
+          >
+            Only admins can add new coffee :)
+          </Alert>
+        </Paper>
+      )}
+    </PrivateLayout>
   )
 }
 

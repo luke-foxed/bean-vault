@@ -13,11 +13,12 @@ import { useNotify } from './notifcation_provider'
 
 const AuthContext = createContext({
   currentUser: null,
+  isAdmin: false,
+  loading: false,
   signup: async () => {},
   login: async () => {},
   loginWithGoogle: async () => {},
   logout: async () => {},
-  loading: false,
 })
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -61,8 +62,9 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => wrapAction(() => firebaseLogin(email, password))
   const loginWithGoogle = async () => wrapAction(() => firebaseLoginGoogle())
   const logout = async () => wrapAction(() => firebaseLogout())
+  const isAdmin = currentUser?.role === 'admin'
 
-  const value = { currentUser, signup, login, loginWithGoogle, logout, loading }
+  const value = { currentUser, signup, login, loginWithGoogle, logout, loading, isAdmin }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

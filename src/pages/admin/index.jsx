@@ -1,4 +1,4 @@
-import { Center, Tabs, rem } from '@mantine/core'
+import { Center, Paper, Tabs, rem } from '@mantine/core'
 import { IconCoffee, IconUser } from '@tabler/icons-react'
 import { useNavigate } from 'react-router-dom'
 import AdminCoffees from './admin_coffees'
@@ -34,7 +34,9 @@ export default function Admin() {
         </Tabs.List>
 
         <Tabs.Panel value="coffee">
-          <AdminCoffees />
+          <Paper radius="lg" p="20px" w="100%" mt="10px">
+            <AdminCoffees />
+          </Paper>
         </Tabs.Panel>
 
         <Tabs.Panel value="users">

@@ -1,11 +1,24 @@
-import { AppShell, Burger, Group, Title, UnstyledButton } from '@mantine/core'
+import { AppShell, Burger, Button, Group, Title, UnstyledButton } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
-import classes from './style.module.css'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, NavLink as RouterNavLink } from 'react-router-dom'
+import { useAuth } from '../../providers/auth_provider'
+
+function NavItem({ label, path, disabled }) {
+  return (
+    <RouterNavLink to={disabled ? null : path} style={{ textDecoration: 'none' }}>
+      {({ isActive }) => (
+        <Button disabled={disabled} variant={isActive ? 'light' : 'subtle'} size="compact-lg">
+          {label}
+        </Button>
+      )}
+    </RouterNavLink>
+  )
+}
 
 export default function Navbar() {
   const [opened, { toggle }] = useDisclosure()
   const navigate = useNavigate()
+  const { isAdmin } = useAuth()
 
   return (
     <AppShell
@@ -25,37 +38,22 @@ export default function Navbar() {
               <Title order={2}>BeanVault</Title>
             </UnstyledButton>
 
-            <Group ml="xl" gap={0} visibleFrom="sm">
-              <UnstyledButton
-                onClick={() => navigate('/coffee')}
-                className={classes.control}
-              >
-                Coffee
-              </UnstyledButton>
-              <UnstyledButton
-                onClick={() => navigate('/admin')}
-                className={classes.control}
-              >
-                Admin
-              </UnstyledButton>
+            <Group ml="xl" gap={10} visibleFrom="sm">
+              <NavItem path="/coffee" label="Coffee" />
+
+              <NavItem disabled={!isAdmin} path="/admin" label="Admin" />
             </Group>
           </Group>
         </Group>
       </AppShell.Header>
 
       <AppShell.Navbar py="md" px={4}>
-        <UnstyledButton
-          onClick={() => navigate('/coffee')}
-          className={classes.control}
-        >
+        <Button variant="outline" onClick={() => navigate('/coffee')}>
           Coffee
-        </UnstyledButton>
-        <UnstyledButton
-          onClick={() => navigate('/admin')}
-          className={classes.control}
-        >
+        </Button>
+        <Button variant="outline" onClick={() => navigate('/admin')}>
           Admin
-        </UnstyledButton>
+        </Button>
       </AppShell.Navbar>
     </AppShell>
   )
