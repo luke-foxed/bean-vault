@@ -1,7 +1,7 @@
 import { AppShell, Burger, Group, Title, UnstyledButton } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
-import classes from './style.module.css';
-import { useNavigate } from 'react-router-dom';
+import classes from './style.module.css'
+import { useNavigate } from 'react-router-dom'
 
 export default function Navbar() {
   const [opened, { toggle }] = useDisclosure()
@@ -21,7 +21,10 @@ export default function Navbar() {
         <Group h="100%" px="md">
           <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
           <Group justify="space-between" style={{ flex: 1 }}>
-            <Title order={2}>BeanVault</Title>
+            <UnstyledButton onClick={() => navigate('/')}>
+              <Title order={2}>BeanVault</Title>
+            </UnstyledButton>
+
             <Group ml="xl" gap={0} visibleFrom="sm">
               <UnstyledButton
                 onClick={() => navigate('/coffee')}
