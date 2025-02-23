@@ -40,10 +40,23 @@ export const firebaseFetchUser = async (userUID) => {
 }
 
 export const fetchCoffeeItems = async () => {
+
   const coffeeSnapshot = await getDocs(collection(db, 'coffee'))
   const coffeeList = coffeeSnapshot.docs.map((doc) => ({
-    id: doc.id, // Include the document ID
-    ...doc.data(), // Spread the rest of the document data
+    id: doc.id,
+    ...doc.data(),
   }))
-  return coffeeList
+
+  // fetch all regions (i don't like this but it's only a small document)
+  const regionsDocRef = doc(db, 'regions', 'all')
+  const regionsDocSnap = await getDoc(regionsDocRef)
+  const regionsArray = regionsDocSnap.data().regions || []
+  const regionsMap = Object.fromEntries(
+    regionsArray.map(region => [region.id, { name: region.name, color: region.color }]),
+  )
+
+  return coffeeList.map((coffee) => ({
+    ...coffee,
+    regions: (coffee.regions || []).map((regionId) => regionsMap[regionId]).filter(Boolean),
+  }))
 }

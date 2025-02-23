@@ -1,8 +1,7 @@
-import { ActionIcon, Button, Group, Stack, Table, Title } from '@mantine/core'
+import { ActionIcon, Badge, Button, Group, Stack, Table, Title } from '@mantine/core'
 import useCustomQuery from '../../hooks/useCustomQuery'
 import { fetchCoffeeItems } from '../../firebase/api'
 import { formatFirestoreTimestamp } from '../../utils'
-import CoffeeBadge from '../../components/coffee_badge'
 import { IconPencil, IconTrash } from '@tabler/icons-react'
 import { useNavigate } from 'react-router-dom'
 
@@ -51,8 +50,14 @@ export default function AdminCoffees() {
                 <Table.Td>{coffee.roaster}</Table.Td>
                 <Table.Td>
                   <Group gap="10px">
-                    {coffee.origin_region.map((origin) => (
-                      <CoffeeBadge key={origin} origin={origin} />
+                    {coffee.regions.map((region) => (
+                      <Badge
+                        key={region.name}
+                        variant="light"
+                        color={region.color}
+                      >
+                        {region.name}
+                      </Badge>
                     ))}
                   </Group>
                 </Table.Td>

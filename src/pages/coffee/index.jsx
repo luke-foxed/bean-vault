@@ -10,11 +10,11 @@ import {
   Title,
   SimpleGrid,
   Stack,
+  Badge,
 } from '@mantine/core'
 import { fetchCoffeeItems } from '../../firebase/api'
 import useCustomQuery from '../../hooks/useCustomQuery'
 import { IconStarFilled } from '@tabler/icons-react'
-import CoffeeBadge from '../../components/coffee_badge'
 
 function CoffeeCard({ coffee }) {
   return (
@@ -38,8 +38,10 @@ function CoffeeCard({ coffee }) {
           </Group>
         </Group>
         <SimpleGrid cols="2" spacing={5} verticalSpacing={5}>
-          {coffee.origin_region.map((origin) => (
-            <CoffeeBadge key={origin} origin={origin} />
+          {coffee.regions.map((region) => (
+            <Badge key={region.name} variant="light" color={region.color}>
+              {region.name}
+            </Badge>
           ))}
         </SimpleGrid>
         <Card.Section>
