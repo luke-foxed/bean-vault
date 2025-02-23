@@ -1,6 +1,6 @@
 import { Center } from '@mantine/core'
 
-export function AdminUsers() {
+export default function AdminUsers() {
   return (
     <>
       <Center mt={200}>

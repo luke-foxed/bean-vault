@@ -16,8 +16,8 @@ import Navbar from './components/navbar'
 import Coffee from './pages/coffee'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import Admin from './pages/admin'
-import AdminCoffees from './pages/admin/admin_coffees'
 import AdminUsers from './pages/admin/admin_users'
+import AdminCoffees from './pages/admin/admin_coffees'
 
 const theme = createTheme({
   fontFamily: 'Gowun Dodum, sans-serif',

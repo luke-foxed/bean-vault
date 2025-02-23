@@ -1,6 +1,6 @@
 import { Center } from '@mantine/core'
 
-export function AdminCoffees() {
+export default function AdminCoffees() {
   return (
     <>
       <Center mt={200}>
