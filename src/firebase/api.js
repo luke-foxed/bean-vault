@@ -6,7 +6,7 @@ import {
   signOut,
 } from 'firebase/auth'
 
-import { collection, doc, getDoc, getDocs, setDoc } from 'firebase/firestore'
+import { addDoc, collection, doc, getDoc, getDocs, serverTimestamp, setDoc } from 'firebase/firestore'
 import { auth, db } from './config'
 
 // auth based endpoints
@@ -39,24 +39,31 @@ export const firebaseFetchUser = async (userUID) => {
   return (await getDoc(doc(db, 'users', userUID))).data()
 }
 
-export const fetchCoffeeItems = async () => {
-
-  const coffeeSnapshot = await getDocs(collection(db, 'coffee'))
-  const coffeeList = coffeeSnapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  }))
-
-  // fetch all regions (i don't like this but it's only a small document)
+export const firebaseFetchRegions = async () => {
   const regionsDocRef = doc(db, 'regions', 'all')
   const regionsDocSnap = await getDoc(regionsDocRef)
+
   const regionsArray = regionsDocSnap.data().regions || []
-  const regionsMap = Object.fromEntries(
-    regionsArray.map(region => [region.id, { name: region.name, color: region.color }]),
-  )
+  return regionsArray
+}
+
+export const fetchCoffeeItems = async () => {
+  const [coffeeSnapshot, regions] = await Promise.all([getDocs(collection(db, 'coffee')), firebaseFetchRegions()])
+
+  const coffeeList = coffeeSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+  const regionsMap = Object.fromEntries(regions.map((region) => [region.id, { name: region.name, color: region.color }]))
 
   return coffeeList.map((coffee) => ({
     ...coffee,
-    regions: (coffee.regions || []).map((regionId) => regionsMap[regionId]).filter(Boolean),
+    regions: (coffee.regions || [])
+      .map((regionId) => regionsMap[regionId])
+      .filter(Boolean),
   }))
+}
+
+export const firebaseAddCoffee = async (coffeeData) => {
+  const coffeeRef = collection(db, 'coffee')
+  const coffeeWithDate = { ...coffeeData, date_added: serverTimestamp() }
+
+  return addDoc(coffeeRef, coffeeWithDate)
 }

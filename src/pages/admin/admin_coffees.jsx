@@ -10,8 +10,8 @@ function Score({ score }) {
   const getColor = () => {
     let color = 'green'
 
-    if (score < 75 && score >= 50) color = 'yellow'
-    if (score < 50) color ='red'
+    if (score < 7.5 && score >= 5) color = 'yellow'
+    if (score < 5) color ='red'
 
     return color
   }

@@ -78,7 +78,7 @@ function AppRouter() {
 function PrivateRoute({ adminRoute = false }) {
   const { currentUser, isAdmin, loading } = useAuth()
 
-  if (!currentUser) return <Navigate to="/login" />
+  if (!currentUser && !loading) return <Navigate to="/login" />
 
   return (
     <PrivateLayout>

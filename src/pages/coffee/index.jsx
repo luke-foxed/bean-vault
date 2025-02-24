@@ -33,7 +33,7 @@ function CoffeeCard({ coffee }) {
               <IconStarFilled />
             </ThemeIcon>
             <Text fw={500} size="lg">
-              {Number((coffee.score * 10) / 100).toFixed(1)}
+              {coffee.score}
             </Text>
           </Group>
         </Group>
