@@ -12,20 +12,20 @@ import {
   Stack,
   Badge,
 } from '@mantine/core'
-import { fetchCoffeeItems } from '../../firebase/api'
+import { firebaseFetchAllCoffee } from '../../firebase/api'
 import useCustomQuery from '../../hooks/useCustomQuery'
 import { IconStarFilled } from '@tabler/icons-react'
 
 function CoffeeCard({ coffee }) {
   return (
-    <Card shadow="sm" padding="xl" radius="xl" w={250}>
+    <Card shadow="sm" padding="lg" radius="lg" w={260}>
       <Card.Section>
-        <Image src={coffee.image} h={200} fit="contain" />
+        <Image src={coffee.image} h={200} fit="cover" />
       </Card.Section>
 
-      <Stack gap={10}>
-        <Group justify="space-between" gap={5}>
-          <Text fw={500} size="lg">
+      <Stack gap="10px">
+        <Group justify="space-between" gap="10px" mt="10px">
+          <Text fw={500} size="lg" truncate="end" w="70%">
             {coffee.name}
           </Text>
           <Group align="center" justify="center" gap={5}>
@@ -37,7 +37,7 @@ function CoffeeCard({ coffee }) {
             </Text>
           </Group>
         </Group>
-        <SimpleGrid cols="2" spacing={5} verticalSpacing={5}>
+        <SimpleGrid cols="2" spacing={4} verticalSpacing={4} h="50px">
           {coffee.regions.map((region) => (
             <Badge key={region.name} variant="light" color={region.color}>
               {region.name}
@@ -45,19 +45,20 @@ function CoffeeCard({ coffee }) {
           ))}
         </SimpleGrid>
         <Card.Section>
-          <Center bg="grey">
+          <Group bg="rgba(220,220,220)" p="10px">
+            <Image src={coffee.roaster?.logo} radius="100%" h={45} w={45} fit="contain" bg="white" />
             <Title order={3} c="white">
-              {coffee.roaster}
+              {coffee.roaster?.name}
             </Title>
-          </Center>
+          </Group>
         </Card.Section>
       </Stack>
     </Card>
   )
 }
 
-export default function Coffee() {
-  const { data, isLoading } = useCustomQuery(['coffee'], fetchCoffeeItems)
+export default function Coffees() {
+  const { data, isLoading } = useCustomQuery(['coffees'], firebaseFetchAllCoffee)
 
   return (
     <>

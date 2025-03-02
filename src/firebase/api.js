@@ -47,23 +47,37 @@ export const firebaseFetchRegions = async () => {
   return regionsArray
 }
 
-export const fetchCoffeeItems = async () => {
+export const firebaseFetchAllCoffee = async () => {
   const [coffeeSnapshot, regions] = await Promise.all([getDocs(collection(db, 'coffee')), firebaseFetchRegions()])
 
   const coffeeList = coffeeSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
   const regionsMap = Object.fromEntries(regions.map((region) => [region.id, { name: region.name, color: region.color }]))
 
+  // Fetch roaster data
+  const roasterIds = [...new Set(coffeeList.map((coffee) => coffee?.roaster_id))]
+  const roasterDocs = await Promise.all(
+    roasterIds.map(async (id) => {
+      if (!id) return null
+      const roasterSnap = await getDoc(doc(db, 'roasters', id))
+      return roasterSnap.exists() ? { id: roasterSnap.id, ...roasterSnap.data() } : null
+    }),
+  )
+
+  const roastersMap = Object.fromEntries(roasterDocs.filter(Boolean).map((roaster) => [roaster.id, roaster]))
+
   return coffeeList.map((coffee) => ({
     ...coffee,
-    regions: (coffee.regions || [])
-      .map((regionId) => regionsMap[regionId])
-      .filter(Boolean),
+    roaster: roastersMap[coffee.roaster_id] || null,
+    regions: (coffee.regions || []).map((regionId) => regionsMap[regionId]).filter(Boolean),
   }))
 }
 
 export const firebaseAddCoffee = async (coffeeData) => {
-  const coffeeRef = collection(db, 'coffee')
-  const coffeeWithDate = { ...coffeeData, date_added: serverTimestamp() }
-
-  return addDoc(coffeeRef, coffeeWithDate)
+  try {
+    const coffeeRef = collection(db, 'coffee')
+    const coffeeWithDate = { ...coffeeData, date_added: serverTimestamp() }
+    return { res: addDoc(coffeeRef, coffeeWithDate) }
+  } catch (error) {
+    return { error }
+  }
 }

@@ -1,11 +1,15 @@
 import { createContext, useContext } from 'react'
 import { Notifications, notifications } from '@mantine/notifications'
-import { IconX } from '@tabler/icons-react'
+import { IconCheck, IconX } from '@tabler/icons-react'
 
 const NOTIFY_MAP = {
   error: {
     icon: <IconX />,
     color: 'red',
+  },
+  success: {
+    icon: <IconCheck />,
+    color: 'green',
   },
 }
 

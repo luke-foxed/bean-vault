@@ -14,33 +14,27 @@ import {
   Text,
   TextInput,
 } from '@mantine/core'
-import { hasLength, isInRange, isNotEmpty, matches, useForm } from '@mantine/form'
+import { useForm } from '@mantine/form'
 import useCustomQuery from '../../hooks/useCustomQuery'
 import { firebaseAddCoffee, firebaseFetchRegions } from '../../firebase/api'
 import { useMemo } from 'react'
 import { IconStar } from '@tabler/icons-react'
-
-const URL_REGEX = /^(https?:\/\/)?([\w-]+(\.[\w-]+)+)(\/[\w-.]*)*\/?$/
+import { isValidImage } from '../../utils'
+import { useNotify } from '../../providers/notifcation_provider'
+import { useDebouncedCallback } from '@mantine/hooks'
+import useCustomMutation from '../../hooks/useCustomMutation'
+import { useNavigate } from 'react-router-dom'
+import newCoffeeForm from '../../forms/new_coffee_form'
 
 export default function NewCoffee() {
+  const { notify } = useNotify()
+  const navigate = useNavigate()
+  const form = useForm(newCoffeeForm)
   const { data, isLoading } = useCustomQuery(['coffee-regions'], firebaseFetchRegions)
-  const form = useForm({
-    mode: 'uncontrolled',
-    initialValues: {
-      name: '',
-      image: '',
-      roaster: '',
-      regions: [],
-      notes: [],
-      score: 5,
-    },
-
-    validate: {
-      name: hasLength({ min: 2 }, 'Name must have a minimum of 3 characters'),
-      roaster: isNotEmpty('Enter the roaster'),
-      regions: isNotEmpty('Enter the coffee origin'),
-      score: isInRange({ min: 1, max: 10 }, 'Score must be between 1 and 10'),
-      image: matches(URL_REGEX, 'Image must be a valid URL'),
+  const { mutate: addCoffee } = useCustomMutation(['addCoffee'], firebaseAddCoffee, {
+    onSuccess: () => {
+      notify('success', 'Coffee added successfully!')
+      navigate('/coffees')
     },
   })
 
@@ -48,15 +42,25 @@ export default function NewCoffee() {
     return (data || []).map((region) => ({ value: region?.id.toString(), label: region?.name, color: region?.color }))
   }, [data])
 
-  const handleSubmit = async (coffee) => {
-    const res = await firebaseAddCoffee(coffee)
-    console.log(res)
-  }
+  const debouncedTestImage = useDebouncedCallback(async (event) => {
+    const image = event.target?.value
+    const isValid = await isValidImage(image)
+
+    if (!isValid) {
+      form.setErrors({ ...form.errors, image: 'The URL provided is not a valid image' })
+      return notify('error', 'Invalid Image', 'The URL provided is not a valid image')
+    }
+
+    form.clearFieldError('image')
+    form.setFieldValue('image', image)
+  }, 600)
+
+  const handleSubmit = async (coffee) => addCoffee(coffee)
 
   const handleAddNote = (event) => {
     if (event.key === ',' || event.type === 'blur') {
       const note = event.target.value.trim()
-      if (note && !form.values.notes.includes(note)) {
+      if (note && !form.getValues().notes.includes(note)) {
         form.setFieldValue('notes', [...form.getValues().notes, note])
       }
       event.target.value = ''
@@ -117,20 +121,6 @@ export default function NewCoffee() {
                   />
                 </Pill.Group>
               </PillsInput>
-              <Text mt="md" size="sm">
-                Score
-              </Text>
-              <Slider
-                thumbChildren={<IconStar size={16} />}
-                thumbSize={22}
-                styles={{ thumb: { borderWidth: 2, padding: 3 } }}
-                defaultValue={5}
-                min={1}
-                max={10}
-                step={0.1}
-                key={form.key('score')}
-                {...form.getInputProps('score')}
-              />
 
               {isLoading ? (
                 <LoadingOverlay />
@@ -148,15 +138,33 @@ export default function NewCoffee() {
               )}
 
               <TextInput
-                label="Image"
-                placeholder="Roaster"
-                withAsterisk
                 mt="md"
+                label="Image"
+                placeholder="Image URL"
+                withAsterisk
                 key={form.key('image')}
                 {...form.getInputProps('image')}
+                onChange={debouncedTestImage}
               />
 
-              <Group justify="flex-end" mt="md">
+              <Text mt="md" size="sm">
+                Score
+              </Text>
+              <Slider
+                flex={1}
+                thumbChildren={<IconStar size={16} />}
+                thumbSize={22}
+                styles={{ thumb: { borderWidth: 2, padding: 3 } }}
+                defaultValue={5}
+                min={1}
+                max={10}
+                step={0.5}
+                marks={Array.from({ length: 10 }, (_, i) => ({ value: i + 1, label: i + 1 }))}
+                key={form.key('score')}
+                {...form.getInputProps('score')}
+              />
+
+              <Group justify="flex-end" mt="xl">
                 <Button type="submit">Submit</Button>
               </Group>
             </form>

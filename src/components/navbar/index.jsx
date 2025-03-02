@@ -39,7 +39,7 @@ export default function Navbar() {
             </UnstyledButton>
 
             <Group ml="xl" gap={10} visibleFrom="sm">
-              <NavItem path="/coffee" label="Coffee" />
+              <NavItem path="/coffees" label="Coffees" />
 
               <NavItem disabled={!isAdmin} path="/admin" label="Admin" />
             </Group>
