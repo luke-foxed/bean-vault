@@ -14,23 +14,23 @@ const firebaseConfig = {
 
 const roasters = [
   {
-    name: '3FE',
+    name: 'Java The Hut',
     location: 'Ireland',
-    logo: 'https://w7.pngwing.com/pngs/335/825/png-transparent-coffee-roasting-cafe-3fe-food-fulham-f-c-food-text-cafe.png',
-    website: 'https://3fe.com/',
+    logo: 'https://www.javathehut.ie/wp-content/uploads/2019/06/java-the-hut-coffee-logo-03.png',
+    website: 'https://www.javathehut.ie/',
   },
-  {
-    name: 'Carrow',
-    location: 'Ireland',
-    logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYzKAHho-ahGm2imNJ64EDdaxHD2Dym-YINw&s',
-    website: 'https://carrow.ie/',
-  },
-  {
-    name: 'Mancoco',
-    location: 'UK',
-    logo: 'https://mancoco.co.uk/cdn/shop/files/mancoco_black_600x.png?v=1613783898',
-    website: 'https://mancoco.co.uk',
-  },
+  // {
+  //   name: 'Carrow',
+  //   location: 'Ireland',
+  //   logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYzKAHho-ahGm2imNJ64EDdaxHD2Dym-YINw&s',
+  //   website: 'https://carrow.ie/',
+  // },
+  // {
+  //   name: 'Mancoco',
+  //   location: 'UK',
+  //   logo: 'https://mancoco.co.uk/cdn/shop/files/mancoco_black_600x.png?v=1613783898',
+  //   website: 'https://mancoco.co.uk',
+  // },
 ]
 
 const app = initializeApp(firebaseConfig)

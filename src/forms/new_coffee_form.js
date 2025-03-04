@@ -1,6 +1,4 @@
-import { hasLength, isInRange, isNotEmpty, matches } from '@mantine/form'
-
-const URL_REGEX = /^(https?:\/\/)?([\w-]+(\.[\w-]+)+)(\/[\w-.]*)*\/?$/
+import { hasLength, isInRange, isNotEmpty } from '@mantine/form'
 
 const newCoffeeForm = {
   mode: 'uncontrolled',
@@ -9,7 +7,8 @@ const newCoffeeForm = {
     image: '',
     roaster: '',
     regions: [],
-    notes: [],
+    flavour_notes: [],
+    additional_notes: '',
     score: 5,
   },
 
@@ -18,7 +17,7 @@ const newCoffeeForm = {
     roaster: isNotEmpty('Enter the roaster'),
     regions: isNotEmpty('Enter the coffee origin'),
     score: isInRange({ min: 1, max: 10 }, 'Score must be between 1 and 10'),
-    image: matches(URL_REGEX, 'Image must be a valid URL'),
+    image: isNotEmpty('Enter the coffee image URL'),
   },
 }
 

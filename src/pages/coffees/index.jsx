@@ -11,12 +11,21 @@ import {
   SimpleGrid,
   Stack,
   Badge,
+  useMantineTheme,
+  Container,
 } from '@mantine/core'
 import { firebaseFetchAllCoffee } from '../../firebase/api'
 import useCustomQuery from '../../hooks/useCustomQuery'
 import { IconStarFilled } from '@tabler/icons-react'
 
+const getGradient = (regions, theme) => {
+  const colors = regions.map((region) => theme.colors[region.color]?.[4] || region.color)
+  return `linear-gradient(90deg, ${colors[0]}, white)`
+}
+
 function CoffeeCard({ coffee }) {
+  const theme = useMantineTheme()
+
   return (
     <Card shadow="sm" padding="lg" radius="lg" w={260}>
       <Card.Section>
@@ -45,12 +54,12 @@ function CoffeeCard({ coffee }) {
           ))}
         </SimpleGrid>
         <Card.Section>
-          <Group bg="rgba(220,220,220)" p="10px">
-            <Image src={coffee.roaster?.logo} radius="100%" h={45} w={45} fit="contain" bg="white" />
-            <Title order={3} c="white">
+
+          <Container p="10px" bg={getGradient(coffee.regions, theme)}>
+            <Title order={2} c="white">
               {coffee.roaster?.name}
             </Title>
-          </Group>
+          </Container>
         </Card.Section>
       </Stack>
     </Card>

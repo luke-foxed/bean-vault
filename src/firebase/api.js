@@ -41,10 +41,18 @@ export const firebaseFetchUser = async (userUID) => {
 
 export const firebaseFetchRegions = async () => {
   const regionsDocRef = doc(db, 'regions', 'all')
-  const regionsDocSnap = await getDoc(regionsDocRef)
+  const regionsDoc = await getDoc(regionsDocRef)
 
-  const regionsArray = regionsDocSnap.data().regions || []
+  const regionsArray = regionsDoc.data().regions.map((region) => ({ ...region, id: region.id.toString() })) || []
   return regionsArray
+}
+
+export const firebaseFetchRoasters = async () => {
+  const roastersCollectionRef = collection(db, 'roasters')
+  const roastersDocs = await getDocs(roastersCollectionRef)
+  const roasters = roastersDocs.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+
+  return roasters
 }
 
 export const firebaseFetchAllCoffee = async () => {

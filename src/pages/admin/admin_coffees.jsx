@@ -47,7 +47,7 @@ export default function AdminCoffees() {
             coffees.map((coffee) => (
               <Table.Tr key={coffee.name}>
                 <Table.Td>{coffee.name}</Table.Td>
-                <Table.Td>{coffee.roaster}</Table.Td>
+                <Table.Td>{coffee.roaster.name}</Table.Td>
                 <Table.Td>
                   <Group gap="10px">
                     {coffee.regions.map((region) => (

@@ -1,4 +1,4 @@
-import { AppShell, Burger, Button, Group, Title, UnstyledButton } from '@mantine/core'
+import { AppShell, Avatar, Burger, Button, Group, Title, UnstyledButton } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { useNavigate, NavLink as RouterNavLink } from 'react-router-dom'
 import { useAuth } from '../../providers/auth_provider'
@@ -18,7 +18,7 @@ function NavItem({ label, path, disabled }) {
 export default function Navbar() {
   const [opened, { toggle }] = useDisclosure()
   const navigate = useNavigate()
-  const { isAdmin } = useAuth()
+  const { isAdmin, currentUser } = useAuth()
 
   return (
     <AppShell
@@ -40,8 +40,8 @@ export default function Navbar() {
 
             <Group ml="xl" gap={10} visibleFrom="sm">
               <NavItem path="/coffees" label="Coffees" />
-
               <NavItem disabled={!isAdmin} path="/admin" label="Admin" />
+              <Avatar color="initials" name={currentUser?.email} />
             </Group>
           </Group>
         </Group>
@@ -54,6 +54,7 @@ export default function Navbar() {
         <Button variant="outline" onClick={() => navigate('/admin')}>
           Admin
         </Button>
+
       </AppShell.Navbar>
     </AppShell>
   )
