@@ -22,3 +22,32 @@ export function isValidImage(url) {
     img.src = url
   })
 }
+
+export function transformCloudinaryURL(url, options) {
+  if (!url) return ''
+
+  const { size, bgColor } = options
+  const transformations = []
+
+  if (size) {
+    const { width, height } = size
+    transformations.push(`ar_16:9,w_${width},h_${height},c_pad`)
+  }
+
+  // // expects a hex color
+  if (bgColor) {
+    const cleanBgColor = bgColor.replace('#', '')
+    transformations.push(`b_rgb:${cleanBgColor}`)
+  }
+
+  const [base, publicId] = url.split('/upload/')
+  const transformationString = transformations.length > 0 ? `${transformations.join(',')}/` : ''
+
+  return `${base}/upload/${transformationString}${publicId}`
+}
+
+// for quickly generating a 'fixed' image with a non-transparent bg and uniform size
+export function generateCoffeeThumbnail(url) {
+  const options = { size: { height: 400, width: 800 }, bgColor: '#e3e3e3' }
+  return transformCloudinaryURL(url, options)
+}
