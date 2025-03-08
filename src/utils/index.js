@@ -7,22 +7,6 @@ export function formatFirestoreTimestamp(timestamp) {
   return `${day}/${month}/${year}`
 }
 
-export function isValidImage(url) {
-  return new Promise((resolve) => {
-    if (!url) {
-      resolve(false)
-      return
-    }
-
-    const img = new Image()
-
-    img.crossOrigin = 'anonymous'
-    img.onload = () => resolve(true)
-    img.onerror = () => resolve(false)
-    img.src = url
-  })
-}
-
 export function transformCloudinaryURL(url, options) {
   if (!url) return ''
 

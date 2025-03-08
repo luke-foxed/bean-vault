@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-catch */
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -8,6 +9,7 @@ import {
 
 import { addDoc, collection, doc, getDoc, getDocs, serverTimestamp, setDoc } from 'firebase/firestore'
 import { auth, db } from './config'
+import { uploadImageToCloudinary } from '../cloudinary/api'
 
 // auth based endpoints
 export const firebaseSignup = async (email, password) => {
@@ -82,10 +84,12 @@ export const firebaseFetchAllCoffee = async () => {
 
 export const firebaseAddCoffee = async (coffeeData) => {
   try {
+    const { image, ...coffee } = coffeeData
+    const imageUrl = await uploadImageToCloudinary(image)
     const coffeeRef = collection(db, 'coffee')
-    const coffeeWithDate = { ...coffeeData, date_added: serverTimestamp() }
+    const coffeeWithDate = { ...coffee, date_added: serverTimestamp(), image: imageUrl }
     return { res: addDoc(coffeeRef, coffeeWithDate) }
   } catch (error) {
-    return { error }
+    throw error
   }
 }

@@ -1,6 +1,7 @@
 import {
   Button,
   Center,
+  FileInput,
   Group,
   Image,
   Loader,
@@ -18,11 +19,9 @@ import {
 import { useForm } from '@mantine/form'
 import useCustomQuery from '../../hooks/useCustomQuery'
 import { firebaseAddCoffee, firebaseFetchRegions, firebaseFetchRoasters } from '../../firebase/api'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { IconStar } from '@tabler/icons-react'
-import { isValidImage } from '../../utils'
 import { useNotify } from '../../providers/notifcation_provider'
-import { useDebouncedCallback } from '@mantine/hooks'
 import useCustomMutation from '../../hooks/useCustomMutation'
 import { useNavigate } from 'react-router-dom'
 import newCoffeeForm from '../../forms/new_coffee_form'
@@ -31,6 +30,7 @@ export default function NewCoffee() {
   const { notify } = useNotify()
   const navigate = useNavigate()
   const form = useForm(newCoffeeForm)
+  const [imagePreview, setImagePreview] = useState(null)
   const { data: regions, isLoading: loadingRegions } = useCustomQuery(['regions'], firebaseFetchRegions)
   const { data: roasters, isLoading: loadingRoasters } = useCustomQuery(['roasters'], firebaseFetchRoasters)
   const { mutate: addCoffee } = useCustomMutation(['add-coffee'], firebaseAddCoffee, {
@@ -47,19 +47,6 @@ export default function NewCoffee() {
   const roasterOptions = useMemo(() => {
     return (roasters || []).map((roaster) => ({ value: roaster.id, label: roaster.name }))
   }, [roasters])
-
-  const debouncedTestImage = useDebouncedCallback(async (event) => {
-    const image = event.target?.value
-    const isValid = await isValidImage(image)
-
-    if (!isValid) {
-      form.setErrors({ ...form.errors, image: 'The URL provided is not a valid image' })
-      return notify('error', 'Invalid Image', 'The URL provided is not a valid image')
-    }
-
-    form.clearFieldError('image')
-    form.setFieldValue('image', image)
-  }, 600)
 
   const handleSubmit = async (coffee) => {
     const coffeeWithRoaster = { roaster_id: coffee.roaster, ...coffee }
@@ -82,16 +69,25 @@ export default function NewCoffee() {
     form.setFieldValue('flavour_notes', updatedNotes)
   }
 
+  const handleFileChange = (file) => {
+    if (file) {
+      // Create a URL for the file to be used as a preview
+      form.setFieldValue('image', file)
+      const objectURL = URL.createObjectURL(file);
+      setImagePreview(objectURL)
+    }
+  };
+
   return (
     <Center mt={200}>
-      <Paper radius="lg" shadow="md" w="70%" h="30%" mah="30%">
+      <Paper radius="lg" shadow="md" w="75%" h="30%" mah="30%">
         <SimpleGrid cols={{ sm: 1, md: 2 }} spacing="xl">
           <Image
             style={{ borderRadius: '16px 0px 0px 16px' }}
             h="100%"
             fit="cover"
             fallbackSrc="https://placehold.co/570x570?text=Coffee+Image"
-            src={form.getValues().image}
+            src={imagePreview}
           />
           <Stack p="30px">
             <form onSubmit={form.onSubmit(handleSubmit)}>
@@ -101,6 +97,14 @@ export default function NewCoffee() {
                 withAsterisk
                 key={form.key('name')}
                 {...form.getInputProps('name')}
+              />
+              <TextInput
+                mt="md"
+                label="About"
+                placeholder="About the coffee"
+                withAsterisk
+                key={form.key('about')}
+                {...form.getInputProps('about')}
               />
               <Select
                 rightSection={loadingRoasters && <Loader size="sm" />}
@@ -114,7 +118,12 @@ export default function NewCoffee() {
                 key={form.key('roaster')}
                 {...form.getInputProps('roaster')}
               />
-              <PillsInput mt="md" label="Flavour Notes" key={form.key('flavour_notes')} {...form.getInputProps('flavour_notes')}>
+              <PillsInput
+                mt="md"
+                label="Flavour Notes"
+                key={form.key('flavour_notes')}
+                {...form.getInputProps('flavour_notes')}
+              >
                 <Pill.Group>
                   {form.getValues().flavour_notes.map((note) => (
                     <Pill key={note} withRemoveButton onRemove={() => handleRemoveNote(note)}>
@@ -143,22 +152,15 @@ export default function NewCoffee() {
                 {...form.getInputProps('regions')}
               />
 
-              <TextInput
+              <FileInput
+                accept="image/*"
                 mt="md"
                 label="Image"
-                placeholder="Image URL"
+                placeholder="Image File"
                 withAsterisk
                 key={form.key('image')}
                 {...form.getInputProps('image')}
-                onChange={debouncedTestImage}
-              />
-
-              <TextInput
-                label="Additional Notes"
-                placeholder="Additional Notes"
-                mt="md"
-                key={form.key('additional_notes')}
-                {...form.getInputProps('additional_notes')}
+                onChange={handleFileChange}
               />
 
               <Text mt="md" size="sm">

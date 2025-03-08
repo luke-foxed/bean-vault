@@ -32,7 +32,7 @@ export const NotifcationProvider = ({ children }) => {
       radius: 'xl',
       position: 'bottom-right',
       withBorder: true,
-      autoClose: false,
+      autoClose: 4000,
       styles: () => ({
         title: {
           fontSize: '20px',
