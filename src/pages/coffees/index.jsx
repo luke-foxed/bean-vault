@@ -1,10 +1,10 @@
 import { Center, Grid, LoadingOverlay } from '@mantine/core'
 import { firebaseFetchAllCoffee } from '../../firebase/api'
-import useCustomQuery from '../../hooks/useCustomQuery'
 import { CoffeeCard } from '../../components/coffees'
+import { useQuery } from 'react-query'
 
 export default function Coffees() {
-  const { data, isLoading } = useCustomQuery(['coffees'], firebaseFetchAllCoffee)
+  const { data, isLoading } = useQuery(['coffees'], firebaseFetchAllCoffee)
 
   return (
     <>

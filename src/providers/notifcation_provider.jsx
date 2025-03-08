@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext } from 'react'
 import { Notifications, notifications } from '@mantine/notifications'
 import { IconCheck, IconX } from '@tabler/icons-react'
@@ -18,32 +19,32 @@ const NotificationContext = createContext({
   clearNotifcations: () => {},
 })
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const useNotify = () => useContext(NotificationContext)
 
+export const notify = (type, title, message) => {
+  const { color, icon } = NOTIFY_MAP[type]
+  return notifications.show({
+    color,
+    icon,
+    message,
+    title,
+    radius: 'xl',
+    position: 'bottom-right',
+    withBorder: true,
+    autoClose: 4000,
+    styles: () => ({
+      title: {
+        fontSize: '20px',
+        fontWeight: 'bold',
+      },
+      description: {
+        fontSize: '18px',
+      },
+    }),
+  })
+}
+
 export const NotifcationProvider = ({ children }) => {
-  const notify = (type, title, message) => {
-    const { color, icon } = NOTIFY_MAP[type]
-    return notifications.show({
-      color,
-      icon,
-      message,
-      title,
-      radius: 'xl',
-      position: 'bottom-right',
-      withBorder: true,
-      autoClose: 4000,
-      styles: () => ({
-        title: {
-          fontSize: '20px',
-          fontWeight: 'bold',
-        },
-        description: {
-          fontSize: '18px',
-        },
-      }),
-    })
-  }
 
   const clearNotifcations = () => {
     return notifications.clean()

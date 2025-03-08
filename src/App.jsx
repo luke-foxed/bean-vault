@@ -6,7 +6,7 @@ import { AuthProvider, useAuth } from './providers/auth_provider'
 import Signup from './pages/signup'
 import Login from './pages/login'
 import Home from './pages/home'
-import { NotifcationProvider } from './providers/notifcation_provider'
+import { NotifcationProvider, notify } from './providers/notifcation_provider'
 import Navbar from './components/navbar'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import Admin from './pages/admin'
@@ -26,6 +26,11 @@ const queryClient = new QueryClient({
     queries: {
       refetchOnWindowFocus: false,
       retry: 1,
+      onError: (err) => notify('error', 'There was an error with your request', err?.message ?? 'Unknown Error'),
+    },
+    mutations: {
+      retry: 1,
+      onError: (err) => notify('error', 'There was an error with your request', err?.message ?? 'Unknown Error'),
     },
   },
 })
@@ -59,6 +64,7 @@ function AppRouter() {
 
         <Route element={<PrivateRoute adminRoute />}>
           <Route path="/coffee/new" element={<NewCoffee />} />
+          <Route path="/coffee/edit/:id" element={<NewCoffee />} />
           <Route path="/admin" element={<Admin />}>
             <Route path="coffee" element={<AdminCoffees />} />
             <Route path="users" element={<AdminUsers />} />

@@ -7,7 +7,7 @@ import {
   signOut,
 } from 'firebase/auth'
 
-import { addDoc, collection, doc, getDoc, getDocs, serverTimestamp, setDoc } from 'firebase/firestore'
+import { addDoc, collection, doc, getDoc, getDocs, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore'
 import { auth, db } from './config'
 import { uploadImageToCloudinary } from '../cloudinary/api'
 
@@ -63,8 +63,7 @@ export const firebaseFetchAllCoffee = async () => {
   const coffeeList = coffeeSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
   const regionsMap = Object.fromEntries(regions.map((region) => [region.id, { name: region.name, color: region.color }]))
 
-  // Fetch roaster data
-  const roasterIds = [...new Set(coffeeList.map((coffee) => coffee?.roaster_id))]
+  const roasterIds = [...new Set(coffeeList.map((coffee) => coffee?.roaster))]
   const roasterDocs = await Promise.all(
     roasterIds.map(async (id) => {
       if (!id) return null
@@ -77,9 +76,24 @@ export const firebaseFetchAllCoffee = async () => {
 
   return coffeeList.map((coffee) => ({
     ...coffee,
-    roaster: roastersMap[coffee.roaster_id] || null,
+    roaster: roastersMap[coffee.roaster] || null,
     regions: (coffee.regions || []).map((regionId) => regionsMap[regionId]).filter(Boolean),
   }))
+}
+
+export const firebaseFetchCoffeeById = async (coffeeId) => {
+  try {
+    const coffeeRef = doc(db, 'coffee', coffeeId)
+    const coffeeSnap = await getDoc(coffeeRef)
+
+    if (!coffeeSnap.exists()) throw new Error('No coffee found!')
+
+    const coffeeData = { id: coffeeSnap.id, ...coffeeSnap.data() }
+
+    return coffeeData
+  } catch (error) {
+    throw error
+  }
 }
 
 export const firebaseAddCoffee = async (coffeeData) => {
@@ -89,6 +103,26 @@ export const firebaseAddCoffee = async (coffeeData) => {
     const coffeeRef = collection(db, 'coffee')
     const coffeeWithDate = { ...coffee, date_added: serverTimestamp(), image: imageUrl }
     return { res: addDoc(coffeeRef, coffeeWithDate) }
+  } catch (error) {
+    throw error
+  }
+}
+
+export const firebaseUpdateCoffee = async (coffeeData) => {
+  try {
+    const { date_added, image, id, ...coffee } = coffeeData
+    let imageUrl = image
+
+    if (imageUrl instanceof File) {
+      imageUrl = await uploadImageToCloudinary(imageUrl)
+    }
+
+    const coffeeRef = doc(db, 'coffee', id)
+    const coffeeWithUpdate = { ...coffee, image: imageUrl }
+
+    await updateDoc(coffeeRef, coffeeWithUpdate)
+
+    return { res: true }
   } catch (error) {
     throw error
   }

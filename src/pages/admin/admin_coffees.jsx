@@ -1,9 +1,9 @@
 import { ActionIcon, Badge, Button, Group, Stack, Table, Title } from '@mantine/core'
-import useCustomQuery from '../../hooks/useCustomQuery'
 import { firebaseFetchAllCoffee } from '../../firebase/api'
 import { formatFirestoreTimestamp } from '../../utils'
 import { IconPencil, IconTrash } from '@tabler/icons-react'
 import { useNavigate } from 'react-router-dom'
+import { useQuery } from 'react-query'
 
 function Score({ score }) {
 
@@ -22,7 +22,7 @@ function Score({ score }) {
 }
 
 export default function AdminCoffees() {
-  const { data: coffees } = useCustomQuery(['admin-coffees'], firebaseFetchAllCoffee)
+  const { data: coffees } = useQuery(['admin-coffees'], firebaseFetchAllCoffee)
   const navigate = useNavigate()
 
   return (
@@ -69,7 +69,7 @@ export default function AdminCoffees() {
                 </Table.Td>
                 <Table.Td>
                   <Group gap="10px">
-                    <ActionIcon variant="transparent">
+                    <ActionIcon variant="transparent" onClick={() => navigate(`/coffee/edit/${coffee.id}`)}>
                       <IconPencil />
                     </ActionIcon>
                     <ActionIcon variant="transparent" color="red">

@@ -5,6 +5,7 @@ import {
   Group,
   Image,
   Loader,
+  LoadingOverlay,
   MultiSelect,
   Paper,
   Pill,
@@ -17,28 +18,42 @@ import {
   TextInput,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import useCustomQuery from '../../hooks/useCustomQuery'
-import { firebaseAddCoffee, firebaseFetchRegions, firebaseFetchRoasters } from '../../firebase/api'
+import { firebaseAddCoffee, firebaseFetchCoffeeById, firebaseFetchRegions, firebaseFetchRoasters, firebaseUpdateCoffee } from '../../firebase/api'
 import { useMemo, useState } from 'react'
 import { IconStar } from '@tabler/icons-react'
 import { useNotify } from '../../providers/notifcation_provider'
-import useCustomMutation from '../../hooks/useCustomMutation'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import newCoffeeForm from '../../forms/new_coffee_form'
+import { useMutation, useQuery } from 'react-query'
+
+const FileInputValue = ({ value }) => {
+  if (!value) return null
+
+  // if in the 'edit' flow, the value is gonna be an image url
+  const name = typeof value === 'string' ? value : value.name
+
+  return <Pill maw="75%">{name}</Pill>
+}
 
 export default function NewCoffee() {
   const { notify } = useNotify()
   const navigate = useNavigate()
+  const { id } = useParams()
   const form = useForm(newCoffeeForm)
   const [imagePreview, setImagePreview] = useState(null)
-  const { data: regions, isLoading: loadingRegions } = useCustomQuery(['regions'], firebaseFetchRegions)
-  const { data: roasters, isLoading: loadingRoasters } = useCustomQuery(['roasters'], firebaseFetchRoasters)
-  const { mutate: addCoffee } = useCustomMutation(['add-coffee'], firebaseAddCoffee, {
-    onSuccess: () => {
-      notify('success', 'Coffee added successfully!')
-      navigate('/coffees')
+  const { data: regions, isLoading: loadingRegions } = useQuery(['regions'], firebaseFetchRegions)
+  const { data: roasters, isLoading: loadingRoasters } = useQuery(['roasters'], firebaseFetchRoasters)
+  const { isLoading: loadingCoffee } = useQuery([`coffee-${id}`], () => firebaseFetchCoffeeById(id), { onSuccess: form.setValues, enabled: !!id })
+  const { mutate: saveCoffee, isLoading: loadingSave } = useMutation(
+    id ? ['update-coffee'] : ['add-coffee'],
+    id ? firebaseUpdateCoffee : firebaseAddCoffee,
+    {
+      onSuccess: () => {
+        notify('success', `Coffee ${id ? 'updated' : 'added'} successfully!`)
+        navigate(id ? '/admin' : '/coffees')
+      },
     },
-  })
+  )
 
   const regionOptions = useMemo(() => {
     return (regions || []).map((region) => ({ value: region.id, label: region.name, color: region.color }))
@@ -48,9 +63,10 @@ export default function NewCoffee() {
     return (roasters || []).map((roaster) => ({ value: roaster.id, label: roaster.name }))
   }, [roasters])
 
-  const handleSubmit = async (coffee) => {
-    const coffeeWithRoaster = { roaster_id: coffee.roaster, ...coffee }
-    addCoffee(coffeeWithRoaster)
+  const handleSubmit = async (submittedCoffee) => {
+    if (!id) return saveCoffee(submittedCoffee)
+    saveCoffee({ ...submittedCoffee })
+
   }
 
   const handleAddNote = (event) => {
@@ -71,23 +87,25 @@ export default function NewCoffee() {
 
   const handleFileChange = (file) => {
     if (file) {
-      // Create a URL for the file to be used as a preview
       form.setFieldValue('image', file)
-      const objectURL = URL.createObjectURL(file);
+      const objectURL = URL.createObjectURL(file)
       setImagePreview(objectURL)
     }
-  };
+  }
 
   return (
     <Center mt={200}>
       <Paper radius="lg" shadow="md" w="75%" h="30%" mah="30%">
+
+        <LoadingOverlay visible={(Boolean(id) && loadingCoffee) || loadingSave} />
+
         <SimpleGrid cols={{ sm: 1, md: 2 }} spacing="xl">
           <Image
             style={{ borderRadius: '16px 0px 0px 16px' }}
             h="100%"
             fit="cover"
             fallbackSrc="https://placehold.co/570x570?text=Coffee+Image"
-            src={imagePreview}
+            src={imagePreview ?? form.getValues().image}
           />
           <Stack p="30px">
             <form onSubmit={form.onSubmit(handleSubmit)}>
@@ -156,11 +174,11 @@ export default function NewCoffee() {
                 accept="image/*"
                 mt="md"
                 label="Image"
-                placeholder="Image File"
                 withAsterisk
                 key={form.key('image')}
                 {...form.getInputProps('image')}
                 onChange={handleFileChange}
+                valueComponent={FileInputValue}
               />
 
               <Text mt="md" size="sm">
