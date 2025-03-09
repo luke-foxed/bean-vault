@@ -1,35 +1,15 @@
-import {
-  TextInput,
-  PasswordInput,
-  Paper,
-  Title,
-  Text,
-  Button,
-  rem,
-  Center,
-  Stack,
-} from '@mantine/core'
-import { isEmail, matches, useForm } from '@mantine/form'
+import { TextInput, PasswordInput, Paper, Title, Text, Button, rem, Center, Stack } from '@mantine/core'
+import { useForm } from '@mantine/form'
 import { useAuth } from '../../providers/auth_provider'
 import { Link, useNavigate } from 'react-router-dom'
 import { IconAt, IconBrandGoogle, IconLockOpen } from '@tabler/icons-react'
 import './style.module.css'
-
-const PASSWORD_REGEX = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/
+import loginForm from '../../forms/login_form'
 
 export default function Login() {
   const { login, loginWithGoogle, currentUser } = useAuth()
   const navigate = useNavigate()
-  const form = useForm({
-    mode: 'uncontrolled',
-    initialValues: { password: '', email: '' },
-    validate: {
-      email: (value) => isEmail(value) ? 'Email is invalid' : null,
-      password: (value) => !matches(PASSWORD_REGEX, value)
-        ? 'Password must be at least 8 characters and contain one number and special character'
-        : null,
-    },
-  })
+  const form = useForm(loginForm)
 
   if (currentUser) navigate('/')
 
@@ -43,33 +23,30 @@ export default function Login() {
 
   return (
     <Center style={{ height: '100vh' }}>
-      <form onSubmit={form.onSubmit(handleSubmit)}>
+      <Stack>
         <Title ta="center">BeanVault</Title>
         <Paper shadow="md" p={30} radius="lg" w={400}>
-          <Stack gap={10}>
+          <form onSubmit={form.onSubmit(handleSubmit)}>
             <TextInput
               radius="lg"
               label="Email"
               placeholder="you@email.com"
               required
               key={form.key('email')}
-              leftSection={
-                <IconAt style={{ width: rem(18), height: rem(18) }} />
-              }
+              leftSection={<IconAt style={{ width: rem(18), height: rem(18) }} />}
               {...form.getInputProps('email')}
             />
             <PasswordInput
+              mt="md"
               radius="lg"
               label="Password"
               placeholder="Your password"
               required
               key={form.key('password')}
-              leftSection={
-                <IconLockOpen style={{ width: rem(18), height: rem(18) }} />
-              }
+              leftSection={<IconLockOpen style={{ width: rem(18), height: rem(18) }} />}
               {...form.getInputProps('password')}
             />
-            <Button fullWidth type="submit" variant="light">
+            <Button fullWidth type="submit" variant="light" mt="md">
               Log In
             </Button>
             <Text ta="center" c="dimmed">
@@ -78,28 +55,23 @@ export default function Login() {
             <Button
               onClick={handleClickGoogle}
               fullWidth
-              leftSection={
-                <IconBrandGoogle style={{ width: rem(18), height: rem(18) }} />
-              }
+              leftSection={<IconBrandGoogle style={{ width: rem(18), height: rem(18) }} />}
               variant="light"
-              color="rgba(240, 91, 91, 1)"
+              color="red"
             >
               Login With Google
             </Button>
-            <Text ta="center" c="dimmed">
+            <Text ta="center" c="dimmed" mt="md">
               Don&apos;t have an account?{' '}
               <Text span c="blue">
-                <Link
-                  to="/signup"
-                  style={{ textDecoration: 'none', color: 'inherit' }}
-                >
+                <Link to="/signup" style={{ textDecoration: 'none', color: 'inherit' }}>
                   Sign Up
                 </Link>
               </Text>
             </Text>
-          </Stack>
+          </form>
         </Paper>
-      </form>
+      </Stack>
     </Center>
   )
 }

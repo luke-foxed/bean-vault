@@ -1,4 +1,4 @@
-import { Button, Center } from '@mantine/core'
+import { Button, Center, Stack } from '@mantine/core'
 import { useAuth } from '../../providers/auth_provider'
 
 export default function Home() {
@@ -10,8 +10,10 @@ export default function Home() {
 
   return (
     <Center mt={200}>
-      <h1>Welcome back, {currentUser.email} </h1>
-      <Button onClick={handleClickLogout}>Logout</Button>
+      <Stack>
+        <h1>Welcome back, {currentUser.name} </h1>
+        <Button onClick={handleClickLogout}>Logout</Button>
+      </Stack>
     </Center>
   )
 }

@@ -8,7 +8,7 @@ export default function Coffees() {
 
   return (
     <>
-      <Center mt={200}>
+      <Center mt={100}>
         <h1>COFFEE</h1>
       </Center>
 

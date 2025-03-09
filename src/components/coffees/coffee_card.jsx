@@ -1,4 +1,4 @@
-import { Card, Image, Group, Text, ThemeIcon, Stack, Badge, Tooltip, UnstyledButton } from '@mantine/core'
+import { Card, Image, Group, Text, ThemeIcon, Stack, Badge, Tooltip, UnstyledButton, Flex } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { IconStarFilled } from '@tabler/icons-react'
 import CoffeeModal from './coffee_modal'
@@ -7,7 +7,7 @@ import { generateCoffeeThumbnail } from '../../utils'
 export default function CoffeeCard({ coffee }) {
   const [opened, { open, close }] = useDisclosure(false)
   return (
-    <>
+    <Flex justify="center">
       <UnstyledButton onClick={open} w={{ base: 180, xs: 220, sm: 240, md: 260 }}>
         <Card shadow="md" padding="md" radius="lg">
           <Card.Section p="10px">
@@ -48,6 +48,6 @@ export default function CoffeeCard({ coffee }) {
       </UnstyledButton>
 
       <CoffeeModal opened={opened} coffee={coffee} onClose={close} />
-    </>
+    </Flex>
   )
 }

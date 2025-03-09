@@ -12,24 +12,41 @@ import { auth, db } from './config'
 import { uploadImageToCloudinary } from '../cloudinary/api'
 
 // auth based endpoints
-export const firebaseSignup = async (email, password) => {
+export const firebaseSignup = async (userDetails) => {
+
+  const { email, password, name } = userDetails
   const res = await createUserWithEmailAndPassword(auth, email, password)
   const user = res.user
 
   return setDoc(doc(db, 'users', user.uid), {
+    name: name,
     email: user.email,
-    role: 'viewer',
+    role: 'blocked',
   })
 }
 
 export const firebaseLogin = async (email, password) => {
-  return signInWithEmailAndPassword(auth, email, password)
+  const loginStuff = await signInWithEmailAndPassword(auth, email, password)
+  return loginStuff
 }
 
 export const firebaseLoginGoogle = async () => {
   const provider = new GoogleAuthProvider()
+  const res = await signInWithPopup(auth, provider)
+  const userRef = doc(db, 'users', res.user.uid)
 
-  return signInWithPopup(auth, provider)
+  // check if the user exists first
+  const userSnap = await getDoc(userRef)
+
+  if (!userSnap.exists()) {
+    await setDoc(userRef, {
+      email: res.user.email,
+      name: res.user.displayName,
+      role: 'blocked',
+    })
+  }
+
+  return res.user
 }
 
 export const firebaseLogout = async () => {

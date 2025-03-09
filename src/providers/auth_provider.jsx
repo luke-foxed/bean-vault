@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }) => {
       try {
         if (user) {
           const fetchedUser = await firebaseFetchUser(user.uid)
-          setCurrentUser({ ...user, role: fetchedUser?.role || 'viewer' })
+          setCurrentUser({ ...user, ...fetchedUser })
         } else {
           setCurrentUser(null)
         }
@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }) => {
     setLoading(false)
   }
 
-  const signup = async (email, password) => wrapAction(() => firebaseSignup(email, password))
+  const signup = async (user) => wrapAction(() => firebaseSignup(user))
   const login = async (email, password) => wrapAction(() => firebaseLogin(email, password))
   const loginWithGoogle = async () => wrapAction(() => firebaseLoginGoogle())
   const logout = async () => wrapAction(() => firebaseLogout())
