@@ -8,15 +8,15 @@ export default function CoffeeCard({ coffee }) {
   const [opened, { open, close }] = useDisclosure(false)
   return (
     <>
-      <UnstyledButton onClick={open}>
-        <Card shadow="md" padding="md" radius="lg" w={260}>
+      <UnstyledButton onClick={open} w={{ base: 180, xs: 220, sm: 240, md: 260 }}>
+        <Card shadow="md" padding="md" radius="lg">
           <Card.Section p="10px">
-            <Image src={generateCoffeeThumbnail(coffee.image)} h={240} fit="cover" radius="lg" />
+            <Image src={generateCoffeeThumbnail(coffee.image)} h={{ base: 180, sm: 240 }} fit="cover" radius="lg" />
           </Card.Section>
 
           <Stack gap="10px">
             <Group justify="space-between" gap="10px" mt="10px">
-              <Stack gap="0px" w="70%">
+              <Stack gap="0px" w="100%">
                 <Text fw={500} size="lg" truncate="end">
                   {coffee.name}
                 </Text>
@@ -29,7 +29,7 @@ export default function CoffeeCard({ coffee }) {
                 <ThemeIcon size="xs" variant="white" color="yellow">
                   <IconStarFilled />
                 </ThemeIcon>
-                <Text fw={500} size="lg">
+                <Text fw={400} size="md">
                   {coffee.score}
                 </Text>
               </Group>

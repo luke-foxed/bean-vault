@@ -1,20 +1,21 @@
 import '@mantine/core/styles.css'
 import '@mantine/notifications/styles.css'
 import { Alert, createTheme, LoadingOverlay, MantineProvider, Paper } from '@mantine/core'
+import { IconInfoCircle } from '@tabler/icons-react'
+import { QueryClient, QueryClientProvider } from 'react-query'
 import { BrowserRouter as Router, Route, Routes, Navigate, Outlet } from 'react-router-dom'
 import { AuthProvider, useAuth } from './providers/auth_provider'
+import { NotifcationProvider, notify } from './providers/notifcation_provider'
 import Signup from './pages/signup'
 import Login from './pages/login'
 import Home from './pages/home'
-import { NotifcationProvider, notify } from './providers/notifcation_provider'
 import Navbar from './components/navbar'
-import { QueryClient, QueryClientProvider } from 'react-query'
 import Admin from './pages/admin'
 import AdminUsers from './pages/admin/admin_users'
 import AdminCoffees from './pages/admin/admin_coffees'
-import NewCoffee from './pages/coffees/new_coffee'
-import { IconInfoCircle } from '@tabler/icons-react'
+
 import Coffees from './pages/coffees'
+import CoffeeEditor from './pages/coffees/coffee_editor'
 
 const theme = createTheme({
   fontFamily: 'Gowun Dodum, sans-serif',
@@ -63,8 +64,8 @@ function AppRouter() {
         </Route>
 
         <Route element={<PrivateRoute adminRoute />}>
-          <Route path="/coffee/new" element={<NewCoffee />} />
-          <Route path="/coffee/edit/:id" element={<NewCoffee />} />
+          <Route path="/coffee/new" element={<CoffeeEditor />} />
+          <Route path="/coffee/edit/:id" element={<CoffeeEditor />} />
           <Route path="/admin" element={<Admin />}>
             <Route path="coffee" element={<AdminCoffees />} />
             <Route path="users" element={<AdminUsers />} />

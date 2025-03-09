@@ -15,9 +15,13 @@ export default function Coffees() {
       {isLoading && <LoadingOverlay />}
 
       {data && (
-        <Grid gutter="xl" align="center">
+        <Grid
+          gutter="xl"
+          align="center"
+          breakpoints={{ xs: '200px', sm: '250px', md: '600px', lg: '800px', xl: '1400px' }}
+        >
           {data.map((coffee) => (
-            <Grid.Col key={coffee.id} span={{ base: 12, md: 6, lg: 3 }}>
+            <Grid.Col key={coffee.id} span={{ base: 12, xs: 6, sm: 6, md: 4, lg: 4, xl: 2.4 }}>
               <CoffeeCard coffee={coffee} />
             </Grid.Col>
           ))}

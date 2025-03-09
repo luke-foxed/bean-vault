@@ -11,8 +11,9 @@ import {
   Divider,
   Center,
   Blockquote,
+  ActionIcon,
 } from '@mantine/core'
-import { IconCoffee, IconGlobe, IconIceCream2, IconQuote } from '@tabler/icons-react'
+import { IconCoffee, IconGlobe, IconIceCream2, IconQuote, IconX } from '@tabler/icons-react'
 
 export default function CoffeeModal({ opened, onClose, coffee }) {
 
@@ -34,6 +35,9 @@ export default function CoffeeModal({ opened, onClose, coffee }) {
           fallbackSrc="https://placehold.co/570x570?text=Coffee+Image"
           src={coffee.image}
         />
+        <ActionIcon visibleFrom="sm" pos="absolute" top="20px" right="20px" variant="white" onClick={onClose}>
+          <IconX color="black" />
+        </ActionIcon>
         <Stack gap="10px" p="30px">
           <Center>
             <Stack gap="10px">
@@ -50,6 +54,9 @@ export default function CoffeeModal({ opened, onClose, coffee }) {
                 </Text>
               </Text>
             </Stack>
+            <ActionIcon hiddenFrom="sm" pos="absolute" top="20px" right="20px" variant="white" onClick={onClose}>
+              <IconX color="black" />
+            </ActionIcon>
           </Center>
 
           <Divider />

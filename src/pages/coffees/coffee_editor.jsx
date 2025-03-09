@@ -35,7 +35,7 @@ const FileInputValue = ({ value }) => {
   return <Pill maw="75%">{name}</Pill>
 }
 
-export default function NewCoffee() {
+export default function CoffeeEditor() {
   const { notify } = useNotify()
   const navigate = useNavigate()
   const { id } = useParams()
