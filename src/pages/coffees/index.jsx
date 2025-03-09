@@ -16,7 +16,9 @@ export default function Coffees() {
 
       {data && (
         <Grid
-          gutter="xl"
+          w="95vw"
+          m="auto"
+          gutter={{ base: 'sm', sm: 'md', lg: 'xl' }}
           align="center"
           breakpoints={{ xs: '200px', sm: '250px', md: '600px', lg: '800px', xl: '1400px' }}
         >

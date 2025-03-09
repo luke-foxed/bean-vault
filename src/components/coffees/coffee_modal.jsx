@@ -12,24 +12,31 @@ import {
   Center,
   Blockquote,
   ActionIcon,
+  RemoveScroll,
 } from '@mantine/core'
+import { useMediaQuery } from '@mantine/hooks';
 import { IconCoffee, IconGlobe, IconIceCream2, IconQuote, IconX } from '@tabler/icons-react'
 
 export default function CoffeeModal({ opened, onClose, coffee }) {
+
+  const isMobile = useMediaQuery('(max-width: 50em)')
 
   return (
     <Modal
       opened={opened}
       onClose={onClose}
-      lockScroll={false}
+      lockScroll={true}
       withCloseButton={false}
       padding={0}
       radius="xl"
       size="auto"
+      fullScreen={isMobile}
+      className={RemoveScroll.classNames.zeroRight}
+      styles={{ inner: { left: 0 } }} // fix inner modal alignment
     >
       <SimpleGrid cols={{ sm: 1, md: 2 }} spacing="xl">
         <Image
-          style={{ borderRadius: '16px 0px 0px 16px' }}
+          style={ isMobile ? {} : { borderRadius: '16px 0px 0px 16px' }}
           h="100%"
           fit="cover"
           fallbackSrc="https://placehold.co/570x570?text=Coffee+Image"
@@ -54,7 +61,7 @@ export default function CoffeeModal({ opened, onClose, coffee }) {
                 </Text>
               </Text>
             </Stack>
-            <ActionIcon hiddenFrom="sm" pos="absolute" top="20px" right="20px" variant="white" onClick={onClose}>
+            <ActionIcon hiddenFrom="sm" pos="absolute" top="30px" right="20px" variant="white" onClick={onClose}>
               <IconX color="black" />
             </ActionIcon>
           </Center>
@@ -72,7 +79,7 @@ export default function CoffeeModal({ opened, onClose, coffee }) {
             <Title order={4}>Origin</Title>
           </Group>
 
-          <Group gap="10px" wrap="nowrap">
+          <Group gap="10px">
             {coffee.regions.map((region) => (
               <Badge size="lg" key={region.name} w="max-content" variant="light" color={region.color}>
                 {region.name}
@@ -86,7 +93,7 @@ export default function CoffeeModal({ opened, onClose, coffee }) {
             </ThemeIcon>
             <Title order={4}>Flavours</Title>
           </Group>
-          <Group gap="10px" wrap="nowrap">
+          <Group gap="10px" >
             {coffee.flavour_notes.map((flavour) => (
               <Badge size="lg" variant="dot" key={flavour} w="max-content">
                 {flavour}
