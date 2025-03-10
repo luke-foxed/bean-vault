@@ -1,4 +1,4 @@
-import { Center, Paper, Tabs, rem } from '@mantine/core'
+import { Center, Paper, Tabs, Title } from '@mantine/core'
 import { IconCoffee, IconUser } from '@tabler/icons-react'
 import { useNavigate } from 'react-router-dom'
 import AdminCoffees from './admin_coffees'
@@ -9,18 +9,18 @@ export default function Admin() {
 
   return (
     <>
-      <Center mt={200}>
+      <Center mt={100}>
         <h1>ADMIN</h1>
       </Center>
 
-      <Paper radius="lg" p="20px" w="100%" mt="10px">
+      <Paper radius="lg" p="20px" w="95%" m="auto" shadow="lg">
         <Tabs variant="outline" defaultValue="coffee" onChange={(val) => navigate(`/admin/${val}`)}>
           <Tabs.List>
-            <Tabs.Tab value="coffee" leftSection={<IconCoffee style={{ width: rem(12), height: rem(12) }} />}>
-              Coffee
+            <Tabs.Tab value="coffee" leftSection={<IconCoffee style={{ width: 25, height: 25 }} />}>
+              <Title order={3}>Coffee</Title>
             </Tabs.Tab>
-            <Tabs.Tab value="users" leftSection={<IconUser style={{ width: rem(12), height: rem(12) }} />}>
-              Users
+            <Tabs.Tab value="users" leftSection={<IconUser style={{ width: 25, height: 25 }} />}>
+              <Title order={3}>Users</Title>
             </Tabs.Tab>
           </Tabs.List>
 

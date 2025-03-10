@@ -1,6 +1,5 @@
 import {
   Button,
-  Center,
   FileInput,
   Group,
   Image,
@@ -18,19 +17,20 @@ import {
   TextInput,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { firebaseAddCoffee, firebaseFetchCoffeeById, firebaseFetchRegions, firebaseFetchRoasters, firebaseUpdateCoffee } from '../../firebase/api'
+import { firebaseAddCoffee, firebaseFetchCoffeeForEdit, firebaseFetchRegions, firebaseFetchRoasters, firebaseUpdateCoffee } from '../../firebase/api'
 import { useMemo, useState } from 'react'
 import { IconStar } from '@tabler/icons-react'
 import { useNotify } from '../../providers/notifcation_provider'
 import { useNavigate, useParams } from 'react-router-dom'
 import newCoffeeForm from '../../forms/new_coffee_form'
 import { useMutation, useQuery } from 'react-query'
+import { useMediaQuery } from '@mantine/hooks'
 
 const FileInputValue = ({ value }) => {
   if (!value) return null
 
-  // if in the 'edit' flow, the value is gonna be an image url
-  const name = typeof value === 'string' ? value : value.name
+  // if in the 'edit' flow, the value is gonna be a cloudinary url so take the 'name' bit of the url
+  const name = typeof value === 'string' ? value.split('/').pop() : value.name
 
   return <Pill maw="75%">{name}</Pill>
 }
@@ -40,10 +40,11 @@ export default function CoffeeEditor() {
   const navigate = useNavigate()
   const { id } = useParams()
   const form = useForm(newCoffeeForm)
+  const isMobile = useMediaQuery('(max-width: 50em)')
   const [imagePreview, setImagePreview] = useState(null)
   const { data: regions, isLoading: loadingRegions } = useQuery(['regions'], firebaseFetchRegions)
   const { data: roasters, isLoading: loadingRoasters } = useQuery(['roasters'], firebaseFetchRoasters)
-  const { isLoading: loadingCoffee } = useQuery([`coffee-${id}`], () => firebaseFetchCoffeeById(id), { onSuccess: form.setValues, enabled: !!id })
+  const { isLoading: loadingCoffee } = useQuery([`coffee-${id}`], () => firebaseFetchCoffeeForEdit(id), { onSuccess: form.setValues, enabled: !!id })
   const { mutate: saveCoffee, isLoading: loadingSave } = useMutation(
     id ? ['update-coffee'] : ['add-coffee'],
     id ? firebaseUpdateCoffee : firebaseAddCoffee,
@@ -86,22 +87,23 @@ export default function CoffeeEditor() {
   }
 
   const handleFileChange = (file) => {
-    if (file) {
-      form.setFieldValue('image', file)
-      const objectURL = URL.createObjectURL(file)
-      setImagePreview(objectURL)
-    }
+    if (!file) return form.setFieldValue('image', null)
+
+    form.setFieldValue('image', file)
+    const objectURL = URL.createObjectURL(file)
+    setImagePreview(objectURL)
   }
 
   return (
-    <Center mt={200}>
-      <Paper radius="lg" shadow="md" w="75%" h="30%" mah="30%">
+    <Stack align="center" mt="100">
+      <h1>{id ? 'EDIT' : 'NEW'} COFFEE</h1>
 
+      <Paper radius="lg" shadow="md" w={isMobile ? '90%' : '75%'} h="30%" mah="30%">
         <LoadingOverlay visible={(Boolean(id) && loadingCoffee) || loadingSave} />
 
         <SimpleGrid cols={{ sm: 1, md: 2 }} spacing="xl">
           <Image
-            style={{ borderRadius: '16px 0px 0px 16px' }}
+            style={{ borderRadius: isMobile ? '16px 16px 0px 0px' : '16px 0px 0px 16px' }}
             h="100%"
             fit="cover"
             fallbackSrc="https://placehold.co/570x570?text=Coffee+Image"
@@ -179,6 +181,7 @@ export default function CoffeeEditor() {
                 {...form.getInputProps('image')}
                 onChange={handleFileChange}
                 valueComponent={FileInputValue}
+                clearable
               />
 
               <Text mt="md" size="sm">
@@ -205,6 +208,6 @@ export default function CoffeeEditor() {
           </Stack>
         </SimpleGrid>
       </Paper>
-    </Center>
+    </Stack>
   )
 }

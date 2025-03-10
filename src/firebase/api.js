@@ -98,7 +98,7 @@ export const firebaseFetchAllCoffee = async () => {
   }))
 }
 
-export const firebaseFetchCoffeeById = async (coffeeId) => {
+export const firebaseFetchCoffeeForEdit = async (coffeeId) => {
   try {
     const coffeeRef = doc(db, 'coffee', coffeeId)
     const coffeeSnap = await getDoc(coffeeRef)
@@ -108,6 +108,30 @@ export const firebaseFetchCoffeeById = async (coffeeId) => {
     const coffeeData = { id: coffeeSnap.id, ...coffeeSnap.data() }
 
     return coffeeData
+  } catch (error) {
+    throw error
+  }
+}
+
+export const firebaseFetchCoffee = async (coffeeId) => {
+  try {
+    const coffeeRef = doc(db, 'coffee', coffeeId)
+    const coffeeSnap = await getDoc(coffeeRef)
+
+    if (!coffeeSnap.exists()) throw new Error('No coffee found!')
+
+    const coffeeData = { id: coffeeSnap.id, ...coffeeSnap.data() }
+    const regions = await firebaseFetchRegions()
+    const regionsMap = Object.fromEntries(regions.map((region) => [region.id, { name: region.name, color: region.color }]))
+    const coffeeRegions = (coffeeData.regions || []).map((regionId) => regionsMap[regionId]).filter(Boolean)
+    const roasterSnap = await getDoc(doc(db, 'roasters', coffeeData.roaster))
+    const roaster = roasterSnap.exists() ? { id: roasterSnap.id, ...roasterSnap.data() } : null
+
+    return {
+      ...coffeeData,
+      regions: coffeeRegions,
+      roaster: roaster,
+    }
   } catch (error) {
     throw error
   }

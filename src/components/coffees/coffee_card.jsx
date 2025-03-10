@@ -1,7 +1,6 @@
 import { Card, Image, Group, Text, ThemeIcon, Stack, Badge, Tooltip, UnstyledButton, Flex, ScrollArea } from '@mantine/core'
-import { useDisclosure, useMediaQuery } from '@mantine/hooks'
+import { useMediaQuery } from '@mantine/hooks'
 import { IconStarFilled } from '@tabler/icons-react'
-import CoffeeModal from './coffee_modal'
 import { generateCoffeeThumbnail } from '../../utils'
 
 const CoffeeRegions = ({ regions }) => (
@@ -16,12 +15,11 @@ const CoffeeRegions = ({ regions }) => (
   </Group>
 )
 
-export default function CoffeeCard({ coffee }) {
-  const [opened, { open, close }] = useDisclosure(false)
+export default function CoffeeCard({ coffee, onClick }) {
   const isMobile = useMediaQuery('(max-width: 50em)')
   return (
     <Flex justify="center">
-      <UnstyledButton onClick={open} w={{ base: 175, xs: 220, sm: 240, md: 260 }} p="0">
+      <UnstyledButton onClick={() => onClick(coffee)} w={{ base: 175, xs: 220, sm: 240, md: 260 }} p="0">
         <Card shadow="md" padding="md" radius="lg">
           <Card.Section p="10px">
             <Image src={generateCoffeeThumbnail(coffee.image)} h={{ base: 180, sm: 240 }} fit="cover" radius="lg" />
@@ -57,7 +55,6 @@ export default function CoffeeCard({ coffee }) {
           </Stack>
         </Card>
       </UnstyledButton>
-      <CoffeeModal opened={opened} coffee={coffee} onClose={close} />
     </Flex>
   )
 }
