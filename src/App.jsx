@@ -1,6 +1,6 @@
 import '@mantine/core/styles.css'
 import '@mantine/notifications/styles.css'
-import { Alert, createTheme, LoadingOverlay, MantineProvider, Paper } from '@mantine/core'
+import { Alert, createTheme, LoadingOverlay, MantineProvider, Paper, Title } from '@mantine/core'
 import { IconInfoCircle } from '@tabler/icons-react'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { BrowserRouter as Router, Route, Routes, Navigate, Outlet } from 'react-router-dom'
@@ -77,23 +77,37 @@ function AppRouter() {
 }
 
 function PrivateRoute({ adminRoute = false }) {
-  const { currentUser, isAdmin, loading } = useAuth()
+  const { currentUser, isAdmin, isBlocked, loading } = useAuth()
+
+  let ContentComponent = <Outlet />
 
   if (loading) return <LoadingOverlay overlayProps={{ color: '#000' }} />
 
   if (!currentUser) return <Navigate to="/login" />
 
+  if ((adminRoute && !isAdmin) || isBlocked) {
+    ContentComponent = (
+      <Paper mt={200} p="20px" shadow="md" radius="lg" w="75%" m="150 auto">
+        <Alert
+          variant="light"
+          color="yellow"
+          radius="lg"
+          title={<Title order={3}>Access Restricted</Title>}
+          icon={<IconInfoCircle />}
+        >
+          <Title order={4}>
+            {isBlocked
+              ? 'Your account has been created but not yet approved to access this app'
+              : 'This page can only be accessed by admin users'}
+          </Title>
+        </Alert>
+      </Paper>
+    )
+  }
+
   return (
     <PrivateLayout>
-      {(adminRoute && isAdmin) || !adminRoute ? (
-        <Outlet />
-      ) : (
-        <Paper mt={200} p="20px" shadow="md" radius="lg">
-          <Alert variant="light" color="yellow" radius="lg" title="Access Restricted" icon={<IconInfoCircle />}>
-            Only admins can add new coffee :)
-          </Alert>
-        </Paper>
-      )}
+      {ContentComponent}
     </PrivateLayout>
   )
 }

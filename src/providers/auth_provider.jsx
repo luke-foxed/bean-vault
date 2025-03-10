@@ -14,6 +14,7 @@ import { useNotify } from './notifcation_provider'
 const AuthContext = createContext({
   currentUser: null,
   isAdmin: false,
+  isBlocked: false,
   loading: false,
   signup: async () => {},
   login: async () => {},
@@ -62,9 +63,11 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => wrapAction(() => firebaseLogin(email, password))
   const loginWithGoogle = async () => wrapAction(() => firebaseLoginGoogle())
   const logout = async () => wrapAction(() => firebaseLogout())
-  const isAdmin = currentUser?.role === 'admin'
 
-  const value = { currentUser, signup, login, loginWithGoogle, logout, loading, isAdmin }
+  const isAdmin = currentUser?.role === 'admin'
+  const isBlocked = currentUser?.role === 'blocked'
+
+  const value = { currentUser, signup, login, loginWithGoogle, logout, loading, isAdmin, isBlocked }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
