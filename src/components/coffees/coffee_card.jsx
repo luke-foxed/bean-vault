@@ -15,11 +15,11 @@ const CoffeeRegions = ({ regions }) => (
   </Group>
 )
 
-export default function CoffeeCard({ coffee, onClick }) {
+export default function CoffeeCard({ coffee, onClick = null }) {
   const isMobile = useMediaQuery('(max-width: 50em)')
   return (
     <Flex justify="center">
-      <UnstyledButton onClick={() => onClick(coffee)} w={{ base: 175, xs: 220, sm: 240, md: 260 }} p="0">
+      <UnstyledButton style={{ cursor: onClick ? 'pointer' : 'default' }} onClick={() => onClick(coffee)} w={{ base: 175, xs: 220, sm: 240, md: 260 }} p="0">
         <Card shadow="md" padding="md" radius="lg">
           <Card.Section p="10px">
             <Image src={generateCoffeeThumbnail(coffee.image)} h={{ base: 180, sm: 240 }} fit="cover" radius="lg" />

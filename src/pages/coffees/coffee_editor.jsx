@@ -71,8 +71,10 @@ export default function CoffeeEditor() {
   }
 
   const handleAddNote = (event) => {
-    if (event.key === ',' || event.type === 'blur') {
-      const note = event.target.value.trim()
+    // fun one, gboard on android/ios won't show correct event keys/key codes so we need to check for commas manually
+    // https://issues.chromium.org/issues/41368867
+    if (event.key === ','  || event.type === 'blur' || event.target.value.endsWith(',')) {
+      const note = event.target.value.trim().replace(',', '')
       if (note && !form.getValues().flavour_notes.includes(note)) {
         form.setFieldValue('flavour_notes', [...form.getValues().flavour_notes, note])
       }
@@ -98,18 +100,18 @@ export default function CoffeeEditor() {
     <Stack align="center" mt="100">
       <h1>{id ? 'EDIT' : 'NEW'} COFFEE</h1>
 
-      <Paper radius="lg" shadow="md" w={isMobile ? '90%' : '75%'} h="30%" mah="30%">
+      <Paper radius="lg" shadow="md" w={isMobile ? '92%' : '75%'} h="30%" mah="30%">
         <LoadingOverlay visible={(Boolean(id) && loadingCoffee) || loadingSave} />
 
-        <SimpleGrid cols={{ sm: 1, md: 2 }} spacing="xl">
+        <SimpleGrid cols={{ sm: 1, md: 2 }} spacing={0}>
           <Image
             style={{ borderRadius: isMobile ? '16px 16px 0px 0px' : '16px 0px 0px 16px' }}
             h="100%"
             fit="cover"
-            fallbackSrc="https://placehold.co/570x570?text=Coffee+Image"
+            fallbackSrc="https://placehold.co/520x520?text=Coffee+Image"
             src={imagePreview ?? form.getValues().image}
           />
-          <Stack p="30px">
+          <Stack p="20px">
             <form onSubmit={form.onSubmit(handleSubmit)}>
               <TextInput
                 label="Coffee Name"
@@ -153,8 +155,8 @@ export default function CoffeeEditor() {
                   <PillsInput.Field
                     autoFocus
                     placeholder="Enter flavour notes (use the 'comma' key to enter multiple)"
-                    onKeyDown={handleAddNote}
                     onBlur={handleAddNote}
+                    onInput={handleAddNote}
                   />
                 </Pill.Group>
               </PillsInput>

@@ -29,8 +29,10 @@ export default function Signup() {
 
   return (
     <Center style={{ height: '100vh' }}>
-      <Stack gap={10}>
-        <Title ta="center">Welcome to BeanVault!</Title>
+      <Stack gap={10} w={{ base: '95%', sm: 400 }}>
+        <Title ta="center" ff="Unica One">
+          BeanVault
+        </Title>
         <Paper shadow="md" p={30} radius="lg">
           <form onSubmit={form.onSubmit(handleSubmit)}>
             <TextInput
@@ -72,7 +74,7 @@ export default function Signup() {
               leftSection={<IconUser style={{ width: rem(18), height: rem(18) }} />}
               {...form.getInputProps('name')}
             />
-            <Button fullWidth type="submit" variant="light" mt="md">
+            <Button size="compact-lg" fullWidth type="submit" variant="light" mt="md">
               Sign Up
             </Button>
             <Text ta="center" c="dimmed" mt="md">

@@ -1,7 +1,8 @@
-import { AppShell, Avatar, Box, Burger, Button, Group, Image, Stack, Title, UnstyledButton } from '@mantine/core'
+import { AppShell, Box, Burger, Button, Group, Image, Stack, Text, UnstyledButton } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { useNavigate, NavLink as RouterNavLink } from 'react-router-dom'
 import { useAuth } from '../../providers/auth_provider'
+import User from './user'
 
 function NavItem({ label, path, disabled, onClick = () => {} }) {
   return (
@@ -44,7 +45,8 @@ export default function Navbar() {
   const [opened, { toggle }] = useDisclosure()
   const navigate = useNavigate()
   const { isAdmin, currentUser } = useAuth()
-
+  const [userPopoverOpened, { toggle: toggleUserPopover }] = useDisclosure()
+  const [mobileUserPopoverOpened, { toggle: toggleMobileUserPopover }] = useDisclosure()
   return (
     <AppShell
       header={{ height: 70 }}
@@ -56,30 +58,46 @@ export default function Navbar() {
       padding="md"
     >
       <AppShell.Header>
-        <Group h="100%" px="md">
+        <Group h="100%" px="md" justify="space-between">
           <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-          <Group justify="space-between" style={{ flex: 1 }}>
+
+          <Group visibleFrom="sm" style={{ flex: 1 }} justify="space-between">
             <UnstyledButton onClick={() => navigate('/')}>
               <Group>
-                <Image src={'/logo2.png'} h={50} />
-                <Title order={1}>BeanVault</Title>
+                <Image src="/logo_black.png" h={50} />
+                <Text ff="Unica One" size="50px">
+                  BeanVault
+                </Text>
               </Group>
             </UnstyledButton>
-
-            <Group ml="xl" gap={20} visibleFrom="sm">
+            <Group gap={20}>
               <NavItem path="/coffees" label="Coffees" />
               <NavItem disabled={!isAdmin} path="/admin" label="Admin" />
-              <Avatar color="initials" name={currentUser?.name} />
-            </Group>
-            <Group hiddenFrom="sm" ml="xl">
-              <Avatar color="initials" name={currentUser?.name} />
+              <User key="desktop" currentUser={currentUser} opened={userPopoverOpened} toggle={toggleUserPopover} />
             </Group>
           </Group>
+
+          <UnstyledButton
+            onClick={() => navigate('/')}
+            hiddenFrom="sm"
+            style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}
+          >
+            <Image src="/logo_black.png" h={50} />
+          </UnstyledButton>
+
+          <Box hiddenFrom="sm">
+            <User currentUser={currentUser} opened={mobileUserPopoverOpened} toggle={toggleMobileUserPopover} />
+          </Box>
         </Group>
       </AppShell.Header>
 
       <AppShell.Navbar py="md">
         <Stack align="center">
+          <Text ff="Unica One" size="50px">
+            BeanVault
+          </Text>
+
+          <NavItem path="/" label="Home" onClick={toggle} />
           <NavItem path="/coffees" label="Coffees" onClick={toggle} />
           <NavItem disabled={!isAdmin} path="/admin" label="Admin" onClick={toggle} />
         </Stack>

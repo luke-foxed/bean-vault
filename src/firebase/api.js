@@ -7,7 +7,7 @@ import {
   signOut,
 } from 'firebase/auth'
 
-import { addDoc, collection, doc, getDoc, getDocs, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore'
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, limit, orderBy, query, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore'
 import { auth, db } from './config'
 import { uploadImageToCloudinary } from '../cloudinary/api'
 
@@ -49,6 +49,37 @@ export const firebaseLoginGoogle = async () => {
   return res.user
 }
 
+export const firebaseFetchAllUsers = async () => {
+  try {
+    const usersCollectionRef = collection(db, 'users')
+    const usersSnapshot = await getDocs(usersCollectionRef)
+    const users = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+    return users
+  } catch (error) {
+    throw error
+  }
+}
+
+export const firebaseUpdateUserRole = async (userId, newRole) => {
+  try {
+    const userRef = doc(db, 'users', userId)
+    await updateDoc(userRef, { role: newRole })
+    return { success: true }
+  } catch (error) {
+    throw error
+  }
+}
+
+export const firebaseDeleteUser = async (userId) => {
+  try {
+    const userRef = doc(db, 'users', userId)
+    await deleteDoc(userRef)
+    return { success: true }
+  } catch (error) {
+    throw error
+  }
+}
+
 export const firebaseLogout = async () => {
   return signOut(auth)
 }
@@ -74,8 +105,14 @@ export const firebaseFetchRoasters = async () => {
   return roasters
 }
 
-export const firebaseFetchAllCoffee = async () => {
-  const [coffeeSnapshot, regions] = await Promise.all([getDocs(collection(db, 'coffee')), firebaseFetchRegions()])
+export const firebaseFetchAllCoffee = async ({ count = null, sortByField = null, sortDirection = 'desc' }) => {
+  let coffeeQuery = collection(db, 'coffee')
+
+  if (sortByField) coffeeQuery = query(coffeeQuery, orderBy(sortByField, sortDirection))
+
+  if (count) coffeeQuery = query(coffeeQuery, limit(count))
+
+  const [coffeeSnapshot, regions] = await Promise.all([getDocs(coffeeQuery), firebaseFetchRegions()])
 
   const coffeeList = coffeeSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
   const regionsMap = Object.fromEntries(regions.map((region) => [region.id, { name: region.name, color: region.color }]))

@@ -1,4 +1,4 @@
-import { TextInput, PasswordInput, Paper, Title, Text, Button, rem, Center, Stack } from '@mantine/core'
+import { TextInput, PasswordInput, Paper, Title, Text, Button, rem, Center, Stack, Divider } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { useAuth } from '../../providers/auth_provider'
 import { Link, useNavigate } from 'react-router-dom'
@@ -23,9 +23,11 @@ export default function Login() {
 
   return (
     <Center style={{ height: '100vh' }}>
-      <Stack>
-        <Title ta="center">BeanVault</Title>
-        <Paper shadow="md" p={30} radius="lg" w={400}>
+      <Stack w={{ base: '95%', sm: 400 }}>
+        <Title ta="center" order={1} ff="Unica One">
+          BeanVault
+        </Title>
+        <Paper shadow="md" p={30} radius="lg">
           <form onSubmit={form.onSubmit(handleSubmit)}>
             <TextInput
               radius="lg"
@@ -46,13 +48,12 @@ export default function Login() {
               leftSection={<IconLockOpen style={{ width: rem(18), height: rem(18) }} />}
               {...form.getInputProps('password')}
             />
-            <Button fullWidth type="submit" variant="light" mt="md">
+            <Button size="compact-lg" fullWidth type="submit" variant="light" mt="md">
               Log In
             </Button>
-            <Text ta="center" c="dimmed">
-              OR
-            </Text>
+            <Divider label="OR" my="md" variant="dashed" w="100%" />
             <Button
+              size="compact-lg"
               onClick={handleClickGoogle}
               fullWidth
               leftSection={<IconBrandGoogle style={{ width: rem(18), height: rem(18) }} />}
