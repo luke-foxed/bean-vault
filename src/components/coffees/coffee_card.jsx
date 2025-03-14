@@ -15,11 +15,16 @@ const CoffeeRegions = ({ regions }) => (
   </Group>
 )
 
-export default function CoffeeCard({ coffee, onClick = null }) {
+export default function CoffeeCard({ coffee, onClick =null }) {
   const isMobile = useMediaQuery('(max-width: 50em)')
+
+  const handleClickCoffee = () => {
+    if (onClick) return onClick(coffee)
+  }
+
   return (
     <Flex justify="center">
-      <UnstyledButton style={{ cursor: onClick ? 'pointer' : 'default' }} onClick={() => onClick(coffee)} w={{ base: 175, xs: 220, sm: 240, md: 260 }} p="0">
+      <UnstyledButton style={{ cursor: onClick ? 'pointer' : 'default' }} onClick={handleClickCoffee} w={{ base: 175, xs: 220, sm: 240, md: 260 }} p="0">
         <Card shadow="md" padding="md" radius="lg">
           <Card.Section p="10px">
             <Image src={generateCoffeeThumbnail(coffee.image)} h={{ base: 180, sm: 240 }} fit="cover" radius="lg" />
@@ -37,7 +42,7 @@ export default function CoffeeCard({ coffee, onClick = null }) {
               </Stack>
 
               <Group align="center" justify="center" gap={5}>
-                <ThemeIcon size="xs" variant="white" color="yellow">
+                <ThemeIcon size="xs" variant="transparent" color="yellow">
                   <IconStarFilled />
                 </ThemeIcon>
                 <Text fw={400} size="md">

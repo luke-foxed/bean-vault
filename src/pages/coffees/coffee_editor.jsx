@@ -19,12 +19,13 @@ import {
 import { useForm } from '@mantine/form'
 import { firebaseAddCoffee, firebaseFetchCoffeeForEdit, firebaseFetchRegions, firebaseFetchRoasters, firebaseUpdateCoffee } from '../../firebase/api'
 import { useMemo, useState } from 'react'
-import { IconStar } from '@tabler/icons-react'
+import { IconCirclePlus, IconEditCircle, IconStar } from '@tabler/icons-react'
 import { useNotify } from '../../providers/notifcation_provider'
 import { useNavigate, useParams } from 'react-router-dom'
 import newCoffeeForm from '../../forms/new_coffee_form'
 import { useMutation, useQuery } from 'react-query'
 import { useMediaQuery } from '@mantine/hooks'
+import Heading from '../../components/heading'
 
 const FileInputValue = ({ value }) => {
   if (!value) return null
@@ -97,8 +98,8 @@ export default function CoffeeEditor() {
   }
 
   return (
-    <Stack align="center" mt="100">
-      <h1>{id ? 'EDIT' : 'NEW'} COFFEE</h1>
+    <Stack align="center" mt="150">
+      <Heading icon={id ? IconEditCircle : IconCirclePlus} title={`${id ? 'EDIT' : 'NEW'} COFFEE`} />
 
       <Paper radius="lg" shadow="md" w={isMobile ? '92%' : '75%'} h="30%" mah="30%">
         <LoadingOverlay visible={(Boolean(id) && loadingCoffee) || loadingSave} />

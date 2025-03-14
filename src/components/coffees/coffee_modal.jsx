@@ -43,8 +43,8 @@ export default function CoffeeModal({ opened, onClose, coffee }) {
             fallbackSrc="https://placehold.co/570x570?text=Coffee+Image"
             src={coffee.image}
           />
-          <ActionIcon visibleFrom="sm" pos="absolute" top="20px" right="20px" variant="white" onClick={onClose}>
-            <IconX color="black" />
+          <ActionIcon visibleFrom="sm" pos="absolute" top="20px" right="20px" variant="transparent" onClick={onClose} >
+            <IconX />
           </ActionIcon>
           <Stack gap="10px" p="30px">
             <Center>
@@ -55,9 +55,9 @@ export default function CoffeeModal({ opened, onClose, coffee }) {
                   </Title>
                 </Badge>
 
-                <Text ta="center" c="gray">
+                <Text ta="center">
                   By{' '}
-                  <Text span c="dark">
+                  <Text span>
                     {coffee.roaster.name}
                   </Text>
                 </Text>
@@ -74,7 +74,7 @@ export default function CoffeeModal({ opened, onClose, coffee }) {
             </Blockquote>
 
             <Group gap="5px">
-              <ThemeIcon color="grey" size="sm" variant="white">
+              <ThemeIcon color="gray" size="sm" variant="transparent">
                 <IconGlobe />
               </ThemeIcon>
               <Title order={4}>Origin</Title>
@@ -89,7 +89,7 @@ export default function CoffeeModal({ opened, onClose, coffee }) {
             </Group>
 
             <Group gap="5px">
-              <ThemeIcon color="grey" size="sm" variant="white">
+              <ThemeIcon color="gray" size="sm" variant="transparent">
                 <IconIceCream2 />
               </ThemeIcon>
               <Title order={4}>Flavours</Title>

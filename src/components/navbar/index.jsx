@@ -1,4 +1,4 @@
-import { AppShell, Box, Burger, Button, Group, Image, Stack, Text, UnstyledButton } from '@mantine/core'
+import { AppShell, Box, Burger, Button, Group, Image, Stack, Text, UnstyledButton, useMantineColorScheme } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { useNavigate, NavLink as RouterNavLink } from 'react-router-dom'
 import { useAuth } from '../../providers/auth_provider'
@@ -45,16 +45,13 @@ export default function Navbar() {
   const [opened, { toggle }] = useDisclosure()
   const navigate = useNavigate()
   const { isAdmin, currentUser } = useAuth()
-  const [userPopoverOpened, { toggle: toggleUserPopover }] = useDisclosure()
-  const [mobileUserPopoverOpened, { toggle: toggleMobileUserPopover }] = useDisclosure()
+  const [, { toggle: toggleUserPopover }] = useDisclosure()
+  const [, { toggle: toggleMobileUserPopover }] = useDisclosure()
+  const { colorScheme } = useMantineColorScheme()
   return (
     <AppShell
       header={{ height: 70 }}
-      navbar={{
-        width: 300,
-        breakpoint: 'sm',
-        collapsed: { desktop: true, mobile: !opened },
-      }}
+      navbar={{ width: 300, breakpoint: 'sm', collapsed: { desktop: true, mobile: !opened } }}
       padding="md"
     >
       <AppShell.Header>
@@ -64,7 +61,7 @@ export default function Navbar() {
           <Group visibleFrom="sm" style={{ flex: 1 }} justify="space-between">
             <UnstyledButton onClick={() => navigate('/')}>
               <Group>
-                <Image src="/logo_black.png" h={50} />
+                <Image src={`/logo_${colorScheme === 'dark' ? 'light' : 'dark'}.png`} h={50} />
                 <Text ff="Unica One" size="50px">
                   BeanVault
                 </Text>
@@ -73,7 +70,7 @@ export default function Navbar() {
             <Group gap={20}>
               <NavItem path="/coffees" label="Coffees" />
               <NavItem disabled={!isAdmin} path="/admin" label="Admin" />
-              <User key="desktop" currentUser={currentUser} opened={userPopoverOpened} toggle={toggleUserPopover} />
+              <User key="desktop" currentUser={currentUser} toggle={toggleUserPopover} />
             </Group>
           </Group>
 
@@ -82,11 +79,11 @@ export default function Navbar() {
             hiddenFrom="sm"
             style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}
           >
-            <Image src="/logo_black.png" h={50} />
+            <Image src={`/logo_${colorScheme === 'dark' ? 'light' : 'dark'}.png`} h={50} />
           </UnstyledButton>
 
           <Box hiddenFrom="sm">
-            <User currentUser={currentUser} opened={mobileUserPopoverOpened} toggle={toggleMobileUserPopover} />
+            <User currentUser={currentUser} toggle={toggleMobileUserPopover} />
           </Box>
         </Group>
       </AppShell.Header>

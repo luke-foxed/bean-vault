@@ -9,10 +9,20 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Add this for smooth dark mode transitions */
+
+
+.mantine-color-scheme-transition, .mantine-Card-root {
+  transition: all 0.2s ease !important;
+}
 
 body {
   min-height: 100vh;
   margin: auto;
   background-image: url('/public/bg_pattern.webp');
   background-repeat: repeat;
+}
+
+[data-mantine-color-scheme='dark'] body {
+  background-image: url('/public/bg_pattern_dark.webp');
 }

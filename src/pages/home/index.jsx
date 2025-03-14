@@ -25,8 +25,8 @@ export default function Home() {
 
         <Divider my="xl" w="100%" />
 
-        <Stack>
-          <Heading icon={IconPlaylistAdd} title="Recent Coffees" />
+        <Stack align="center">
+          <Heading icon={IconPlaylistAdd} title="RECENT COFFEES" />
 
           {coffee && (
             <Grid

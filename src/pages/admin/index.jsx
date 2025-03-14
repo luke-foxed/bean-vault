@@ -9,7 +9,7 @@ export default function Admin() {
 
   return (
     <Center mt={150}>
-      <Stack w="95%">
+      <Stack w="95%" align="center">
         <Heading icon={IconUserStar} title="Admin" />
         <Paper radius="lg" p="20px"  m="auto" shadow="lg" w="100%">
           <Tabs variant="outline" defaultValue="coffee" onChange={(val) => navigate(`/admin/${val}`)}>

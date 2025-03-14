@@ -28,8 +28,8 @@ export default function Coffees() {
 
   return (
     <Center mt={150}>
-      <Stack>
-        <Heading icon={IconCoffee} title="Coffees" />
+      <Stack align="center">
+        <Heading icon={IconCoffee} title="COFFEES" />
 
         {isLoading && <LoadingOverlay />}
 

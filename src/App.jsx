@@ -39,13 +39,15 @@ const queryClient = new QueryClient({
 export default function App() {
   return (
     <MantineProvider theme={theme}>
-      <NotifcationProvider>
-        <AuthProvider>
-          <QueryClientProvider client={queryClient}>
-            <AppRouter />
-          </QueryClientProvider>
-        </AuthProvider>
-      </NotifcationProvider>
+      <div className="mantine-color-scheme-transition">
+        <NotifcationProvider>
+          <AuthProvider>
+            <QueryClientProvider client={queryClient}>
+              <AppRouter />
+            </QueryClientProvider>
+          </AuthProvider>
+        </NotifcationProvider>
+      </div>
     </MantineProvider>
   )
 }
