@@ -13,11 +13,12 @@ import {
   Blockquote,
   ActionIcon,
   RemoveScroll,
+  Loader,
 } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks';
 import { IconCoffee, IconGlobe, IconIceCream2, IconQuote, IconX } from '@tabler/icons-react'
 
-export default function CoffeeModal({ opened, onClose, coffee }) {
+export default function CoffeeModal({ opened, onClose, coffee, loading }) {
 
   const isMobile = useMediaQuery('(max-width: 50em)')
 
@@ -34,6 +35,9 @@ export default function CoffeeModal({ opened, onClose, coffee }) {
       className={RemoveScroll.classNames.zeroRight}
       styles={{ inner: { left: 0 } }} // fix inner modal alignment
     >
+
+      {loading && <Loader />}
+
       {coffee && (
         <SimpleGrid cols={{ sm: 1, md: 2 }} spacing="xl">
           <Image

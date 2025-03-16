@@ -1,12 +1,14 @@
-import { Center, Stack, Grid, Text, Divider } from '@mantine/core'
+import { Center, Stack, Grid, Text, Divider, Loader } from '@mantine/core'
 import { IconPlaylistAdd } from '@tabler/icons-react'
 import { firebaseFetchAllCoffee } from '../../firebase/api'
 import { useQuery } from 'react-query'
 import { CoffeeCard } from '../../components/coffees'
 import Heading from '../../components/heading'
 
+const coffeeParams = { count: 5, sortByField: 'date_added', sortDirection: 'desc' }
+
 export default function Home() {
-  const { data: coffee } = useQuery(['new-coffee'], () => firebaseFetchAllCoffee({ count: 5, sortByField: 'date_added', sortDirection: 'desc' }))
+  const { data: coffee, isLoading: loadingCoffee } = useQuery(['new-coffee'], () => firebaseFetchAllCoffee(coffeeParams))
 
   return (
     <Center>
@@ -27,6 +29,8 @@ export default function Home() {
 
         <Stack align="center">
           <Heading icon={IconPlaylistAdd} title="RECENT COFFEES" />
+
+          {loadingCoffee && <Loader />}
 
           {coffee && (
             <Grid
