@@ -7,9 +7,10 @@ import {
   signOut,
 } from 'firebase/auth'
 
-import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, limit, orderBy, query, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore'
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore'
 import { auth, db } from './config'
 import { uploadImageToCloudinary } from '../cloudinary/api'
+import { buildCoffeeQuery } from './helpers'
 
 // auth based endpoints
 export const firebaseSignup = async (userDetails) => {
@@ -105,12 +106,10 @@ export const firebaseFetchRoasters = async () => {
   return roasters
 }
 
-export const firebaseFetchAllCoffee = async ({ count = null, sortByField = null, sortDirection = 'desc' }) => {
+export const firebaseFetchAllCoffee = async (queryParams) => {
   let coffeeQuery = collection(db, 'coffee')
 
-  if (sortByField) coffeeQuery = query(coffeeQuery, orderBy(sortByField, sortDirection))
-
-  if (count) coffeeQuery = query(coffeeQuery, limit(count))
+  coffeeQuery = buildCoffeeQuery(coffeeQuery, queryParams)
 
   const [coffeeSnapshot, regions] = await Promise.all([getDocs(coffeeQuery), firebaseFetchRegions()])
 

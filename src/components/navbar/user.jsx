@@ -22,7 +22,7 @@ function User({ currentUser, toggle }) {
           <RoleBadge name={currentUser?.name} role={currentUser?.role} />
           <Divider variant="dashed" w="100%" />
           <ColorSchemeToggle />
-          <Button size="compact-sm" variant="light" onClick={logout} w="100%">
+          <Button size="compact-sm" variant="gradient" onClick={logout} w="100%">
             Logout
           </Button>
         </Stack>

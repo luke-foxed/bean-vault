@@ -205,7 +205,7 @@ export default function CoffeeEditor() {
               />
 
               <Group justify="flex-end" mt="xl">
-                <Button type="submit">Submit</Button>
+                <Button variant="gradient" type="submit">Submit</Button>
               </Group>
             </form>
           </Stack>

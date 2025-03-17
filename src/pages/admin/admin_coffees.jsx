@@ -28,7 +28,7 @@ export default function AdminCoffees() {
   return (
     <Stack gap="20px">
       <Group justify="flex-end">
-        <Button leftSection={<IconPlus />} size="compact-lg" onClick={() => navigate('/coffee/new')}>
+        <Button leftSection={<IconPlus />} size="compact-lg" variant="gradient" onClick={() => navigate('/coffee/new')}>
           Add a Coffee
         </Button>
       </Group>

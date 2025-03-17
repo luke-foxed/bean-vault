@@ -1,34 +1,37 @@
-import { Center, Stack, Grid, Text, Divider, Loader } from '@mantine/core'
-import { IconPlaylistAdd } from '@tabler/icons-react'
+import { Center, Stack, Grid, Text, Divider, Loader, Button, Group } from '@mantine/core'
+import { IconPlaylistAdd, IconArrowRight } from '@tabler/icons-react'
 import { firebaseFetchAllCoffee } from '../../firebase/api'
 import { useQuery } from 'react-query'
 import { CoffeeCard } from '../../components/coffees'
 import Heading from '../../components/heading'
+import { useNavigate } from 'react-router-dom'
 
-const coffeeParams = { count: 5, sortByField: 'date_added', sortDirection: 'desc' }
+const queryParams = { limit: 5, sortBy: 'date_added', order: 'desc' }
 
 export default function Home() {
-  const { data: coffee, isLoading: loadingCoffee } = useQuery(['new-coffee'], () => firebaseFetchAllCoffee(coffeeParams))
-
+  const { data: coffee, isLoading: loadingCoffee } = useQuery(['new-coffee'], () => firebaseFetchAllCoffee(queryParams))
+  const navigate = useNavigate()
   return (
     <Center>
       <Stack align="center">
         <Stack align="center" justify="center" mt={150}>
-          <Text span size="40px">Welcome to</Text>{' '}
-          <Text
-            span
-            ff="Unica One"
-            size="45px"
-            mt="sm"
-          >
-            BeanVault {' '}👋
+          <Text span size="40px">
+            Welcome to
+          </Text>{' '}
+          <Text span ff="Unica One" size="45px" mt="sm">
+            BeanVault 👋
           </Text>
         </Stack>
 
         <Divider my="xl" w="100%" />
 
         <Stack align="center">
-          <Heading icon={IconPlaylistAdd} title="RECENT COFFEES" />
+          <Group justify="space-between" w="100%" align="center">
+            <Heading icon={IconPlaylistAdd} title="RECENT COFFEES" />
+            <Button size="compact-lg" leftSection={<IconArrowRight />} variant="gradient" onClick={() => navigate('/coffees')} visibleFrom="sm">
+              Explore More
+            </Button>
+          </Group>
 
           {loadingCoffee && <Loader />}
 
@@ -47,6 +50,12 @@ export default function Home() {
               ))}
             </Grid>
           )}
+
+          <Button size="compact-lg" leftSection={<IconArrowRight />} variant="gradient" onClick={() => navigate('/coffees')} hiddenFrom="sm">
+            Explore More
+          </Button>
+
+          <div />
         </Stack>
       </Stack>
     </Center>
