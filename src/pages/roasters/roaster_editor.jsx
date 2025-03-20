@@ -75,7 +75,7 @@ export default function RoasterEditor() {
             style={{ borderRadius: isMobile ? '16px 16px 0px 0px' : '16px 0px 0px 16px' }}
             h="100%"
             fit="cover"
-            fallbackSrc="https://placehold.co/520x520?text=Coffee+Image"
+            fallbackSrc="https://placehold.co/520x520?text=Roaster+Image"
             src={imagePreview ?? form.getValues().image}
           />
           <Stack p="20px">

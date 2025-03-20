@@ -1,5 +1,5 @@
-import { ActionIcon, Group, Skeleton, Stack, Table } from '@mantine/core'
-import { IconPencil, IconTrash } from '@tabler/icons-react'
+import { ActionIcon, Button, Group, Skeleton, Stack, Table } from '@mantine/core'
+import { IconPencil, IconPlus, IconTrash } from '@tabler/icons-react'
 import { useQuery } from 'react-query'
 import { firebaseFetchRoasters } from '../../firebase/api/roasters'
 import { useNavigate } from 'react-router-dom'
@@ -11,6 +11,11 @@ export default function AdminRoasters() {
 
   return (
     <Stack gap="20px">
+      <Group justify="flex-end">
+        <Button leftSection={<IconPlus />} size="compact-lg" onClick={() => navigate('/roaster/new')}>
+          Add a Roaster
+        </Button>
+      </Group>
       <Skeleton visible={loadingRoasters}>
         <Table.ScrollContainer minWidth={650}>
           <Table striped>

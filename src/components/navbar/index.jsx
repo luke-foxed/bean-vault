@@ -70,7 +70,7 @@ export default function Navbar() {
             <Group gap={20}>
               <NavItem path="/coffees" label="Coffees" />
               <NavItem path="/roasters" label="Roasters" />
-              <NavItem disabled={!isAdmin} path="/admin" label="Admin" />
+              <NavItem disabled={!isAdmin} path="/admin/coffee" label="Admin" />
               <User key="desktop" currentUser={currentUser} toggle={toggleUserPopover} />
             </Group>
           </Group>
@@ -98,7 +98,7 @@ export default function Navbar() {
           <NavItem path="/" label="Home" onClick={toggle} />
           <NavItem path="/coffees" label="Coffees" onClick={toggle} />
           <NavItem path="/roasters" label="Roasters" onClick={toggle} />
-          <NavItem disabled={!isAdmin} path="/admin" label="Admin" onClick={toggle} />
+          <NavItem disabled={!isAdmin} path="/admin/coffee" label="Admin" onClick={toggle} />
         </Stack>
       </AppShell.Navbar>
     </AppShell>
