@@ -16,7 +16,6 @@ export const firebaseFetchRoasters = async () => {
 }
 
 export const firebaseFetchRoaster = async (roasterId) => {
-  console.log('ROASTER ID', roasterId)
   try {
     const roasterRef = doc(db, 'roasters', roasterId)
     const roasterSnap = await getDoc(roasterRef)
