@@ -1,6 +1,6 @@
 import { Center, Stack, Grid, Text, Divider, Loader, Button, Group } from '@mantine/core'
 import { IconPlaylistAdd, IconArrowRight } from '@tabler/icons-react'
-import { firebaseFetchAllCoffee } from '../../firebase/api'
+import { firebaseFetchCoffees } from '../../firebase/api/coffee'
 import { useQuery } from 'react-query'
 import { CoffeeCard } from '../../components/coffees'
 import Heading from '../../components/heading'
@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom'
 const queryParams = { limit: 5, sortBy: 'date_added', order: 'desc' }
 
 export default function Home() {
-  const { data: coffee, isLoading: loadingCoffee } = useQuery(['new-coffee'], () => firebaseFetchAllCoffee(queryParams))
+  const { data: coffee, isLoading: loadingCoffee } = useQuery(['new-coffee'], () => firebaseFetchCoffees(queryParams))
   const navigate = useNavigate()
   return (
     <Center>
@@ -28,7 +28,7 @@ export default function Home() {
         <Stack align="center">
           <Group justify="space-between" w="100%" align="center">
             <Heading icon={IconPlaylistAdd} title="RECENT COFFEES" />
-            <Button size="compact-lg" leftSection={<IconArrowRight />} variant="gradient" onClick={() => navigate('/coffees')} visibleFrom="sm">
+            <Button size="compact-lg" leftSection={<IconArrowRight />} onClick={() => navigate('/coffees')} visibleFrom="sm">
               Explore More
             </Button>
           </Group>
@@ -51,7 +51,7 @@ export default function Home() {
             </Grid>
           )}
 
-          <Button size="compact-lg" leftSection={<IconArrowRight />} variant="gradient" onClick={() => navigate('/coffees')} hiddenFrom="sm">
+          <Button size="compact-lg" leftSection={<IconArrowRight />} onClick={() => navigate('/coffees')} hiddenFrom="sm">
             Explore More
           </Button>
 

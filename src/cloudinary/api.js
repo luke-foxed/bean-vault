@@ -2,11 +2,11 @@
 
 const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
 
-export const uploadImageToCloudinary = async (file) => {
+export const uploadImageToCloudinary = async (file, preset) => {
   try {
     const formData = new FormData()
     formData.append('file', file)
-    formData.append('upload_preset', 'coffee_upload')
+    formData.append('upload_preset', preset)
     formData.append('cloud_name', cloudName)
     formData.append('api_key', import.meta.env.VITE_CLOUDINARY_API_KEY)
 

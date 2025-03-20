@@ -1,4 +1,4 @@
-import { Card, Image, Group, Text, ThemeIcon, Stack, Badge, Tooltip, UnstyledButton, Flex, ScrollArea } from '@mantine/core'
+import { Card, Image, Group, Text, ThemeIcon, Stack, Badge, Tooltip, UnstyledButton, Flex, ScrollArea, Divider } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 import { IconStarFilled } from '@tabler/icons-react'
 import { generateCoffeeThumbnail } from '../../utils'
@@ -24,7 +24,12 @@ export default function CoffeeCard({ coffee, onClick =null }) {
 
   return (
     <Flex justify="center">
-      <UnstyledButton style={{ cursor: onClick ? 'pointer' : 'default' }} onClick={handleClickCoffee} w={{ base: 175, xs: 220, sm: 240, md: 260 }} p="0">
+      <UnstyledButton
+        style={{ cursor: onClick ? 'pointer' : 'default' }}
+        onClick={handleClickCoffee}
+        w={{ base: 175, xs: 220, sm: 240, md: 260 }}
+        p="0"
+      >
         <Card shadow="md" padding="md" radius="lg">
           <Card.Section p="10px">
             <Image src={generateCoffeeThumbnail(coffee.image)} h={{ base: 180, sm: 240 }} fit="cover" radius="lg" />
@@ -41,12 +46,19 @@ export default function CoffeeCard({ coffee, onClick =null }) {
                 </Text>
               </Stack>
 
-              <Group align="center" justify="center" gap={5}>
+              <Group align="center" justify="center" gap="10px">
                 <ThemeIcon size="xs" variant="transparent" color="yellow">
                   <IconStarFilled />
                 </ThemeIcon>
-                <Text fw={400} size="md">
+                <Text fw={400} size="md" >
                   {coffee.score}
+                </Text>
+                <Divider orientation="vertical" />
+                <Text fw={400} size="sm" c="dimmed">
+                  {new Date(coffee.date_added.seconds * 1000).toLocaleDateString('en-US', {
+                    month: 'short',
+                    year: 'numeric',
+                  })}
                 </Text>
               </Group>
             </Group>

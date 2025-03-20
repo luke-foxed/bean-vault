@@ -1,8 +1,8 @@
 import { ActionIcon, Skeleton, Stack, Table } from '@mantine/core'
-import { firebaseFetchAllUsers } from '../../firebase/api'
 import { IconTrash } from '@tabler/icons-react'
 import { useQuery } from 'react-query'
 import RoleBadge from '../../components/role_badge'
+import { firebaseFetchAllUsers } from '../../firebase/api/auth'
 
 export default function AdminUsers() {
   const { data: users, isLoading: loadingUsers } = useQuery(['admin-users'], firebaseFetchAllUsers)

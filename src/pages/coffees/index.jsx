@@ -1,13 +1,12 @@
 import { Box, Button, Center, Collapse, Grid, Group, Loader, Paper, Stack, Title } from '@mantine/core'
-import { firebaseFetchAllCoffee, firebaseFetchCoffee } from '../../firebase/api'
-import { CoffeeCard, CoffeeModal } from '../../components/coffees'
+import { firebaseFetchCoffees, firebaseFetchCoffee } from '../../firebase/api/coffee'
+import { CoffeeCard, CoffeeModal, CoffeeFilters } from '../../components/coffees'
 import { useQuery } from 'react-query'
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import Heading from '../../components/heading'
 import { IconCoffee, IconFilter, IconMoodEmpty } from '@tabler/icons-react'
 import { useDisclosure, useMediaQuery } from '@mantine/hooks'
-import CoffeeFilters from '../../components/coffees/coffee_filters'
 
 export default function Coffees() {
   const [filtersOpen, { toggle: toggleFilters }] = useDisclosure(false)
@@ -16,7 +15,7 @@ export default function Coffees() {
   const [selectedCoffee, setSelectedCoffee] = useState(null)
   const isMobile = useMediaQuery('(max-width: 50em)')
 
-  const { data: coffees, isLoading: loadingCoffees, isFetched } = useQuery(['coffees', params], () => firebaseFetchAllCoffee(params))
+  const { data: coffees, isLoading: loadingCoffees, isFetched } = useQuery(['coffees', params], () => firebaseFetchCoffees(params))
   const { data: coffee, isLoading: loadingCoffee } = useQuery([params?.id], () => firebaseFetchCoffee(params?.id), { enabled: Boolean(params?.id) && !selectedCoffee })
 
   const activeCoffee = selectedCoffee || coffee
@@ -46,7 +45,7 @@ export default function Coffees() {
       <Stack align="center" w="95%">
         <Group justify="space-between" w="100%" align="center">
           <Heading icon={IconCoffee} title="COFFEES" />
-          <Button leftSection={<IconFilter />} variant="gradient" hiddenFrom="sm" onClick={toggleFilters}>
+          <Button leftSection={<IconFilter />} hiddenFrom="sm" onClick={toggleFilters}>
             Filter
           </Button>
           <Box visibleFrom="sm">

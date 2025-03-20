@@ -1,8 +1,9 @@
 import { ActionIcon, Grid, Loader, Select } from '@mantine/core'
-import { firebaseFetchRegions, firebaseFetchRoasters } from '../../firebase/api'
 import { useQuery } from 'react-query'
 import { IconSortAscending, IconSortDescending } from '@tabler/icons-react'
 import { useState } from 'react'
+import { firebaseFetchRoasters } from '../../firebase/api/roasters'
+import { firebaseFetchRegions } from '../../firebase/api/coffee'
 
 const SORT_OPTIONS = [
   { label: 'Name', value: 'name' },

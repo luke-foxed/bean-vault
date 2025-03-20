@@ -16,6 +16,9 @@ import AdminCoffees from './pages/admin/admin_coffees'
 
 import Coffees from './pages/coffees'
 import CoffeeEditor from './pages/coffees/coffee_editor'
+import Roasters from './pages/roasters'
+import AdminRoasters from './pages/admin/admin_roasters'
+import RoasterEditor from './pages/roasters/roaster_editor'
 
 const theme = createTheme({
   fontFamily: 'Gowun Dodum, sans-serif',
@@ -63,14 +66,21 @@ function AppRouter() {
         <Route element={<PrivateRoute />}>
           <Route index element={<Home />} />
           <Route path="/coffees" element={<Coffees />} />
+          <Route path="/roasters" element={<Roasters />} />
         </Route>
 
+        {/* Admin routes */}
         <Route element={<PrivateRoute adminRoute />}>
           <Route path="/coffee/new" element={<CoffeeEditor />} />
           <Route path="/coffee/edit/:id" element={<CoffeeEditor />} />
+
+          <Route path="/roaster/new" element={<RoasterEditor />} />
+          <Route path="/roaster/edit/:id" element={<RoasterEditor />} />
+
           <Route path="/admin" element={<Admin />}>
             <Route path="coffee" element={<AdminCoffees />} />
             <Route path="users" element={<AdminUsers />} />
+            <Route path="roasters" element={<AdminRoasters />} />
           </Route>
         </Route>
       </Routes>

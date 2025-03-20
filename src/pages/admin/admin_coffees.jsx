@@ -1,9 +1,9 @@
 import { ActionIcon, Badge, Button, Group, Stack, Table, Title, Skeleton } from '@mantine/core'
-import { firebaseFetchAllCoffee } from '../../firebase/api'
 import { formatFirestoreTimestamp } from '../../utils'
 import { IconPencil, IconPlus, IconTrash } from '@tabler/icons-react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery } from 'react-query'
+import { firebaseFetchCoffees } from '../../firebase/api/coffee'
 
 function Score({ score }) {
 
@@ -22,13 +22,13 @@ function Score({ score }) {
 }
 
 export default function AdminCoffees() {
-  const { data: coffees, isLoading: loadingCoffees } = useQuery(['admin-coffees'], firebaseFetchAllCoffee)
+  const { data: coffees, isLoading: loadingCoffees } = useQuery(['coffees'], firebaseFetchCoffees)
   const navigate = useNavigate()
 
   return (
     <Stack gap="20px">
       <Group justify="flex-end">
-        <Button leftSection={<IconPlus />} size="compact-lg" variant="gradient" onClick={() => navigate('/coffee/new')}>
+        <Button leftSection={<IconPlus />} size="compact-lg" onClick={() => navigate('/coffee/new')}>
           Add a Coffee
         </Button>
       </Group>

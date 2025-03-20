@@ -1,11 +1,10 @@
-import { AppShell, Box, Burger, Button, Group, Image, Stack, Text, UnstyledButton, useMantineColorScheme, useMantineTheme } from '@mantine/core'
+import { AppShell, Box, Burger, Button, Group, Image, Stack, Text, UnstyledButton, useMantineColorScheme } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { useNavigate, NavLink as RouterNavLink } from 'react-router-dom'
 import { useAuth } from '../../providers/auth_provider'
 import User from './user'
 
 function NavItem({ label, path, disabled, onClick = () => {} }) {
-  const theme = useMantineTheme()
   return (
     <RouterNavLink to={disabled ? null : path} style={{ textDecoration: 'none', margin: 'auto' }}>
       {({ isActive }) => (
@@ -32,7 +31,7 @@ function NavItem({ label, path, disabled, onClick = () => {} }) {
               left="50%"
               w="100%"
               h={3}
-              bg={`linear-gradient(to right, ${theme.colors.blue[6]}, ${theme.colors.cyan[4]})`}
+              bg="blue.6"
               style={{ transform: 'translateX(-50%)', borderRadius: 2 }}
             />
           )}
@@ -70,6 +69,7 @@ export default function Navbar() {
             </UnstyledButton>
             <Group gap={20}>
               <NavItem path="/coffees" label="Coffees" />
+              <NavItem path="/roasters" label="Roasters" />
               <NavItem disabled={!isAdmin} path="/admin" label="Admin" />
               <User key="desktop" currentUser={currentUser} toggle={toggleUserPopover} />
             </Group>
@@ -97,6 +97,7 @@ export default function Navbar() {
 
           <NavItem path="/" label="Home" onClick={toggle} />
           <NavItem path="/coffees" label="Coffees" onClick={toggle} />
+          <NavItem path="/roasters" label="Roasters" onClick={toggle} />
           <NavItem disabled={!isAdmin} path="/admin" label="Admin" onClick={toggle} />
         </Stack>
       </AppShell.Navbar>

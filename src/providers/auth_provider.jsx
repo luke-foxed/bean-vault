@@ -1,4 +1,3 @@
-// In AuthProvider.jsx
 import { createContext, useContext, useEffect, useState } from 'react'
 import { onAuthStateChanged } from 'firebase/auth'
 import {
@@ -7,7 +6,7 @@ import {
   firebaseLoginGoogle,
   firebaseLogout,
   firebaseSignup,
-} from '../firebase/api'
+} from '../firebase/api/auth'
 import { auth } from '../firebase/config'
 import { useNotify } from './notifcation_provider'
 

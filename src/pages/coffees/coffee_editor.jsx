@@ -14,10 +14,11 @@ import {
   Slider,
   Stack,
   Text,
+  Textarea,
   TextInput,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { firebaseAddCoffee, firebaseFetchCoffeeForEdit, firebaseFetchRegions, firebaseFetchRoasters, firebaseUpdateCoffee } from '../../firebase/api'
+import { firebaseAddCoffee, firebaseFetchCoffeeForEdit, firebaseFetchRegions, firebaseUpdateCoffee } from '../../firebase/api/coffee'
 import { useMemo, useState } from 'react'
 import { IconCirclePlus, IconEditCircle, IconStar } from '@tabler/icons-react'
 import { useNotify } from '../../providers/notifcation_provider'
@@ -26,6 +27,7 @@ import newCoffeeForm from '../../forms/new_coffee_form'
 import { useMutation, useQuery } from 'react-query'
 import { useMediaQuery } from '@mantine/hooks'
 import Heading from '../../components/heading'
+import { firebaseFetchRoasters } from '../../firebase/api/roasters'
 
 const FileInputValue = ({ value }) => {
   if (!value) return null
@@ -121,7 +123,7 @@ export default function CoffeeEditor() {
                 key={form.key('name')}
                 {...form.getInputProps('name')}
               />
-              <TextInput
+              <Textarea
                 mt="md"
                 label="About"
                 placeholder="About the coffee"
@@ -130,6 +132,7 @@ export default function CoffeeEditor() {
                 {...form.getInputProps('about')}
               />
               <Select
+                withAsterisk
                 rightSection={loadingRoasters && <Loader size="sm" />}
                 disabled={loadingRoasters}
                 label="Roaster"
@@ -142,6 +145,7 @@ export default function CoffeeEditor() {
                 {...form.getInputProps('roaster')}
               />
               <PillsInput
+                withAsterisk
                 mt="md"
                 label="Flavour Notes"
                 key={form.key('flavour_notes')}
@@ -163,6 +167,7 @@ export default function CoffeeEditor() {
               </PillsInput>
 
               <MultiSelect
+                withAsterisk
                 rightSection={loadingRegions && <Loader size="sm" />}
                 disabled={loadingRegions}
                 label="Regions"
@@ -205,7 +210,7 @@ export default function CoffeeEditor() {
               />
 
               <Group justify="flex-end" mt="xl">
-                <Button variant="gradient" type="submit">Submit</Button>
+                <Button type="submit">Submit</Button>
               </Group>
             </form>
           </Stack>
