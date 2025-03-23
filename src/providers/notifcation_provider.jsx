@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext } from 'react'
 import { Notifications, notifications } from '@mantine/notifications'
-import { IconCheck, IconX } from '@tabler/icons-react'
+import { IconCheck, IconInfoCircle, IconX } from '@tabler/icons-react'
 
 const NOTIFY_MAP = {
   error: {
@@ -11,6 +11,10 @@ const NOTIFY_MAP = {
   success: {
     icon: <IconCheck />,
     color: 'green',
+  },
+  info: {
+    icon: <IconInfoCircle />,
+    color: 'blue',
   },
 }
 

@@ -76,9 +76,16 @@ export const firebaseUpdateUserRole = async (userId, newRole) => {
 export const firebaseDeleteUser = async (userId) => {
   try {
     const userRef = doc(db, 'users', userId)
-    // await auth.deleteUser(userId)
     await deleteDoc(userRef)
     return { success: true }
+  } catch (error) {
+    throw error
+  }
+}
+
+export const firebaseDeleteUserAuth = async () => {
+  try {
+    return await auth.currentUser.delete()
   } catch (error) {
     throw error
   }
