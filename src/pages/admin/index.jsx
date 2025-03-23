@@ -5,12 +5,14 @@ import AdminCoffees from './admin_coffees'
 import AdminUsers from './admin_users'
 import AdminRoasters from './admin_roasters'
 import Heading from '../../components/heading'
+import { useAuth } from '../../providers/auth_provider'
 
 export default function Admin() {
   const navigate = useNavigate()
+  const { isSuperAdmin } = useAuth()
   const { pathname } = useLocation()
-  let path = pathname.split('/').pop()
 
+  let path = pathname.split('/').pop()
   if (path === 'admin') path = 'coffee'
 
   return (
@@ -26,7 +28,7 @@ export default function Admin() {
               <Tabs.Tab value="roasters" leftSection={<IconCooker style={{ width: 25, height: 25 }} />}>
                 <Title order={3}>Roasters</Title>
               </Tabs.Tab>
-              <Tabs.Tab value="users" leftSection={<IconUser style={{ width: 25, height: 25 }} />}>
+              <Tabs.Tab value="users" leftSection={<IconUser style={{ width: 25, height: 25 }} />} disabled={!isSuperAdmin}>
                 <Title order={3}>Users</Title>
               </Tabs.Tab>
             </Tabs.List>
@@ -40,7 +42,7 @@ export default function Admin() {
             </Tabs.Panel>
 
             <Tabs.Panel value="users" mt="10px">
-              <AdminUsers />
+              {isSuperAdmin ? <AdminUsers /> : <Paper p="20px">Only super admins can view this page</Paper>}
             </Tabs.Panel>
           </Tabs>
         </Paper>

@@ -28,6 +28,7 @@ export default function CoffeeFilters({ filters, onChangeFilters }) {
           onDropdownClose={() => setDropdownsOpened({ ...dropdownsOpened, roaster: false })}
           onBlur={() => setDropdownsOpened({ ...dropdownsOpened, roaster: false })}
           placeholder="Select by Roaster"
+          value={filters.get('roaster') || ''}
           clearable
           rightSection={loadingRoasters && <Loader size="sm" />}
           disabled={loadingRoasters}
@@ -44,6 +45,7 @@ export default function CoffeeFilters({ filters, onChangeFilters }) {
           onBlur={() => setDropdownsOpened({ ...dropdownsOpened, region: false })}
           placeholder="Select by Region"
           clearable
+          value={regions?.find((region) => region.id === filters.get('region'))?.name || ''}
           rightSection={loadingRegions && <Loader size="sm" />}
           disabled={loadingRegions}
           label="Select by Region:"

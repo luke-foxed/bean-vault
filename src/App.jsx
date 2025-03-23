@@ -19,6 +19,7 @@ import CoffeeEditor from './pages/coffees/coffee_editor'
 import Roasters from './pages/roasters'
 import AdminRoasters from './pages/admin/admin_roasters'
 import RoasterEditor from './pages/roasters/roaster_editor'
+import { ModalsProvider } from '@mantine/modals'
 
 const theme = createTheme({
   fontFamily: 'Gowun Dodum, sans-serif',
@@ -42,20 +43,23 @@ const queryClient = new QueryClient({
 export default function App() {
   return (
     <MantineProvider theme={theme}>
-      <div className="mantine-color-scheme-transition">
-        <NotifcationProvider>
-          <AuthProvider>
-            <QueryClientProvider client={queryClient}>
-              <AppRouter />
-            </QueryClientProvider>
-          </AuthProvider>
-        </NotifcationProvider>
-      </div>
+      <ModalsProvider>
+        <div className="mantine-color-scheme-transition">
+          <NotifcationProvider>
+            <AuthProvider>
+              <QueryClientProvider client={queryClient}>
+                <AppRouter />
+              </QueryClientProvider>
+            </AuthProvider>
+          </NotifcationProvider>
+        </div>
+      </ModalsProvider>
     </MantineProvider>
   )
 }
 
 function AppRouter() {
+
   return (
     <Router>
       <Routes>

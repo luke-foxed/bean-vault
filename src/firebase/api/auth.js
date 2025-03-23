@@ -12,40 +12,44 @@ import { auth, db } from '../config'
 
 // auth based endpoints
 export const firebaseSignup = async (userDetails) => {
+  try {
+    const { email, password, name } = userDetails
+    const res = await createUserWithEmailAndPassword(auth, email, password)
+    const user = { name: name, email: res.user.email, role: 'blocked' }
 
-  const { email, password, name } = userDetails
-  const res = await createUserWithEmailAndPassword(auth, email, password)
-  const user = res.user
+    await setDoc(doc(db, 'users', res.user.uid), user)
 
-  return setDoc(doc(db, 'users', user.uid), {
-    name: name,
-    email: user.email,
-    role: 'blocked',
-  })
+    return { ...res.user, ...user }
+  } catch (error) {
+    throw error
+  }
 }
 
 export const firebaseLogin = async (email, password) => {
-  const loginStuff = await signInWithEmailAndPassword(auth, email, password)
-  return loginStuff
+  const res = await signInWithEmailAndPassword(auth, email, password)
+  const userRef = doc(db, 'users', res.user.uid)
+  const user = await getDoc(userRef)
+  return { ...res.user, ...user.data() }
 }
 
 export const firebaseLoginGoogle = async () => {
-  const provider = new GoogleAuthProvider()
-  const res = await signInWithPopup(auth, provider)
-  const userRef = doc(db, 'users', res.user.uid)
+  try {
+    const provider = new GoogleAuthProvider()
+    const res = await signInWithPopup(auth, provider)
+    const userRef = doc(db, 'users', res.user.uid)
 
-  // check if the user exists first
-  const userSnap = await getDoc(userRef)
+    // check if the user exists first
+    let user = await (await getDoc(userRef))?.data()
 
-  if (!userSnap.exists()) {
-    await setDoc(userRef, {
-      email: res.user.email,
-      name: res.user.displayName,
-      role: 'blocked',
-    })
+    if (!user) {
+      user = { email: res.user.email, name: res.user.displayName, role: 'blocked' }
+      await setDoc(userRef, user)
+    }
+
+    return { ...res.user, ...user }
+  } catch (error) {
+    throw error
   }
-
-  return res.user
 }
 
 export const firebaseFetchAllUsers = async () => {
@@ -72,6 +76,7 @@ export const firebaseUpdateUserRole = async (userId, newRole) => {
 export const firebaseDeleteUser = async (userId) => {
   try {
     const userRef = doc(db, 'users', userId)
+    // await auth.deleteUser(userId)
     await deleteDoc(userRef)
     return { success: true }
   } catch (error) {

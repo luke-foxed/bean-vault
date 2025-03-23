@@ -1,29 +1,53 @@
-import { ActionIcon, Badge, Button, Group, Stack, Table, Title, Skeleton } from '@mantine/core'
+import { ActionIcon, Badge, Button, Group, Stack, Table, Title, Skeleton, Text } from '@mantine/core'
 import { formatFirestoreTimestamp } from '../../utils'
 import { IconPencil, IconPlus, IconTrash } from '@tabler/icons-react'
 import { useNavigate } from 'react-router-dom'
-import { useQuery } from 'react-query'
-import { firebaseFetchCoffees } from '../../firebase/api/coffee'
+import { useMutation, useQuery } from 'react-query'
+import { firebaseDeleteCoffee, firebaseFetchCoffees } from '../../firebase/api/coffee'
+import { useAuth } from '../../providers/auth_provider'
+import { modals } from '@mantine/modals'
 
 function Score({ score }) {
 
   const getColor = () => {
     let color = 'green'
 
-    if (score < 7.5 && score >= 5) color = 'yellow'
+    if (score < 8 && score >= 5) color = 'yellow'
     if (score < 5) color ='red'
 
     return color
   }
 
   return (
-    <Title order={3} c={getColor()} color={getColor()}>{score}</Title>
+    <Title order={4} c={getColor()} color={getColor()}>{score}</Title>
   )
 }
 
 export default function AdminCoffees() {
-  const { data: coffees, isLoading: loadingCoffees } = useQuery(['coffees'], firebaseFetchCoffees)
+  const { data: coffees, isLoading: loadingCoffees, refetch } = useQuery(['coffees'], firebaseFetchCoffees)
+  const { isSuperAdmin } = useAuth()
   const navigate = useNavigate()
+
+  const { mutate: deleteCoffee } = useMutation(['delete-coffee'], (id) => firebaseDeleteCoffee(id), {
+    onSuccess: () => {
+      refetch()
+    },
+  })
+
+  const handleClickDeleteCoffee = (id) => {
+    modals.openConfirmModal({
+      title: <Title order={3}>Delete Coffee</Title>,
+      children: <Text>Are you sure you want to delete this coffee? This action cannot be undone.</Text>,
+      labels: {
+        confirm: 'Delete Coffee',
+        cancel: 'Cancel',
+      },
+      confirmProps: { color: 'red' },
+      onConfirm: () => {
+        deleteCoffee(id)
+      },
+    })
+  }
 
   return (
     <Stack gap="20px">
@@ -38,12 +62,12 @@ export default function AdminCoffees() {
           <Table striped>
             <Table.Thead>
               <Table.Tr>
-                <Table.Th>Name</Table.Th>
-                <Table.Th>Roaster</Table.Th>
-                <Table.Th>Origin</Table.Th>
-                <Table.Th>Date Added</Table.Th>
-                <Table.Th>Score</Table.Th>
-                <Table.Th>Actions</Table.Th>
+                <Table.Th fz="20px">Name</Table.Th>
+                <Table.Th fz="20px">Roaster</Table.Th>
+                <Table.Th fz="20px">Origin</Table.Th>
+                <Table.Th fz="20px">Date Added</Table.Th>
+                <Table.Th fz="20px">Score</Table.Th>
+                <Table.Th fz="20px">Actions</Table.Th>
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>
@@ -75,10 +99,10 @@ export default function AdminCoffees() {
                     </Table.Td>
                     <Table.Td>
                       <Group gap="10px">
-                        <ActionIcon variant="transparent" onClick={() => navigate(`/coffee/edit/${coffee.id}`)}>
+                        <ActionIcon variant="transparent" onClick={() => navigate(`/coffee/edit/${coffee.id}`)} disabled={!isSuperAdmin}>
                           <IconPencil />
                         </ActionIcon>
-                        <ActionIcon variant="transparent" color="red">
+                        <ActionIcon variant="transparent" color="red" disabled={!isSuperAdmin} onClick={() => handleClickDeleteCoffee(coffee.id)}>
                           <IconTrash />
                         </ActionIcon>
                       </Group>

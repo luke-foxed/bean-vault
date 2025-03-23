@@ -1,5 +1,5 @@
-import { Card, Image, Group, Text, ThemeIcon, Stack, Badge, Tooltip, UnstyledButton, Flex, ScrollArea, Divider } from '@mantine/core'
-import { useMediaQuery } from '@mantine/hooks'
+import { Card, Image, Group, Text, ThemeIcon, Stack, Badge, Tooltip, UnstyledButton, Flex, ScrollArea, Divider, useMantineColorScheme } from '@mantine/core'
+import { useHover, useMediaQuery } from '@mantine/hooks'
 import { IconStarFilled } from '@tabler/icons-react'
 import { generateCoffeeThumbnail } from '../../utils'
 
@@ -17,10 +17,15 @@ const CoffeeRegions = ({ regions }) => (
 
 export default function CoffeeCard({ coffee, onClick =null }) {
   const isMobile = useMediaQuery('(max-width: 50em)')
+  const { hovered, ref } = useHover()
+  const { colorScheme } = useMantineColorScheme()
 
   const handleClickCoffee = () => {
     if (onClick) return onClick(coffee)
   }
+
+  let cardColor = colorScheme === 'dark' ? 'dark.7' : 'white'
+  if (hovered) cardColor = colorScheme === 'dark' ? 'gray.8' : 'gray.1'
 
   return (
     <Flex justify="center">
@@ -30,7 +35,7 @@ export default function CoffeeCard({ coffee, onClick =null }) {
         w={{ base: 175, xs: 220, sm: 240, md: 260 }}
         p="0"
       >
-        <Card shadow="md" padding="md" radius="lg">
+        <Card shadow="md" padding="md" radius="lg" ref={ref} {...(onClick && { bg: cardColor })}>
           <Card.Section p="10px">
             <Image src={generateCoffeeThumbnail(coffee.image)} h={{ base: 180, sm: 240 }} fit="cover" radius="lg" />
           </Card.Section>
@@ -50,12 +55,12 @@ export default function CoffeeCard({ coffee, onClick =null }) {
                 <ThemeIcon size="xs" variant="transparent" color="yellow">
                   <IconStarFilled />
                 </ThemeIcon>
-                <Text fw={400} size="md" >
+                <Text fw={400} size="md">
                   {coffee.score}
                 </Text>
                 <Divider orientation="vertical" />
                 <Text fw={400} size="sm" c="dimmed">
-                  {new Date(coffee.date_added.seconds * 1000).toLocaleDateString('en-US', {
+                  {new Date(coffee.date_added?.seconds * 1000).toLocaleDateString('en-US', {
                     month: 'short',
                     year: 'numeric',
                   })}

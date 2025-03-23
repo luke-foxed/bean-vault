@@ -59,14 +59,15 @@ export const AuthProvider = ({ children }) => {
   }
 
   const signup = async (user) => wrapAction(() => firebaseSignup(user))
-  const login = async (email, password) => wrapAction(() => firebaseLogin(email, password))
-  const loginWithGoogle = async () => wrapAction(() => firebaseLoginGoogle())
   const logout = async () => wrapAction(() => firebaseLogout())
+  const login = async (email, password) => wrapAction(async () => firebaseLogin(email, password).then((user) => setCurrentUser(user)))
+  const loginWithGoogle = async () => wrapAction(async () => firebaseLoginGoogle().then((user) => setCurrentUser(user)))
 
-  const isAdmin = currentUser?.role === 'admin'
+  const isAdmin = currentUser?.role === 'admin' || currentUser?.role === 'super_admin'
+  const isSuperAdmin = currentUser?.role === 'super_admin'
   const isBlocked = currentUser?.role === 'blocked'
 
-  const value = { currentUser, signup, login, loginWithGoogle, logout, loading, isAdmin, isBlocked }
+  const value = { currentUser, signup, login, loginWithGoogle, logout, loading, isAdmin, isSuperAdmin, isBlocked }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

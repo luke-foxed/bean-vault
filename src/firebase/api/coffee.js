@@ -1,5 +1,5 @@
 /* eslint-disable no-useless-catch */
-import { addDoc, collection, doc, getDoc, getDocs, serverTimestamp, updateDoc } from 'firebase/firestore'
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, serverTimestamp, updateDoc } from 'firebase/firestore'
 import { db } from '../config'
 import { uploadImageToCloudinary } from '../../cloudinary/api'
 import { buildCoffeeQuery } from '../helpers'
@@ -111,6 +111,15 @@ export const firebaseUpdateCoffee = async (coffeeData) => {
     await updateDoc(coffeeRef, coffeeWithUpdate)
 
     return { res: true }
+  } catch (error) {
+    throw error
+  }
+}
+
+export const firebaseDeleteCoffee = async (coffeeId) => {
+  try {
+    const coffeeRef = doc(db, 'coffee', coffeeId)
+    await deleteDoc(coffeeRef)
   } catch (error) {
     throw error
   }
