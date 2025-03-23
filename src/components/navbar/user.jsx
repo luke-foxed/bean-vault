@@ -12,14 +12,16 @@ function User({ currentUser, toggle }) {
   return (
     <Popover position="bottom-end" withArrow closeOnClickOutside={true} onClose={toggle} withinPortal={false}>
       <Popover.Target ref={ref}>
-        <Avatar
-          style={{ cursor: 'pointer' }}
-          // yeah nested ternary, fight me
-          bg={hovered ? (colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)') : 'transparent'}
-          color="initials"
-          name={currentUser?.name}
-          onClick={toggle}
-        />
+        <Button bg="transparent" p={0} h="100%">
+          <Avatar
+            style={{ cursor: 'pointer' }}
+            // yeah nested ternary, fight me
+            bg={hovered ? (colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)') : 'transparent'}
+            color="initials"
+            name={currentUser?.name}
+            onClick={toggle}
+          />
+        </Button>
       </Popover.Target>
       <Popover.Dropdown mt="10px" style={{ borderRadius: '10px' }} w="260px">
         <Stack justify="center" align="center" gap="15px">

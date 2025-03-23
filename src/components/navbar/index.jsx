@@ -1,21 +1,23 @@
 import { AppShell, Box, Burger, Button, Group, Image, Stack, Text, UnstyledButton, useMantineColorScheme } from '@mantine/core'
-import { useDisclosure } from '@mantine/hooks'
+import { useDisclosure, useHover } from '@mantine/hooks'
 import { useNavigate, NavLink as RouterNavLink } from 'react-router-dom'
 import { useAuth } from '../../providers/auth_provider'
 import User from './user'
 
 function NavItem({ label, path, disabled, onClick = () => {} }) {
+  const { hovered, ref } = useHover()
   return (
     <RouterNavLink to={disabled ? null : path} style={{ textDecoration: 'none', margin: 'auto' }}>
       {({ isActive }) => (
         <Box
           pos="relative"
           ta="center"
+          ref={ref}
         >
           <Button
             onClick={onClick}
             disabled={disabled}
-            color={isActive ? 'blue' : 'dark'}
+            color={(isActive || (hovered && !isActive)) && !disabled ? 'blue' : 'dark'}
             size="compact-lg"
             w="100"
             style={{ fontSize: '20px' }}
@@ -24,7 +26,7 @@ function NavItem({ label, path, disabled, onClick = () => {} }) {
             {label}
           </Button>
 
-          {isActive && !disabled && (
+          {(isActive && !disabled) && (
             <Box
               pos="absolute"
               bottom={-8}
