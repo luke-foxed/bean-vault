@@ -110,6 +110,7 @@ export default function CoffeeEditor() {
           <Image
             style={{ borderRadius: isMobile ? '16px 16px 0px 0px' : '16px 0px 0px 16px' }}
             h="100%"
+            mah="640px"
             fit="cover"
             fallbackSrc="https://placehold.co/520x520?text=Coffee+Image"
             src={imagePreview ?? form.getValues().image}

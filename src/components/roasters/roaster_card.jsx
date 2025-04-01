@@ -2,10 +2,10 @@ import { Button, Grid, Image, Paper, Stack, Text, Title } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 import { IconArrowRight } from '@tabler/icons-react'
 
-export default function RoasterCard({ roaster, onClick }) {
+export default function RoasterCard({ roaster, onClick, transitionStyles }) {
   const isMobile = useMediaQuery('(max-width: 50em)')
   return (
-    <Paper shadow="md" radius="lg" h="auto" w="100%" p="0">
+    <Paper shadow="md" radius="lg" h="auto" w="100%" p="0" style={transitionStyles}>
       <Grid breakpoints={{ xs: '200px', sm: '250px', md: '600px', lg: '800px', xl: '1400px' }}>
         <Grid.Col span={{ base: 12, xs: 12, sm: 12, md: 4 }}>
           <Image
@@ -20,7 +20,13 @@ export default function RoasterCard({ roaster, onClick }) {
           <Stack align="flex-start" justify="center" gap="0px" h="100%" p="20px">
             <Title order={1}>{roaster.name}</Title>
             <Text size="xl">{roaster.location}</Text>
-            <Button leftSection={<IconArrowRight />} mt="md" size="compact-lg" variant="outline" onClick={() => onClick(roaster)}>
+            <Button
+              leftSection={<IconArrowRight />}
+              mt="md"
+              size="compact-lg"
+              variant="outline"
+              onClick={() => onClick(roaster)}
+            >
               View Roaster
             </Button>
           </Stack>

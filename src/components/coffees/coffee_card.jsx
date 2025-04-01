@@ -15,7 +15,7 @@ const CoffeeRegions = ({ regions }) => (
   </Group>
 )
 
-export default function CoffeeCard({ coffee, onClick =null }) {
+export default function CoffeeCard({ coffee, onClick = null }) {
   const isMobile = useMediaQuery('(max-width: 50em)')
   const { hovered, ref } = useHover()
   const { colorScheme } = useMantineColorScheme()
@@ -46,7 +46,7 @@ export default function CoffeeCard({ coffee, onClick =null }) {
                 <Text fw={500} size="lg" truncate="end">
                   {coffee.name}
                 </Text>
-                <Text fw={500} size="sm" c="gray">
+                <Text fw={500} size="sm" c="gray" truncate="end">
                   {coffee.roaster.name}
                 </Text>
               </Stack>

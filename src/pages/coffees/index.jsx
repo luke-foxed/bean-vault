@@ -1,4 +1,4 @@
-import { Box, Button, Center, Collapse, Grid, Group, Loader, Paper, Stack, Title } from '@mantine/core'
+import { Box, Button, Center, Collapse, Grid, Group, Loader, Paper, Stack, Title, Transition } from '@mantine/core'
 import { firebaseFetchCoffees, firebaseFetchCoffee } from '../../firebase/api/coffee'
 import { CoffeeCard, CoffeeModal, CoffeeFilters } from '../../components/coffees'
 import { useQuery } from 'react-query'
@@ -10,12 +10,13 @@ import { useDisclosure, useMediaQuery } from '@mantine/hooks'
 
 export default function Coffees() {
   const [filtersOpen, { toggle: toggleFilters }] = useDisclosure(false)
+  const [mounted, setMounted] = useState(false)
   const [searchParams, setSearchParams] = useSearchParams()
   const params = Object.fromEntries(searchParams.entries())
   const [selectedCoffee, setSelectedCoffee] = useState(null)
   const isMobile = useMediaQuery('(max-width: 50em)')
 
-  const { data: coffees, isLoading: loadingCoffees, isFetched } = useQuery(['coffees', params], () => firebaseFetchCoffees(params))
+  const { data: coffees, isLoading: loadingCoffees, isFetched } = useQuery(['coffees', params], () => firebaseFetchCoffees(params), { onSuccess: () => setTimeout(() => setMounted(true), 50) })
   const { data: coffee, isLoading: loadingCoffee } = useQuery([params?.id], () => firebaseFetchCoffee(params?.id), { enabled: Boolean(params?.id) && !selectedCoffee })
 
   const activeCoffee = selectedCoffee || coffee
@@ -68,12 +69,15 @@ export default function Coffees() {
           align="center"
           breakpoints={{ xs: '200px', sm: '250px', md: '600px', lg: '800px', xl: '1400px' }}
         >
-          {coffees &&
-            coffees.map((coffee) => (
-              <Grid.Col key={coffee.id} span={{ base: 12, xs: 6, sm: 6, md: 4, lg: 4, xl: 2.4 }}>
-                <CoffeeCard coffee={coffee} onClick={(coffee) => handleOpenModal(coffee)} />
-              </Grid.Col>
-            ))}
+          {coffees && coffees.map((coffee) => (
+            <Transition key={coffee.id} transition="fade-left" duration={400} timingFunction="ease" mounted={mounted}>
+              {(styles) => (
+                <Grid.Col span={{ base: 12, xs: 6, sm: 6, md: 4, lg: 4, xl: 2.4 }} style={styles}>
+                  <CoffeeCard coffee={coffee} onClick={(coffee) => handleOpenModal(coffee)} />
+                </Grid.Col>
+              )}
+            </Transition>
+          ))}
 
           {isFetched && !coffees?.length && (
             <Grid.Col span={12}>

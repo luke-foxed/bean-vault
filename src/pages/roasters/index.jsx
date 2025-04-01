@@ -1,4 +1,4 @@
-import { Center, Group, Loader, Stack } from '@mantine/core'
+import { Center, Group, Loader, Stack, Transition } from '@mantine/core'
 import { useQuery } from 'react-query'
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
@@ -8,11 +8,12 @@ import { firebaseFetchRoaster, firebaseFetchRoasters } from '../../firebase/api/
 import { RoasterCard, RoasterModal } from '../../components/roasters'
 
 export default function Roasters() {
+  const [mounted, setMounted] = useState(false)
   const [searchParams, setSearchParams] = useSearchParams()
   const [selectedRoaster, setSelectedRoaster] = useState(null)
   const params = Object.fromEntries(searchParams.entries())
 
-  const { data: roasters, isLoading: loadingRoasters } = useQuery(['roasters'], () => firebaseFetchRoasters())
+  const { data: roasters, isLoading: loadingRoasters } = useQuery(['roasters'], () => firebaseFetchRoasters(), { onSuccess: () => setTimeout(() => setMounted(true), 50) })
   const { data: roaster, isLoading: loadingRoaster } = useQuery([params?.id], () => firebaseFetchRoaster(params?.id), { enabled: Boolean(params?.id) && !selectedRoaster })
 
   const activeRoaster = selectedRoaster || roaster
@@ -37,8 +38,13 @@ export default function Roasters() {
         {loadingRoasters && <Loader />}
 
         <Stack w="100%">
-          {roasters &&
-            roasters.map((roaster) => <RoasterCard onClick={handleOpenModal} key={roaster.id} roaster={roaster} />)}
+          {roasters && roasters.map((roaster) => (
+            <Transition key={roaster.id} transition="fade-down" duration={500} timingFunction="ease" mounted={mounted}>
+              {(styles) => (
+                <RoasterCard onClick={handleOpenModal} key={roaster.id} roaster={roaster} transitionStyles={styles} />
+              )}
+            </Transition>
+          ))}
         </Stack>
 
         <RoasterModal

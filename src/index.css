@@ -17,7 +17,6 @@
 }
 
 body {
-  min-height: 100vh;
   margin: auto;
   background-image: url('/public/bg_pattern.webp');
   background-repeat: repeat;
