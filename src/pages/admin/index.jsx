@@ -1,4 +1,4 @@
-import { Center, Paper, Stack, Tabs, Title } from '@mantine/core'
+import { Center, Paper, Stack, Tabs, Title, Tooltip } from '@mantine/core'
 import { IconCoffee, IconCooker, IconRobot, IconUser, IconUserStar } from '@tabler/icons-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import AdminCoffees from './admin_coffees'
@@ -32,8 +32,10 @@ export default function Admin() {
               <Tabs.Tab value="users" leftSection={<IconUser style={{ width: 25, height: 25 }} />} disabled={!isSuperAdmin}>
                 <Title order={3}>Users</Title>
               </Tabs.Tab>
-              <Tabs.Tab value="scraper" leftSection={<IconRobot style={{ width: 25, height: 25 }} />} disabled={!isSuperAdmin}>
-                <Title order={3}>Scraper</Title>
+              <Tabs.Tab value="scraper" leftSection={<IconRobot style={{ width: 25, height: 25 }} />} disabled={!isSuperAdmin || !import.meta.env.DEV}>
+                <Tooltip disabled={import.meta.env.DEV} label="Scraper is disabled in production">
+                  <Title order={3}>Scraper</Title>
+                </Tooltip>
               </Tabs.Tab>
             </Tabs.List>
 

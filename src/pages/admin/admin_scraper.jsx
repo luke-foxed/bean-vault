@@ -1,4 +1,4 @@
-import { Button, Group, Paper, Stack, Text, TextInput, Title, Loader, Select, Grid } from '@mantine/core'
+import { Button, Group, Paper, Stack, Text, TextInput, Title, Loader, Select, Grid, Alert } from '@mantine/core'
 import { IconRobot, IconCheck, IconX, IconAlertCircle, IconRefresh, IconDeviceFloppy } from '@tabler/icons-react'
 import { useState } from 'react'
 import { useNotify } from '../../providers/notifcation_provider'
@@ -121,50 +121,58 @@ export default function AdminScraper() {
       <Paper p="20px" radius="lg" withBorder>
         <Stack gap="20px">
           <Title order={3}>Coffee Bean Scraper</Title>
-          <Text>
-            Select a roaster or enter a URL to scrape coffee bean data from. The scraper will extract information about
-            coffee beans including name, roaster, region, image URL, and tasting notes.
-          </Text>
-          <Group>
-            <Select
-              placeholder="Select a roaster"
-              data={roasterOptions}
-              value={selectedRoaster}
-              onChange={setSelectedRoaster}
-              style={{ width: 200 }}
-              disabled={loadingRoasters}
-            />
-            <TextInput
-              placeholder="Enter URL to scrape"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              style={{ flex: 1 }}
-            />
-            <Button
-              leftSection={<IconRobot />}
-              onClick={() => setShouldFetch(true)}
-              loading={isLoadingScrape}
-              disabled={isLoadingScrape || !url || !selectedRoaster}
-            >
-              Scrape
-            </Button>
-          </Group>
-          {progress.message && (
-            <Text size="sm" c="dimmed">
-              {progress.message}
-            </Text>
-          )}
-          {progress.urls.length > 0 && (
-            <Stack gap="xs">
-              {progress.urls.map((item, index) => (
-                <Group key={index} gap="xs">
-                  {getStatusIcon(item.status)}
-                  <Text size="sm" style={{ flex: 1, wordBreak: 'break-all' }}>
-                    {item.url}
-                  </Text>
-                </Group>
-              ))}
-            </Stack>
+          {!import.meta.env.DEV ? (
+            <Alert variant="light" color="yellow" radius="lg" title={<Title order={3}>Access Restricted</Title>}>
+              <Title order={4}>Scraper is disabled in production</Title>
+            </Alert>
+          ) : (
+            <>
+              <Text>
+                Select a roaster or enter a URL to scrape coffee bean data from. The scraper will extract information
+                about coffee beans including name, roaster, region, image URL, and tasting notes.
+              </Text>
+              <Group>
+                <Select
+                  placeholder="Select a roaster"
+                  data={roasterOptions}
+                  value={selectedRoaster}
+                  onChange={setSelectedRoaster}
+                  style={{ width: 200 }}
+                  disabled={loadingRoasters}
+                />
+                <TextInput
+                  placeholder="Enter URL to scrape"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  style={{ flex: 1 }}
+                />
+                <Button
+                  leftSection={<IconRobot />}
+                  onClick={() => setShouldFetch(true)}
+                  loading={isLoadingScrape}
+                  disabled={isLoadingScrape || !url || !selectedRoaster}
+                >
+                  Scrape
+                </Button>
+              </Group>
+              {progress.message && (
+                <Text size="sm" c="dimmed">
+                  {progress.message}
+                </Text>
+              )}
+              {progress.urls.length > 0 && (
+                <Stack gap="xs">
+                  {progress.urls.map((item, index) => (
+                    <Group key={index} gap="xs">
+                      {getStatusIcon(item.status)}
+                      <Text size="sm" style={{ flex: 1, wordBreak: 'break-all' }}>
+                        {item.url}
+                      </Text>
+                    </Group>
+                  ))}
+                </Stack>
+              )}
+            </>
           )}
         </Stack>
       </Paper>
