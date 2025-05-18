@@ -5,16 +5,21 @@ import { Link, useNavigate } from 'react-router-dom'
 import { IconAt, IconBrandGoogle, IconLockOpen } from '@tabler/icons-react'
 import './style.module.css'
 import loginForm from '../../forms/login_form'
+import { useNotify } from '../../providers/notifcation_provider'
 
 export default function Login() {
   const { login, loginWithGoogle, currentUser } = useAuth()
   const navigate = useNavigate()
   const form = useForm(loginForm)
-
+  const { notify } = useNotify()
   if (currentUser) navigate('/')
 
   const handleSubmit = async ({ email, password }) => {
-    await login(email, password)
+    try {
+      await login(email, password)
+    } catch (error) {
+      notify('error', 'Login Failed', error.message)
+    }
   }
 
   const handleClickGoogle = async () => {

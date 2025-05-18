@@ -11,16 +11,14 @@ import {
   PillsInput,
   Select,
   SimpleGrid,
-  Slider,
   Stack,
-  Text,
   Textarea,
   TextInput,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { firebaseAddCoffee, firebaseFetchCoffeeForEdit, firebaseFetchRegions, firebaseUpdateCoffee } from '../../firebase/api/coffee'
 import { useMemo, useState } from 'react'
-import { IconCirclePlus, IconEditCircle, IconStar } from '@tabler/icons-react'
+import { IconCirclePlus, IconEditCircle } from '@tabler/icons-react'
 import { useNotify } from '../../providers/notifcation_provider'
 import { useNavigate, useParams } from 'react-router-dom'
 import newCoffeeForm from '../../forms/new_coffee_form'
@@ -192,24 +190,6 @@ export default function CoffeeEditor() {
                 valueComponent={FileInputValue}
                 clearable
               />
-
-              <Text mt="md" size="sm">
-                Score
-              </Text>
-              <Slider
-                flex={1}
-                thumbChildren={<IconStar size={16} />}
-                thumbSize={22}
-                styles={{ thumb: { borderWidth: 2, padding: 3 } }}
-                defaultValue={5}
-                min={1}
-                max={10}
-                step={0.5}
-                marks={Array.from({ length: 10 }, (_, i) => ({ value: i + 1, label: i + 1 }))}
-                key={form.key('score')}
-                {...form.getInputProps('score')}
-              />
-
               <Group justify="flex-end" mt="xl">
                 <Button type="submit">Submit</Button>
               </Group>

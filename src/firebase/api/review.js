@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-catch */
 import {
   collection,
   doc,
@@ -15,21 +16,13 @@ import {
 import { db } from '../config'
 
 export const createOrUpdateReview = async (userId, coffeeId, score) => {
-  if (!userId || !coffeeId || !score) {
-    throw new Error('Missing required parameters')
-  }
-
-  if (score < 1 || score > 10) {
-    throw new Error('Score must be between 1 and 10')
-  }
-
   try {
     const reviewId = `${userId}_${coffeeId}`
     const reviewRef = doc(db, 'reviews', reviewId)
     const coffeeRef = doc(db, 'coffee', coffeeId)
 
     const existingReview = await getDoc(reviewRef)
-    const oldScore = existingReview.exists ? existingReview.data().score : null
+    const oldScore = existingReview.exists ? existingReview.data()?.score : null
     const review = { user_id: userId, coffee_id: coffeeId, score, created_at: new Date().toISOString() }
 
     await setDoc(reviewRef, review)
@@ -58,16 +51,11 @@ export const createOrUpdateReview = async (userId, coffeeId, score) => {
 
     return { review, newAverage }
   } catch (error) {
-    console.error('Error adding review:', error)
     throw error
   }
 }
 
 export const removeReview = async (userId, coffeeId) => {
-  if (!userId || !coffeeId) {
-    throw new Error('Missing required parameters')
-  }
-
   try {
     const reviewId = `${userId}_${coffeeId}`
     const reviewRef = doc(db, 'reviews', reviewId)
@@ -100,14 +88,11 @@ export const removeReview = async (userId, coffeeId) => {
 
     return { success: true }
   } catch (error) {
-    console.error('Error deleting review:', error)
     throw error
   }
 }
 
 export const fetchUserReviews = async (userId, pageSize = 50, lastReviewDoc = null) => {
-  if (!userId) throw new Error('User ID is required')
-
   try {
     let reviewsQuery = query(
       collection(db, 'reviews'),
@@ -152,14 +137,11 @@ export const fetchUserReviews = async (userId, pageSize = 50, lastReviewDoc = nu
 
     return { reviews, lastDoc, hasMore: reviewsSnapshot.docs.length === pageSize }
   } catch (error) {
-    console.error('Error getting user reviews:', error)
     throw error
   }
 }
 
 export const fetchCoffeeDetails = async (coffeeId) => {
-  if (!coffeeId) throw new Error('Coffee ID is required')
-
   try {
     const coffeeRef = doc(db, 'coffee', coffeeId)
     const coffeeDoc = await getDoc(coffeeRef)
@@ -168,14 +150,11 @@ export const fetchCoffeeDetails = async (coffeeId) => {
 
     return coffeeDoc.data()
   } catch (error) {
-    console.error('Error getting coffee details:', error)
     throw error
   }
 }
 
 export const fetchUserReviewForCoffee = async (userId, coffeeId) => {
-  if (!userId || !coffeeId) throw new Error('Missing required parameters')
-
   try {
     const reviewId = `${userId}_${coffeeId}`
     const reviewRef = doc(db, 'reviews', reviewId)
@@ -185,7 +164,6 @@ export const fetchUserReviewForCoffee = async (userId, coffeeId) => {
 
     return reviewDoc.data()
   } catch (error) {
-    console.error('Error getting user review:', error)
     throw error
   }
 }

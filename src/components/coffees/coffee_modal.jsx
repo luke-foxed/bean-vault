@@ -15,14 +15,15 @@ import {
   RemoveScroll,
   Loader,
   Slider,
+  Button,
 } from '@mantine/core'
-import { useMediaQuery, useDebouncedValue } from '@mantine/hooks';
-import { IconCoffee, IconGlobe, IconIceCream2, IconQuote, IconX, IconStarFilled, IconStar } from '@tabler/icons-react'
+import { useMediaQuery } from '@mantine/hooks'
+import { IconCoffee, IconGlobe, IconIceCream2, IconQuote, IconX, IconStarFilled, IconStar, IconCheck } from '@tabler/icons-react'
 import { useAuth } from '../../providers/auth_provider'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { useNotify } from '../../providers/notifcation_provider'
-import { useEffect, useState } from 'react'
-import { createOrUpdateReview, fetchUserReviewForCoffee } from '../../firebase/api/review';
+import { useState } from 'react'
+import { createOrUpdateReview, fetchUserReviewForCoffee } from '../../firebase/api/review'
 
 export default function CoffeeModal({ opened, onClose, coffee, loading }) {
   const isMobile = useMediaQuery('(max-width: 50em)')
@@ -30,13 +31,11 @@ export default function CoffeeModal({ opened, onClose, coffee, loading }) {
   const { notify } = useNotify()
   const queryClient = useQueryClient()
   const [score, setScore] = useState(0)
-  const [debouncedScore] = useDebouncedValue(score, 2000)
-  const [hasUserChangedScore, setHasUserChangedScore] = useState(false)
 
   const { data: userReview } = useQuery(
     ['user-review', coffee?.id],
     () => fetchUserReviewForCoffee(currentUser?.uid, coffee?.id),
-    { enabled: opened },
+    { enabled: opened, onSuccess: (data) => setScore(data?.score || 0) },
   )
 
   const { mutate: updateReview, isLoading: isUpdating } = useMutation(
@@ -44,34 +43,11 @@ export default function CoffeeModal({ opened, onClose, coffee, loading }) {
     {
       onSuccess: () => {
         queryClient.invalidateQueries(['user-review', coffee?.id])
-        queryClient.invalidateQueries(['coffees'])
         notify('success', 'Review updated successfully!')
-        setHasUserChangedScore(false)
       },
-      onError: (error) => {
-        notify('error', error.message)
-      },
+      onError: (error) => notify('error', error.message),
     },
   )
-
-  useEffect(() => {
-    if (userReview?.score) {
-      setScore(userReview.score)
-      setHasUserChangedScore(false)
-    }
-  }, [userReview])
-
-  useEffect(() => {
-    if (debouncedScore > 0 && debouncedScore !== userReview?.score && opened && hasUserChangedScore) {
-      notify('info', 'Saving your review...')
-      updateReview(debouncedScore)
-    }
-  }, [debouncedScore, opened, hasUserChangedScore, userReview?.score, notify, updateReview])
-
-  const handleRatingChange = (newScore) => {
-    setScore(newScore)
-    setHasUserChangedScore(true)
-  }
 
   return (
     <Modal
@@ -84,7 +60,7 @@ export default function CoffeeModal({ opened, onClose, coffee, loading }) {
       size="auto"
       fullScreen={isMobile}
       className={RemoveScroll.classNames.zeroRight}
-      styles={{ inner: { left: 0 } }} // fix inner modal alignment
+      styles={{ inner: { left: 0 } }}
     >
       {loading && <Loader />}
 
@@ -194,27 +170,41 @@ export default function CoffeeModal({ opened, onClose, coffee, loading }) {
               ))}
             </Group>
 
-            <Stack gap="xs" align="center" m="md">
-              <Group gap="5px" justify="center">
-                <ThemeIcon color="blue" size="sm" variant="transparent">
-                  <IconStarFilled />
-                </ThemeIcon>
-                <Title order={4}>Review This Coffee</Title>
-              </Group>
+            <Divider my="sm" />
 
-              <Slider
-                value={score}
-                onChange={handleRatingChange}
-                thumbChildren={<IconStar size={16} />}
-                thumbSize={22}
-                styles={{ thumb: { borderWidth: 2, padding: 3 } }}
-                min={1}
-                max={10}
-                step={0.5}
-                marks={Array.from({ length: 10 }, (_, i) => ({ value: i + 1, label: i + 1 }))}
-                disabled={isUpdating}
-                style={{ width: '100%' }}
-              />
+            <Group gap="5px">
+              <ThemeIcon color="gray" size="sm" variant="transparent">
+                <IconStar />
+              </ThemeIcon>
+              <Title order={4}>Review This Coffee</Title>
+            </Group>
+
+            <Stack gap="md">
+              <Group align="center" w="100%">
+                <Slider
+                  value={score}
+                  onChange={(score) => setScore(score)}
+                  thumbChildren={<IconStar size={16} />}
+                  thumbSize={22}
+                  styles={{ thumb: { borderWidth: 2, padding: 3 } }}
+                  min={0}
+                  max={10}
+                  step={0.5}
+                  marks={Array.from({ length: 10 }, (_, i) => ({ value: i + 1, label: i + 1 }))}
+                  style={{ flex: 1 }}
+                />
+                <Button
+                  w="100px"
+                  variant="light"
+                  color="blue"
+                  size="sm"
+                  leftSection={isUpdating ? <Loader size="xs" /> : <IconCheck size={16} />}
+                  onClick={() => updateReview(score)}
+                  disabled={isUpdating || score === userReview?.score}
+                >
+                  Apply
+                </Button>
+              </Group>
             </Stack>
           </Stack>
         </SimpleGrid>
