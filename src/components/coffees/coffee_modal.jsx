@@ -15,27 +15,36 @@ import {
   RemoveScroll,
   Loader,
   Slider,
-  Button,
 } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
-import { IconCoffee, IconGlobe, IconIceCream2, IconQuote, IconX, IconStarFilled, IconStar, IconCheck } from '@tabler/icons-react'
+import {
+  IconCoffee,
+  IconGlobe,
+  IconIceCream2,
+  IconQuote,
+  IconX,
+  IconStarFilled,
+  IconStar,
+  IconCheck,
+  IconTrash,
+} from '@tabler/icons-react'
 import { useAuth } from '../../providers/auth_provider'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { useNotify } from '../../providers/notifcation_provider'
 import { useState } from 'react'
-import { createOrUpdateReview, fetchUserReviewForCoffee } from '../../firebase/api/review'
+import { createOrUpdateReview, fetchUserReviewForCoffee, removeReview } from '../../firebase/api/review'
 
 export default function CoffeeModal({ opened, onClose, coffee, loading }) {
   const isMobile = useMediaQuery('(max-width: 50em)')
   const { currentUser } = useAuth()
   const { notify } = useNotify()
   const queryClient = useQueryClient()
-  const [score, setScore] = useState(0)
+  const [score, setScore] = useState(1)
 
   const { data: userReview } = useQuery(
     ['user-review', coffee?.id],
     () => fetchUserReviewForCoffee(currentUser?.uid, coffee?.id),
-    { enabled: opened, onSuccess: (data) => setScore(data?.score || 0) },
+    { enabled: opened, onSuccess: (data) => setScore(data?.score || 1) },
   )
 
   const { mutate: updateReview, isLoading: isUpdating } = useMutation(
@@ -43,7 +52,23 @@ export default function CoffeeModal({ opened, onClose, coffee, loading }) {
     {
       onSuccess: () => {
         queryClient.invalidateQueries(['user-review', coffee?.id])
+        queryClient.invalidateQueries(['coffees'])
+        queryClient.invalidateQueries(coffee?.id)
         notify('success', 'Review updated successfully!')
+      },
+      onError: (error) => notify('error', error.message),
+    },
+  )
+
+  const { mutate: deleteReview, isLoading: isDeleting } = useMutation(
+    () => removeReview(currentUser?.uid, coffee?.id),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['user-review', coffee?.id])
+        queryClient.invalidateQueries(['coffees'])
+        queryClient.invalidateQueries(coffee?.id)
+        setScore(0)
+        notify('success', 'Review deleted successfully!')
       },
       onError: (error) => notify('error', error.message),
     },
@@ -86,10 +111,7 @@ export default function CoffeeModal({ opened, onClose, coffee, loading }) {
                 </Badge>
 
                 <Text ta="center">
-                  By{' '}
-                  <Text span>
-                    {coffee.roaster.name}
-                  </Text>
+                  By <Text span>{coffee.roaster.name}</Text>
                 </Text>
               </Stack>
               <ActionIcon hiddenFrom="sm" pos="absolute" top="30px" right="20px" variant="white" onClick={onClose}>
@@ -110,8 +132,12 @@ export default function CoffeeModal({ opened, onClose, coffee, loading }) {
                   </Group>
 
                   <Group gap="10px" align="center" justify="center">
-                    <Text size="lg" fw={500}>{coffee.average_score?.toFixed(1) || 'N/A'}</Text>
-                    <Text size="sm" c="dimmed">({coffee.review_count || 0} reviews)</Text>
+                    <Text size="lg" fw={500}>
+                      {coffee.average_score?.toFixed(1) || 'N/A'}
+                    </Text>
+                    <Text size="sm" c="dimmed">
+                      ({coffee.review_count || 0} reviews)
+                    </Text>
                   </Group>
                 </Stack>
 
@@ -124,7 +150,9 @@ export default function CoffeeModal({ opened, onClose, coffee, loading }) {
                   </Group>
 
                   <Group gap="10px" align="center" justify="center">
-                    <Text size="lg" fw={500}>{userReview?.score?.toFixed(1) || 'N/A'}</Text>
+                    <Text size="lg" fw={500}>
+                      {userReview?.score?.toFixed(1) || 'N/A'}
+                    </Text>
                     {userReview?.created_at && (
                       <Text size="sm" c="dimmed">
                         (Added {new Date(userReview.created_at).toLocaleDateString()})
@@ -162,7 +190,7 @@ export default function CoffeeModal({ opened, onClose, coffee, loading }) {
               </ThemeIcon>
               <Title order={4}>Flavours</Title>
             </Group>
-            <Group gap="10px" >
+            <Group gap="10px">
               {coffee.flavour_notes.map((flavour) => (
                 <Badge size="lg" variant="dot" key={flavour} w="max-content">
                   {flavour}
@@ -187,23 +215,36 @@ export default function CoffeeModal({ opened, onClose, coffee, loading }) {
                   thumbChildren={<IconStar size={16} />}
                   thumbSize={22}
                   styles={{ thumb: { borderWidth: 2, padding: 3 } }}
-                  min={0}
+                  min={1}
                   max={10}
-                  step={0.5}
+                  step={1}
                   marks={Array.from({ length: 10 }, (_, i) => ({ value: i + 1, label: i + 1 }))}
                   style={{ flex: 1 }}
                 />
-                <Button
-                  w="100px"
-                  variant="light"
-                  color="blue"
-                  size="sm"
-                  leftSection={isUpdating ? <Loader size="xs" /> : <IconCheck size={16} />}
-                  onClick={() => updateReview(score)}
-                  disabled={isUpdating || score === userReview?.score}
-                >
-                  Apply
-                </Button>
+                <Group gap="xs">
+                  <ActionIcon
+                    variant="light"
+                    color="blue"
+                    size="lg"
+                    onClick={() => updateReview(score)}
+                    loading={isUpdating}
+                    disabled={isDeleting || isUpdating}
+                  >
+                    <IconCheck size={16} />
+                  </ActionIcon>
+                </Group>
+                {userReview && (
+                  <ActionIcon
+                    variant="light"
+                    color="red"
+                    size="lg"
+                    onClick={() => deleteReview()}
+                    loading={isDeleting}
+                    disabled={isDeleting || isUpdating}
+                  >
+                    <IconTrash size={16} />
+                  </ActionIcon>
+                )}
               </Group>
             </Stack>
           </Stack>

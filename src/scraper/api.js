@@ -9,7 +9,9 @@ const PRODUCT_PROMPT = `
   Go through all coffee beans listed on the page. For each bean, extract the following information: name, description,roaster, region, the image url, and 
   tasting notes. Return the information in a JSON array. Regions should be country only, where each country is a string in the array. Ignore the 
   'You may also like' or anything similar to a 'related products' section for each page. Only extract information from the main product section of the 
-  page. Each JSON object should have the following fields: name, description, roaster, region (array of strings), image, tasting_notes (array of strings).
+  page. Flavour notes should be kept to 5 at max, looking for food related notes mainly. 
+  
+  Each JSON object should have the following fields: name, description, roaster, region (array of strings), image, tasting_notes (array of strings).
 `
 
 const makeScrapeRequest = async (url, prompt) => {

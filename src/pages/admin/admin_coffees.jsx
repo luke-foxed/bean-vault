@@ -8,18 +8,20 @@ import { useAuth } from '../../providers/auth_provider'
 import { modals } from '@mantine/modals'
 
 function Score({ score }) {
-
   const getColor = () => {
-    let color = 'green'
+    if (!score) return 'gray'
 
-    if (score < 8 && score >= 5) color = 'yellow'
-    if (score < 5) color ='red'
+    if (score >= 8) return 'green'
+    if (score < 8 && score >= 5) return 'yellow'
+    if (score < 5) return 'red'
 
-    return color
+    return 'gray'
   }
 
   return (
-    <Title order={4} c={getColor()} color={getColor()}>{score}</Title>
+    <Title order={4} c={getColor()} color={getColor()}>
+      {score ?? 'N/A'}
+    </Title>
   )
 }
 

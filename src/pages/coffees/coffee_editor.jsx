@@ -1,5 +1,6 @@
 import {
   Button,
+  Center,
   FileInput,
   Group,
   Image,
@@ -105,14 +106,16 @@ export default function CoffeeEditor() {
         <LoadingOverlay visible={(Boolean(id) && loadingCoffee) || loadingSave} />
 
         <SimpleGrid cols={{ sm: 1, md: 2 }} spacing={0}>
-          <Image
-            style={{ borderRadius: isMobile ? '16px 16px 0px 0px' : '16px 0px 0px 16px' }}
-            h="100%"
-            mah="640px"
-            fit="cover"
-            fallbackSrc="https://placehold.co/520x520?text=Coffee+Image"
-            src={imagePreview ?? form.getValues().image}
-          />
+          <Center>
+            <Image
+              style={{ borderRadius: isMobile ? '16px 16px 0px 0px' : '16px 0px 0px 16px' }}
+              h="100%"
+              mah="640px"
+              fit="cover"
+              fallbackSrc="https://placehold.co/520x520?text=Coffee+Image"
+              src={imagePreview ?? form.getValues().image}
+            />
+          </Center>
           <Stack p="20px">
             <form onSubmit={form.onSubmit(handleSubmit)}>
               <TextInput
@@ -124,6 +127,7 @@ export default function CoffeeEditor() {
               />
               <Textarea
                 mt="md"
+                resize="vertical"
                 label="About"
                 placeholder="About the coffee"
                 withAsterisk

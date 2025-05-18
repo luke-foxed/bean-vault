@@ -17,6 +17,11 @@ import { db } from '../config'
 
 export const createOrUpdateReview = async (userId, coffeeId, score) => {
   try {
+    // Validate score is between 1 and 10
+    if (score < 1 || score > 10 || !Number.isInteger(score)) {
+      throw new Error('Score must be a whole number between 1 and 10')
+    }
+
     const reviewId = `${userId}_${coffeeId}`
     const reviewRef = doc(db, 'reviews', reviewId)
     const coffeeRef = doc(db, 'coffee', coffeeId)
@@ -31,26 +36,40 @@ export const createOrUpdateReview = async (userId, coffeeId, score) => {
     const coffeeDoc = await getDoc(coffeeRef)
     const coffeeData = coffeeDoc.data()
 
+    // we also need to update the average score and review count - this would ideally be done with a cloud function
+    // but I am cheaap and not paying for that right now
     let newAverage = score
     let newCount = 1
 
     if (coffeeData) {
-      const currentAverage = coffeeData.average_score || 0
+      const currentAverage = coffeeData.average_score ?? null
       const currentCount = coffeeData.review_count || 0
 
       if (oldScore !== null) {
-        newAverage = (currentAverage * currentCount - oldScore + score) / currentCount
+        // Updating existing review - count stays the same
         newCount = currentCount
+        newAverage = (currentAverage * currentCount - oldScore + score) / currentCount
       } else {
-        newAverage = (currentAverage * currentCount + score) / (currentCount + 1)
+        // New review - increment count
         newCount = currentCount + 1
+        // If this is the first review (currentCount is 0), just use the score
+        newAverage = currentCount === 0 ? score : (currentAverage * currentCount + score) / newCount
       }
+    } else {
+      // First review for this coffee - initialize with this score
+      newCount = 1
+      newAverage = score
     }
+
+    // Ensure we never have negative counts or NaN averages
+    newCount = Math.max(1, newCount)
+    newAverage = isNaN(newAverage) ? score : Math.max(1, Math.min(10, newAverage))
 
     await updateDoc(coffeeRef, { average_score: newAverage, review_count: newCount })
 
     return { review, newAverage }
   } catch (error) {
+    console.error('Error updating review:', error)
     throw error
   }
 }
@@ -71,14 +90,16 @@ export const removeReview = async (userId, coffeeId) => {
     const coffeeData = coffeeDoc.data()
 
     if (coffeeData) {
-      const currentAverage = coffeeData.average_score || 0
+      const currentAverage = coffeeData.average_score ?? null
       const currentCount = coffeeData.review_count || 0
 
-      let newAverage = 0
-      let newCount = currentCount - 1
+      let newCount = Math.max(0, currentCount - 1)
+      let newAverage = null // Changed from 0 to null when no reviews left
 
       if (newCount > 0) {
         newAverage = (currentAverage * currentCount - reviewScore) / newCount
+        // Ensure average is valid and within bounds
+        newAverage = isNaN(newAverage) ? null : Math.max(0, Math.min(10, newAverage))
       }
 
       await updateDoc(coffeeRef, { average_score: newAverage, review_count: newCount })

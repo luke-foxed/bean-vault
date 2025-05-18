@@ -63,7 +63,7 @@ export default function CoffeeCard({ review, coffee, onClick = null }) {
                   <IconStarFilled />
                 </ThemeIcon>
                 <Text fw={400} size="md">
-                  {coffee.average_score === 0 ? 'N/A' : coffee.average_score}
+                  {coffee.average_score ?? 'N/A'}
                 </Text>
                 <Divider orientation="vertical" />
                 <Text fw={400} size="sm" c="dimmed">
