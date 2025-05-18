@@ -12,12 +12,14 @@ export default function Coffees() {
   const [filtersOpen, { toggle: toggleFilters }] = useDisclosure(false)
   const [mounted, setMounted] = useState(false)
   const [searchParams, setSearchParams] = useSearchParams()
-  const params = Object.fromEntries(searchParams.entries())
   const [selectedCoffee, setSelectedCoffee] = useState(null)
   const isMobile = useMediaQuery('(max-width: 50em)')
+  // no need to refetch all coffees when we open the coffee modal
+  const params = Object.fromEntries(searchParams.entries().filter(([key]) => key !== 'id'))
+  const coffeeId = searchParams.get('id')
 
   const { data: coffees, isLoading: loadingCoffees, isFetched } = useQuery(['coffees', params], () => firebaseFetchCoffees(params), { onSuccess: () => setTimeout(() => setMounted(true), 50) })
-  const { data: coffee, isLoading: loadingCoffee } = useQuery([params?.id], () => firebaseFetchCoffee(params?.id), { enabled: Boolean(params?.id) && !selectedCoffee })
+  const { data: coffee, isLoading: loadingCoffee } = useQuery([coffeeId], () => firebaseFetchCoffee(coffeeId), { enabled: Boolean(coffeeId) && !selectedCoffee })
 
   const activeCoffee = selectedCoffee || coffee
 

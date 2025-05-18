@@ -95,7 +95,7 @@ export default function AdminCoffees() {
                     </Table.Td>
                     <Table.Td>{formatFirestoreTimestamp(coffee.date_added)}</Table.Td>
                     <Table.Td>
-                      <Score score={coffee.score} />
+                      <Score score={coffee.average_score} />
                     </Table.Td>
                     <Table.Td>
                       <Group gap="10px">
