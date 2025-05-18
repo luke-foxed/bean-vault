@@ -25,13 +25,14 @@ export default function Coffees() {
   const activeCoffee = selectedCoffee || coffee
 
   const handleOpenModal = (coffee) => {
-    setSearchParams({ id: coffee.id })
+    setSearchParams({ ...params, id: coffee.id })
     setSelectedCoffee(coffee)
   }
 
   const handleCloseModal = () => {
     setSelectedCoffee(null)
-    setSearchParams({})
+    // params already has ID filtered out
+    setSearchParams({ ...params })
   }
 
   const handleChangeSearchParams = (key, value) => {
