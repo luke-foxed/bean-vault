@@ -13,6 +13,7 @@ import Navbar from './components/navbar'
 import Admin from './pages/admin'
 import AdminUsers from './pages/admin/admin_users'
 import AdminCoffees from './pages/admin/admin_coffees'
+import AdminScraper from './pages/admin/admin_scraper'
 
 import Coffees from './pages/coffees'
 import CoffeeEditor from './pages/coffees/coffee_editor'
@@ -85,6 +86,7 @@ function AppRouter() {
             <Route path="coffee" element={<AdminCoffees />} />
             <Route path="users" element={<AdminUsers />} />
             <Route path="roasters" element={<AdminRoasters />} />
+            <Route path="scraper" element={<AdminScraper />} />
           </Route>
         </Route>
       </Routes>

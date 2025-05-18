@@ -18,6 +18,7 @@
     "@mantine/modals": "^7.13.2",
     "@mantine/notifications": "^7.13.3",
     "@mantine/nprogress": "^7.13.2",
+    "@monaco-editor/react": "^4.7.0",
     "@tabler/icons-react": "^3.19.0",
     "dotenv": "^16.4.7",
     "firebase": "^10.14.1",

@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import { initializeApp } from 'firebase/app'
-import { doc, getFirestore, setDoc } from 'firebase/firestore'
+import { doc, getFirestore, setDoc, deleteDoc } from 'firebase/firestore'
 import 'dotenv/config'
 
 const firebaseConfig = {
@@ -25,21 +25,37 @@ async function addRegionDocuments() {
     { id: 6, name: 'Guatemala', color: 'grape' },
     { id: 7, name: 'Jamaica', color: 'blue' },
     { id: 8, name: 'Panama', color: 'cyan' },
-    { id: 9, name: 'Sumatra', color: 'lime' },
-    { id: 10, name: 'Yemen', color: 'brown' },
+    { id: 9, name: 'Indonesia', color: 'lime' },
+    { id: 10, name: 'Yemen', color: 'indigo' },
     { id: 11, name: 'Honduras', color: 'violet' },
     { id: 12, name: 'Mexico', color: 'pink' },
     { id: 13, name: 'Rwanda', color: 'indigo' },
-    { id: 14, name: 'Peru', color: 'gold' },
+    { id: 14, name: 'Peru', color: 'yellow' },
     { id: 15, name: 'India', color: 'red' },
+    { id: 16, name: 'El Salvador', color: 'blue' },
+    { id: 17, name: 'Burundi', color: 'violet' },
+    { id: 18, name: 'China', color: 'red' },
+    { id: 19, name: 'Tanzania', color: 'orange' },
+    { id: 20, name: 'Nicaragua', color: 'green' },
+    { id: 21, name: 'Papua New Guinea', color: 'yellow' },
+    { id: 22, name: 'Hawaii', color: 'pink' },
+    { id: 23, name: 'Vietnam', color: 'blue' },
+    { id: 24, name: 'Uganda', color: 'grape' },
   ]
 
-  // Store all regions in a single document
   const regionsDocRef = doc(db, 'regions', 'all')
 
+  // Delete existing regions document
+  try {
+    await deleteDoc(regionsDocRef)
+    console.log('Existing regions document deleted successfully')
+  } catch (error) {
+    console.log('No existing regions document to delete:', error.message)
+  }
+
+  // Store all regions in a single document
   await setDoc(regionsDocRef, { regions }, { merge: true })
-  console.log('Regions added successfully in a single document!')
+  console.log(`Added ${regions.length} regions successfully!`)
 }
 
-addRegionDocuments()
-  .catch((error) => console.error('Error adding regions:', error))
+addRegionDocuments().catch((error) => console.error('Error adding regions:', error))

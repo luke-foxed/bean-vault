@@ -33,5 +33,9 @@ export function transformCloudinaryURL(url, options) {
 // for quickly generating a 'fixed' image with a non-transparent bg and uniform size
 export function generateCoffeeThumbnail(url) {
   const options = { size: { height: 400, width: 800 }, bgColor: '#e3e3e3' }
+
+  // the scraper previews coffee cards with images from their own CDNs, not our cloudinary ones
+  if (!url.includes('res.cloudinary.com')) return url
+
   return transformCloudinaryURL(url, options)
 }
