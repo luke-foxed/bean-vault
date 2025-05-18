@@ -15,7 +15,14 @@ const CoffeeRegions = ({ regions }) => (
   </Group>
 )
 
-export default function CoffeeCard({ coffee, onClick = null }) {
+const renderDate = (review, coffee) => {
+  const dateInput = review?.created_at || coffee.date_added?.seconds * 1000
+  const dateString = new Date(dateInput).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+
+  return review?.created_at ? `Reviewed ${dateString}` : `Added ${dateString}`
+}
+
+export default function CoffeeCard({ review, coffee, onClick = null }) {
   const isMobile = useMediaQuery('(max-width: 50em)')
   const { hovered, ref } = useHover()
   const { colorScheme } = useMantineColorScheme()
@@ -52,7 +59,7 @@ export default function CoffeeCard({ coffee, onClick = null }) {
               </Stack>
 
               <Group align="center" justify="center" gap="10px">
-                <ThemeIcon size="xs" variant="transparent" color="yellow">
+                <ThemeIcon size="xs" variant="transparent" color={review?.score ? 'blue' : 'yellow'}>
                   <IconStarFilled />
                 </ThemeIcon>
                 <Text fw={400} size="md">
@@ -60,10 +67,7 @@ export default function CoffeeCard({ coffee, onClick = null }) {
                 </Text>
                 <Divider orientation="vertical" />
                 <Text fw={400} size="sm" c="dimmed">
-                  {new Date(coffee.date_added?.seconds * 1000).toLocaleDateString('en-US', {
-                    month: 'short',
-                    year: 'numeric',
-                  })}
+                  {renderDate(review, coffee)}
                 </Text>
               </Group>
             </Group>

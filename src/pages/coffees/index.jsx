@@ -1,12 +1,13 @@
-import { Box, Button, Center, Collapse, Grid, Group, Loader, Paper, Stack, Title, Transition } from '@mantine/core'
+import { Box, Button, Center, Collapse, Group, Loader, Paper, Stack } from '@mantine/core'
 import { firebaseFetchCoffees, firebaseFetchCoffee } from '../../firebase/api/coffee'
-import { CoffeeCard, CoffeeModal, CoffeeFilters } from '../../components/coffees'
+import { CoffeeModal, CoffeeFilters } from '../../components/coffees'
 import { useQuery } from 'react-query'
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import Heading from '../../components/heading'
-import { IconCoffee, IconFilter, IconMoodEmpty } from '@tabler/icons-react'
+import { IconCoffee, IconFilter } from '@tabler/icons-react'
 import { useDisclosure, useMediaQuery } from '@mantine/hooks'
+import CoffeeGrid from '../../components/coffees/coffee_grid'
 
 export default function Coffees() {
   const [filtersOpen, { toggle: toggleFilters }] = useDisclosure(false)
@@ -64,34 +65,7 @@ export default function Coffees() {
 
         {loadingCoffees && <Loader />}
 
-        <Grid
-          w="95vw"
-          m="auto"
-          gutter={{ base: 'sm', sm: 'md', lg: 'xl' }}
-          align="center"
-          breakpoints={{ xs: '200px', sm: '250px', md: '600px', lg: '800px', xl: '1400px' }}
-        >
-          {coffees && coffees.map((coffee) => (
-            <Transition key={coffee.id} transition="fade-left" duration={400} timingFunction="ease" mounted={mounted}>
-              {(styles) => (
-                <Grid.Col span={{ base: 12, xs: 6, sm: 6, md: 4, lg: 4, xl: 2.4 }} style={styles}>
-                  <CoffeeCard coffee={coffee} onClick={(coffee) => handleOpenModal(coffee)} />
-                </Grid.Col>
-              )}
-            </Transition>
-          ))}
-
-          {isFetched && !coffees?.length && (
-            <Grid.Col span={12}>
-              <Paper shadow="md" p="xl" radius="lg">
-                <Stack align="center">
-                  <IconMoodEmpty size={60} />
-                  <Title order={1}>No coffees found!</Title>
-                </Stack>
-              </Paper>
-            </Grid.Col>
-          )}
-        </Grid>
+        <CoffeeGrid coffees={coffees} onClick={handleOpenModal} mounted={mounted} isFetched={isFetched} />
 
         <CoffeeModal
           loading={loadingCoffee}

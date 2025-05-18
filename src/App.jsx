@@ -14,6 +14,7 @@ import Admin from './pages/admin'
 import AdminUsers from './pages/admin/admin_users'
 import AdminCoffees from './pages/admin/admin_coffees'
 import AdminScraper from './pages/admin/admin_scraper'
+import UserCoffees from './pages/user_coffees'
 
 import Coffees from './pages/coffees'
 import CoffeeEditor from './pages/coffees/coffee_editor'
@@ -60,7 +61,6 @@ export default function App() {
 }
 
 function AppRouter() {
-
   return (
     <Router>
       <Routes>
@@ -72,6 +72,7 @@ function AppRouter() {
           <Route index element={<Home />} />
           <Route path="/coffees" element={<Coffees />} />
           <Route path="/roasters" element={<Roasters />} />
+          <Route path="/:userId/coffees" element={<UserCoffees />} />
         </Route>
 
         {/* Admin routes */}

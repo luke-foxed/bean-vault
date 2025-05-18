@@ -3,11 +3,14 @@ import { useAuth } from '../../providers/auth_provider'
 import RoleBadge from '../role_badge'
 import ColorSchemeToggle from './color_scheme_toggle'
 import { useHover } from '@mantine/hooks'
+import { useNavigate } from 'react-router-dom'
+import { IconList } from '@tabler/icons-react'
 
 function User({ currentUser, toggle }) {
   const { logout } = useAuth()
   const { hovered, ref } = useHover()
   const { colorScheme } = useMantineColorScheme()
+  const navigate = useNavigate()
 
   return (
     <Popover position="bottom-end" withArrow closeOnClickOutside={true} onClose={toggle} withinPortal={false}>
@@ -31,6 +34,18 @@ function User({ currentUser, toggle }) {
             <Text c="dimmed">Toggle Theme</Text>
             <ColorSchemeToggle />
           </Group>
+          <Button
+            size="compact-sm"
+            variant="light"
+            leftSection={<IconList size={16} />}
+            w="100%"
+            onClick={() => {
+              toggle()
+              navigate(`/${currentUser.uid}/coffees`)
+            }}
+          >
+            Your Reviews
+          </Button>
           <Button size="compact-sm" onClick={logout} w="100%">
             Logout
           </Button>

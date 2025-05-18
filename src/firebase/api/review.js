@@ -28,17 +28,9 @@ export const createOrUpdateReview = async (userId, coffeeId, score) => {
     const reviewRef = doc(db, 'reviews', reviewId)
     const coffeeRef = doc(db, 'coffee', coffeeId)
 
-    // Get existing review if any
     const existingReview = await getDoc(reviewRef)
     const oldScore = existingReview.exists ? existingReview.data().score : null
-
-    // Create/update review
-    const review = {
-      userId,
-      coffeeId,
-      score,
-      createdAt: new Date().toISOString(),
-    }
+    const review = { user_id: userId, coffee_id: coffeeId, score, created_at: new Date().toISOString() }
 
     await setDoc(reviewRef, review)
 
@@ -54,20 +46,15 @@ export const createOrUpdateReview = async (userId, coffeeId, score) => {
       const currentCount = coffeeData.review_count || 0
 
       if (oldScore !== null) {
-        // Updating existing review
         newAverage = (currentAverage * currentCount - oldScore + score) / currentCount
         newCount = currentCount
       } else {
-        // New review
         newAverage = (currentAverage * currentCount + score) / (currentCount + 1)
         newCount = currentCount + 1
       }
     }
 
-    await updateDoc(coffeeRef, {
-      average_score: newAverage,
-      review_count: newCount,
-    })
+    await updateDoc(coffeeRef, { average_score: newAverage, review_count: newCount })
 
     return { review, newAverage }
   } catch (error) {
@@ -86,15 +73,12 @@ export const removeReview = async (userId, coffeeId) => {
     const reviewRef = doc(db, 'reviews', reviewId)
     const coffeeRef = doc(db, 'coffee', coffeeId)
 
-    // Get the review to be deleted
     const reviewDoc = await getDoc(reviewRef)
-    if (!reviewDoc.exists) {
-      throw new Error('Review not found')
-    }
+
+    if (!reviewDoc.exists) throw new Error('Review not found')
 
     const reviewScore = reviewDoc.data().score
 
-    // Get coffee document
     const coffeeDoc = await getDoc(coffeeRef)
     const coffeeData = coffeeDoc.data()
 
@@ -102,7 +86,6 @@ export const removeReview = async (userId, coffeeId) => {
       const currentAverage = coffeeData.average_score || 0
       const currentCount = coffeeData.review_count || 0
 
-      // Calculate new average and count
       let newAverage = 0
       let newCount = currentCount - 1
 
@@ -110,14 +93,9 @@ export const removeReview = async (userId, coffeeId) => {
         newAverage = (currentAverage * currentCount - reviewScore) / newCount
       }
 
-      // Update coffee document
-      await updateDoc(coffeeRef, {
-        average_score: newAverage,
-        review_count: newCount,
-      })
+      await updateDoc(coffeeRef, { average_score: newAverage, review_count: newCount })
     }
 
-    // Delete the review
     await deleteDoc(reviewRef)
 
     return { success: true }
@@ -127,24 +105,22 @@ export const removeReview = async (userId, coffeeId) => {
   }
 }
 
-export const fetchUserReviews = async (userId, pageSize = 10, lastReviewDoc = null) => {
-  if (!userId) {
-    throw new Error('User ID is required')
-  }
+export const fetchUserReviews = async (userId, pageSize = 50, lastReviewDoc = null) => {
+  if (!userId) throw new Error('User ID is required')
 
   try {
     let reviewsQuery = query(
       collection(db, 'reviews'),
-      where('userId', '==', userId),
-      orderBy('createdAt', 'desc'),
+      where('user_id', '==', userId),
+      orderBy('created_at', 'desc'),
       limit(pageSize),
     )
 
     if (lastReviewDoc) {
       reviewsQuery = query(
         collection(db, 'reviews'),
-        where('userId', '==', userId),
-        orderBy('createdAt', 'desc'),
+        where('user_id', '==', userId),
+        orderBy('created_at', 'desc'),
         startAfter(lastReviewDoc),
         limit(pageSize),
       )
@@ -157,7 +133,7 @@ export const fetchUserReviews = async (userId, pageSize = 10, lastReviewDoc = nu
     // Get coffee details for each review
     for (const reviewDoc of reviewsSnapshot.docs) {
       const review = reviewDoc.data()
-      const coffeeRef = doc(db, 'coffee', review.coffeeId)
+      const coffeeRef = doc(db, 'coffee', review.coffee_id)
       const coffeeDoc = await getDoc(coffeeRef)
 
       if (coffeeDoc.exists) {
@@ -165,7 +141,7 @@ export const fetchUserReviews = async (userId, pageSize = 10, lastReviewDoc = nu
         reviews.push({
           ...review,
           coffee: {
-            id: review.coffeeId,
+            id: review.coffee_id,
             name: coffeeData.name,
             average_score: coffeeData.average_score,
             review_count: coffeeData.review_count,
@@ -174,11 +150,7 @@ export const fetchUserReviews = async (userId, pageSize = 10, lastReviewDoc = nu
       }
     }
 
-    return {
-      reviews,
-      lastDoc,
-      hasMore: reviewsSnapshot.docs.length === pageSize,
-    }
+    return { reviews, lastDoc, hasMore: reviewsSnapshot.docs.length === pageSize }
   } catch (error) {
     console.error('Error getting user reviews:', error)
     throw error
@@ -186,17 +158,13 @@ export const fetchUserReviews = async (userId, pageSize = 10, lastReviewDoc = nu
 }
 
 export const fetchCoffeeDetails = async (coffeeId) => {
-  if (!coffeeId) {
-    throw new Error('Coffee ID is required')
-  }
+  if (!coffeeId) throw new Error('Coffee ID is required')
 
   try {
     const coffeeRef = doc(db, 'coffee', coffeeId)
     const coffeeDoc = await getDoc(coffeeRef)
 
-    if (!coffeeDoc.exists) {
-      throw new Error('Coffee not found')
-    }
+    if (!coffeeDoc.exists) throw new Error('Coffee not found')
 
     return coffeeDoc.data()
   } catch (error) {
@@ -206,22 +174,14 @@ export const fetchCoffeeDetails = async (coffeeId) => {
 }
 
 export const fetchUserReviewForCoffee = async (userId, coffeeId) => {
-
-  console.log('userId', userId)
-  console.log('coffeeId', coffeeId)
-
-  if (!userId || !coffeeId) {
-    throw new Error('Missing required parameters')
-  }
+  if (!userId || !coffeeId) throw new Error('Missing required parameters')
 
   try {
     const reviewId = `${userId}_${coffeeId}`
     const reviewRef = doc(db, 'reviews', reviewId)
     const reviewDoc = await getDoc(reviewRef)
 
-    if (!reviewDoc.exists) {
-      return null
-    }
+    if (!reviewDoc.exists) return null
 
     return reviewDoc.data()
   } catch (error) {

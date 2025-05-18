@@ -149,9 +149,9 @@ export default function CoffeeModal({ opened, onClose, coffee, loading }) {
 
                   <Group gap="10px" align="center" justify="center">
                     <Text size="lg" fw={500}>{userReview?.score?.toFixed(1) || 'N/A'}</Text>
-                    {userReview?.createdAt && (
+                    {userReview?.created_at && (
                       <Text size="sm" c="dimmed">
-                        (Added {new Date(userReview.createdAt).toLocaleDateString()})
+                        (Added {new Date(userReview.created_at).toLocaleDateString()})
                       </Text>
                     )}
                   </Group>

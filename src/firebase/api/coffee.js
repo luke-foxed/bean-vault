@@ -44,8 +44,37 @@ export const firebaseFetchCoffees = async (queryParams) => {
   }
 }
 
+export const firebaseFetchCoffeesByIds = async (coffeeIds) => {
+  const [coffeeSnaps, regions] = await Promise.all([Promise.all(coffeeIds.map((id) => getDoc(doc(db, 'coffee', id)))), firebaseFetchRegions()])
+  const regionsMap = Object.fromEntries(regions.map((region) => [region.id, { name: region.name, color: region.color }]))
+  // keep track of fetched roasters to avoid fetching the same roaster multiple times
+  const roastersMap = new Map()
+
+  const coffeeData = await Promise.all(coffeeSnaps.map(async (docSnap) => {
+    if (!docSnap.exists()) return null
+
+    const data = docSnap.data()
+    let roaster = null
+
+    if (!roastersMap.has(data.roaster)) {
+      const roasterSnap = await getDoc(doc(db, 'roasters', data.roaster))
+      roaster = { id: roasterSnap.id, ...roasterSnap.data() }
+      roastersMap.set(data.roaster, roaster)
+    } else {
+      roaster = roastersMap.get(data.roaster)
+    }
+
+    // Map regions using the regionsMap
+    const coffeeRegions = (data.regions || []).map((regionId) => regionsMap[regionId]).filter(Boolean)
+
+    return { id: docSnap.id, ...data, roaster, regions: coffeeRegions }
+  }))
+  return coffeeData.filter(Boolean)
+}
+
 export const firebaseFetchCoffee = async (coffeeId) => {
   try {
+
     const coffeeRef = doc(db, 'coffee', coffeeId)
     const coffeeSnap = await getDoc(coffeeRef)
 
