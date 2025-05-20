@@ -6,8 +6,9 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 
 export default [
   { ignores: ['dist'] },
+  // Client-side React configuration
   {
-    files: ['**/*.{js,jsx}'],
+    files: ['src/**/*.{js,jsx}'],
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
@@ -71,6 +72,35 @@ export default [
       // React Hooks rules
       'react-hooks/rules-of-hooks': 'error', // Checks rules of Hooks
       'react-hooks/exhaustive-deps': 'warn', // Checks effect dependencies
+    },
+  },
+  // Firebase Functions configuration
+  {
+    files: ['functions/**/*.js'],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: {
+        ...globals.node,
+        process: 'readonly',
+        require: 'readonly',
+        module: 'readonly',
+        exports: 'readonly',
+      },
+      parserOptions: {
+        ecmaVersion: 2020,
+        sourceType: 'commonjs',
+      },
+    },
+    rules: {
+      'no-restricted-globals': ['error', 'name', 'length'],
+      'prefer-arrow-callback': 'error',
+      'quotes': ['error', 'single', { 'allowTemplateLiterals': true }],
+      'require-jsdoc': 'off',
+      'valid-jsdoc': 'off',
+      'max-len': ['error', { 'code': 120 }],
+      'object-curly-spacing': ['error', 'always'],
+      'indent': ['error', 2],
+      'comma-dangle': ['error', 'always-multiline'],
     },
   },
 ]

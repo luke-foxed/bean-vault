@@ -15,11 +15,12 @@ import {
   Stack,
   Textarea,
   TextInput,
+  Text,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { firebaseAddCoffee, firebaseFetchCoffeeForEdit, firebaseFetchRegions, firebaseUpdateCoffee } from '../../firebase/api/coffee'
 import { useMemo, useState } from 'react'
-import { IconCirclePlus, IconEditCircle } from '@tabler/icons-react'
+import { IconCirclePlus, IconEditCircle, IconWand } from '@tabler/icons-react'
 import { useNotify } from '../../providers/notifcation_provider'
 import { useNavigate, useParams } from 'react-router-dom'
 import newCoffeeForm from '../../forms/new_coffee_form'
@@ -27,10 +28,10 @@ import { useMutation, useQuery } from 'react-query'
 import { useMediaQuery } from '@mantine/hooks'
 import Heading from '../../components/heading'
 import { firebaseFetchRoasters } from '../../firebase/api/roasters'
+import { optimizeCoffeeDescription } from '../../firebase/api/cloud_functions'
 
 const FileInputValue = ({ value }) => {
   if (!value) return null
-
   // if in the 'edit' flow, the value is gonna be a cloudinary url so take the 'name' bit of the url
   const name = typeof value === 'string' ? value.split('/').pop() : value.name
 
@@ -44,8 +45,10 @@ export default function CoffeeEditor() {
   const form = useForm(newCoffeeForm)
   const isMobile = useMediaQuery('(max-width: 50em)')
   const [imagePreview, setImagePreview] = useState(null)
+
   const { data: regions, isLoading: loadingRegions } = useQuery(['regions'], firebaseFetchRegions)
   const { data: roasters, isLoading: loadingRoasters } = useQuery(['roasters'], firebaseFetchRoasters)
+
   const { isLoading: loadingCoffee } = useQuery([`coffee-${id}`], () => firebaseFetchCoffeeForEdit(id), { onSuccess: form.setValues, enabled: !!id })
   const { mutate: saveCoffee, isLoading: loadingSave } = useMutation(
     id ? ['update-coffee'] : ['add-coffee'],
@@ -57,6 +60,14 @@ export default function CoffeeEditor() {
       },
     },
   )
+
+  const { mutate: optimizeDescription, isLoading: isOptimizing } = useMutation(['optimize-description'], optimizeCoffeeDescription, {
+    onSuccess: (optimizedDescription) => {
+      form.setFieldValue('about', optimizedDescription)
+      notify('success', 'Description optimized successfully!')
+    },
+    onError: (error) => notify('error', error.message || 'Failed to optimize description'),
+  })
 
   const regionOptions = useMemo(() => {
     return (regions || []).map((region) => ({ value: region.id, label: region.name, color: region.color }))
@@ -125,10 +136,24 @@ export default function CoffeeEditor() {
                 key={form.key('name')}
                 {...form.getInputProps('name')}
               />
+              <Group justify="space-between" align="center" mt="md">
+                <Text size="sm" fw={500}>About</Text>
+                <Button
+                  variant="subtle"
+                  leftSection={<IconWand size={16} />}
+                  onClick={() => optimizeDescription(form.getValues())}
+                  disabled={!form.getValues().name || !form.getValues().regions?.length || !form.getValues().flavour_notes?.length || isOptimizing}
+                  size="compact-sm"
+                  fw={500}
+                  loading={isOptimizing}
+                >
+                  Optimize
+                </Button>
+              </Group>
               <Textarea
-                mt="md"
                 resize="vertical"
-                label="About"
+                minRows={4}
+                autosize
                 placeholder="About the coffee"
                 withAsterisk
                 key={form.key('about')}

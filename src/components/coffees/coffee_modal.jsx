@@ -27,16 +27,19 @@ import {
   IconStar,
   IconCheck,
   IconTrash,
+  IconEdit,
 } from '@tabler/icons-react'
 import { useAuth } from '../../providers/auth_provider'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { useNotify } from '../../providers/notifcation_provider'
 import { useState } from 'react'
 import { createOrUpdateReview, fetchUserReviewForCoffee, removeReview } from '../../firebase/api/review'
+import { useNavigate } from 'react-router-dom'
 
 export default function CoffeeModal({ opened, onClose, coffee, loading }) {
   const isMobile = useMediaQuery('(max-width: 50em)')
-  const { currentUser } = useAuth()
+  const { currentUser, isAdmin } = useAuth()
+  const navigate = useNavigate()
   const { notify } = useNotify()
   const queryClient = useQueryClient()
   const [score, setScore] = useState(1)
@@ -110,9 +113,21 @@ export default function CoffeeModal({ opened, onClose, coffee, loading }) {
                   </Title>
                 </Badge>
 
-                <Text ta="center">
-                  By <Text span>{coffee.roaster.name}</Text>
-                </Text>
+                <Group gap="5px" justify="center">
+                  <Text ta="center">
+                    By <Text span>{coffee.roaster.name}</Text>
+                  </Text>
+                  {isAdmin && (
+                    <ActionIcon
+                      variant="light"
+                      color="blue"
+                      size="sm"
+                      onClick={() => navigate(`/coffee/edit/${coffee.id}`)}
+                    >
+                      <IconEdit />
+                    </ActionIcon>
+                  )}
+                </Group>
               </Stack>
               <ActionIcon hiddenFrom="sm" pos="absolute" top="30px" right="20px" variant="white" onClick={onClose}>
                 <IconX color="black" />

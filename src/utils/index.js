@@ -31,11 +31,15 @@ export function transformCloudinaryURL(url, options) {
 }
 
 // for quickly generating a 'fixed' image with a non-transparent bg and uniform size
-export function generateCoffeeThumbnail(url) {
-  const options = { size: { height: 400, width: 800 }, bgColor: '#e3e3e3' }
+export const generateCoffeeThumbnail = (url) => {
+  const tranformationOptions = { size: { height: 400, width: 800 }, bgColor: '#e3e3e3' }
+  if (!url) return null
+  // If it's already a Cloudinary URL, return as is
+  if (!url.includes('res.cloudinary.com')) {
+    const encodedUrl = encodeURIComponent(url)
+    return `https://res.cloudinary.com/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/fetch/t_coffee_upload/${encodedUrl}`
+  }
 
-  // the scraper previews coffee cards with images from their own CDNs, not our cloudinary ones
-  if (!url.includes('res.cloudinary.com')) return url
-
-  return transformCloudinaryURL(url, options)
+  // For non-Cloudinary URLs, use Cloudinary's fetch feature with f_auto
+  return transformCloudinaryURL(url, tranformationOptions)
 }
