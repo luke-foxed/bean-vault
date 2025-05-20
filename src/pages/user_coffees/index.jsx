@@ -1,5 +1,5 @@
 import { Stack, Group, Loader, Center } from '@mantine/core'
-import { useParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import { fetchUserReviews } from '../../firebase/api/review'
 import { IconUserHeart } from '@tabler/icons-react'
@@ -7,11 +7,12 @@ import { firebaseFetchCoffeesByIds } from '../../firebase/api/coffee'
 import Heading from '../../components/heading'
 import { useState } from 'react'
 import CoffeeGrid from '../../components/coffees/coffee_grid'
+import { CoffeeModal } from '../../components/coffees'
 
 export default function UserCoffees() {
   const [mounted, setMounted] = useState(false)
   const { userId } = useParams()
-
+  const [searchParams, setSearchParams] = useSearchParams()
   const { data: reviewsData, isLoading: loadingReviews } = useQuery(['user-reviews', userId], () => fetchUserReviews(userId), { enabled: !!userId })
 
   const coffeeIDs = reviewsData?.reviews?.map((review) => review?.coffee.id)
@@ -36,9 +37,15 @@ export default function UserCoffees() {
         <CoffeeGrid
           reviews={reviewMap}
           coffees={coffees}
-          onClick={(coffee) => window.open(`/coffees?id=${coffee.id}`, '_blank')}
+          onClick={(coffee) => setSearchParams({ id: coffee.id })}
           mounted={mounted}
           isFetched={isFetched}
+        />
+
+        <CoffeeModal
+          opened={!!searchParams.get('id')}
+          onClose={() => setSearchParams({})}
+          coffee={coffees?.find((coffee) => coffee.id === searchParams.get('id'))}
         />
       </Stack>
     </Center>

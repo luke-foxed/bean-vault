@@ -53,7 +53,7 @@ export default function Home() {
               <Transition key={coffee.id} transition="fade-left" duration={800} timingFunction="ease" mounted={mounted}>
                 {(styles) => (
                   <Grid.Col span={{ base: 12, xs: 6, sm: 6, md: 4, lg: 4, xl: 2.4 }} style={styles}>
-                    <CoffeeCard coffee={coffee} transitionStyles={styles} />
+                    <CoffeeCard coffee={coffee} transitionStyles={styles} onClick={() => navigate(`/coffees?id=${coffee.id}`)} />
                   </Grid.Col>
                 )}
               </Transition>

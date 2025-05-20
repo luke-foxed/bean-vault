@@ -121,47 +121,41 @@ export default function CoffeeModal({ opened, onClose, coffee, loading }) {
 
             <Divider />
 
-            <Stack gap="xl" align="center">
-              <Group align="center" gap="xl" style={{ width: '100%' }}>
-                <Stack gap="xs" style={{ flex: 1 }} align="center">
-                  <Group gap="5px" justify="center">
-                    <ThemeIcon color="yellow" size="sm" variant="transparent">
-                      <IconStarFilled />
-                    </ThemeIcon>
-                    <Title order={4}>Average Score</Title>
-                  </Group>
+            <Group align="center" gap="xl" style={{ width: '100%' }}>
+              <Stack gap="0px" style={{ flex: 1 }} align="center">
+                <Group gap="5px" justify="center">
+                  <ThemeIcon color="yellow" size="sm" variant="transparent">
+                    <IconStarFilled />
+                  </ThemeIcon>
+                  <Title order={4}>Average Score</Title>
+                </Group>
 
-                  <Group gap="10px" align="center" justify="center">
-                    <Text size="lg" fw={500}>
-                      {coffee.average_score?.toFixed(1) || 'N/A'}
-                    </Text>
-                    <Text size="sm" c="dimmed">
-                      ({coffee.review_count || 0} reviews)
-                    </Text>
-                  </Group>
-                </Stack>
+                <Text size="lg" fw={500}>
+                  {coffee.average_score?.toFixed(1) || 'N/A'}
+                </Text>
+                <Text size="sm" c="dimmed">
+                  ({coffee.review_count || 0} reviews)
+                </Text>
+              </Stack>
 
-                <Stack gap="xs" style={{ flex: 1 }} align="center">
-                  <Group gap="5px" justify="center">
-                    <ThemeIcon color="blue" size="sm" variant="transparent">
-                      <IconStarFilled />
-                    </ThemeIcon>
-                    <Title order={4}>Your Score</Title>
-                  </Group>
+              <Stack gap="0px" style={{ flex: 1 }} align="center">
+                <Group gap="5px" justify="center">
+                  <ThemeIcon color="blue" size="sm" variant="transparent">
+                    <IconStarFilled />
+                  </ThemeIcon>
+                  <Title order={4}>Your Score</Title>
+                </Group>
 
-                  <Group gap="10px" align="center" justify="center">
-                    <Text size="lg" fw={500}>
-                      {userReview?.score?.toFixed(1) || 'N/A'}
-                    </Text>
-                    {userReview?.created_at && (
-                      <Text size="sm" c="dimmed">
-                        (Added {new Date(userReview.created_at).toLocaleDateString()})
-                      </Text>
-                    )}
-                  </Group>
-                </Stack>
-              </Group>
-            </Stack>
+                <Text size="lg" fw={500}>
+                  {userReview?.score?.toFixed(1) || 'N/A'}
+                </Text>
+                {userReview?.created_at && (
+                  <Text size="sm" c="dimmed">
+                    (Added {new Date(userReview.created_at).toLocaleDateString()})
+                  </Text>
+                )}
+              </Stack>
+            </Group>
 
             <Divider />
 

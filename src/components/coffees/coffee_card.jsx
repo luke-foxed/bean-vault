@@ -15,13 +15,6 @@ const CoffeeRegions = ({ regions }) => (
   </Group>
 )
 
-const renderDate = (review, coffee) => {
-  const dateInput = review?.created_at || coffee.date_added?.seconds * 1000
-  const dateString = new Date(dateInput).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
-
-  return review?.created_at ? `Reviewed ${dateString}` : `Added ${dateString}`
-}
-
 export default function CoffeeCard({ review, coffee, onClick = null }) {
   const isMobile = useMediaQuery('(max-width: 50em)')
   const { hovered, ref } = useHover()
@@ -67,7 +60,7 @@ export default function CoffeeCard({ review, coffee, onClick = null }) {
                 </Text>
                 <Divider orientation="vertical" />
                 <Text fw={400} size="sm" c="dimmed">
-                  {renderDate(review, coffee)}
+                  {new Date(coffee.date_added?.seconds * 1000).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
                 </Text>
               </Group>
             </Group>
