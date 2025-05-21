@@ -12,10 +12,11 @@ import {
   deleteDoc,
   limit,
   startAfter,
+  getCountFromServer,
 } from 'firebase/firestore'
 import { db } from '../config'
 
-export const createOrUpdateReview = async (userId, coffeeId, score) => {
+export const firebaseAddReview = async (userId, coffeeId, score) => {
   try {
     // Validate score is between 1 and 10
     if (score < 1 || score > 10 || !Number.isInteger(score)) {
@@ -69,12 +70,11 @@ export const createOrUpdateReview = async (userId, coffeeId, score) => {
 
     return { review, newAverage }
   } catch (error) {
-    console.error('Error updating review:', error)
     throw error
   }
 }
 
-export const removeReview = async (userId, coffeeId) => {
+export const firebaseRemoveReview = async (userId, coffeeId) => {
   try {
     const reviewId = `${userId}_${coffeeId}`
     const reviewRef = doc(db, 'reviews', reviewId)
@@ -113,7 +113,7 @@ export const removeReview = async (userId, coffeeId) => {
   }
 }
 
-export const fetchUserReviews = async (userId, pageSize = 50, lastReviewDoc = null) => {
+export const firebaseFetchReviews = async (userId, pageSize = 50, lastReviewDoc = null) => {
   try {
     let reviewsQuery = query(
       collection(db, 'reviews'),
@@ -162,20 +162,7 @@ export const fetchUserReviews = async (userId, pageSize = 50, lastReviewDoc = nu
   }
 }
 
-export const fetchCoffeeDetails = async (coffeeId) => {
-  try {
-    const coffeeRef = doc(db, 'coffee', coffeeId)
-    const coffeeDoc = await getDoc(coffeeRef)
-
-    if (!coffeeDoc.exists) throw new Error('Coffee not found')
-
-    return coffeeDoc.data()
-  } catch (error) {
-    throw error
-  }
-}
-
-export const fetchUserReviewForCoffee = async (userId, coffeeId) => {
+export const firebaseFetchReview = async (userId, coffeeId) => {
   try {
     const reviewId = `${userId}_${coffeeId}`
     const reviewRef = doc(db, 'reviews', reviewId)
@@ -184,6 +171,17 @@ export const fetchUserReviewForCoffee = async (userId, coffeeId) => {
     if (!reviewDoc.exists) return null
 
     return reviewDoc.data()
+  } catch (error) {
+    throw error
+  }
+}
+
+export const firebaseFetchReviewCount = async (userId, coffeeId) => {
+  try {
+    const reviewRef = collection(db, 'reviews')
+    const reviewSnap = await getCountFromServer(reviewRef)
+
+    return reviewSnap.data().count
   } catch (error) {
     throw error
   }

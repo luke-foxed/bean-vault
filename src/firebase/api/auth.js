@@ -7,7 +7,7 @@ import {
   signOut,
 } from 'firebase/auth'
 
-import { collection, deleteDoc, doc, getDoc, getDocs, setDoc, updateDoc } from 'firebase/firestore'
+import { collection, deleteDoc, doc, getCountFromServer, getDoc, getDocs, setDoc, updateDoc } from 'firebase/firestore'
 import { auth, db } from '../config'
 
 // auth based endpoints
@@ -98,4 +98,10 @@ export const firebaseLogout = async () => {
 // firestore based endpoints
 export const firebaseFetchUser = async (userUID) => {
   return (await getDoc(doc(db, 'users', userUID))).data()
+}
+
+export const firebaseFetchUserCount = async () => {
+  const userRef = collection(db, 'users')
+  const userSnap = await getCountFromServer(userRef)
+  return userSnap.data().count
 }

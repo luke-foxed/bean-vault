@@ -6,6 +6,7 @@ import { CoffeeCard } from '../../components/coffees'
 import Heading from '../../components/heading'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
+import Stats from '../../components/stats'
 
 const queryParams = { limit: 5, sortBy: 'date_added', order: 'desc' }
 
@@ -69,7 +70,10 @@ export default function Home() {
             Explore More
           </Button>
 
-          <div />
+          <Divider my="xl" w="100%" />
+
+          <Stats />
+
         </Stack>
       </Stack>
     </Center>

@@ -33,7 +33,7 @@ import { useAuth } from '../../providers/auth_provider'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { useNotify } from '../../providers/notifcation_provider'
 import { useState } from 'react'
-import { createOrUpdateReview, fetchUserReviewForCoffee, removeReview } from '../../firebase/api/review'
+import { firebaseFetchReview, firebaseRemoveReview, firebaseAddReview } from '../../firebase/api/review'
 import { useNavigate } from 'react-router-dom'
 
 export default function CoffeeModal({ opened, onClose, coffee, loading }) {
@@ -46,12 +46,12 @@ export default function CoffeeModal({ opened, onClose, coffee, loading }) {
 
   const { data: userReview } = useQuery(
     ['user-review', coffee?.id],
-    () => fetchUserReviewForCoffee(currentUser?.uid, coffee?.id),
+    () => firebaseFetchReview(currentUser?.uid, coffee?.id),
     { enabled: opened, onSuccess: (data) => setScore(data?.score || 1) },
   )
 
   const { mutate: updateReview, isLoading: isUpdating } = useMutation(
-    (score) => createOrUpdateReview(currentUser?.uid, coffee?.id, score),
+    (score) => firebaseAddReview(currentUser?.uid, coffee?.id, score),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(['user-review', coffee?.id])
@@ -64,7 +64,7 @@ export default function CoffeeModal({ opened, onClose, coffee, loading }) {
   )
 
   const { mutate: deleteReview, isLoading: isDeleting } = useMutation(
-    () => removeReview(currentUser?.uid, coffee?.id),
+    () => firebaseRemoveReview(currentUser?.uid, coffee?.id),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(['user-review', coffee?.id])

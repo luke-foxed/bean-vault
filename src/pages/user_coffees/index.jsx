@@ -1,7 +1,7 @@
 import { Stack, Group, Loader, Center } from '@mantine/core'
 import { useParams, useSearchParams } from 'react-router-dom'
 import { useQuery } from 'react-query'
-import { fetchUserReviews } from '../../firebase/api/review'
+import { firebaseFetchReviews } from '../../firebase/api/review'
 import { IconUserHeart } from '@tabler/icons-react'
 import { firebaseFetchCoffeesByIds } from '../../firebase/api/coffee'
 import Heading from '../../components/heading'
@@ -13,7 +13,7 @@ export default function UserCoffees() {
   const [mounted, setMounted] = useState(false)
   const { userId } = useParams()
   const [searchParams, setSearchParams] = useSearchParams()
-  const { data: reviewsData, isLoading: loadingReviews } = useQuery(['user-reviews', userId], () => fetchUserReviews(userId), { enabled: !!userId })
+  const { data: reviewsData, isLoading: loadingReviews } = useQuery(['user-reviews', userId], () => firebaseFetchReviews(userId), { enabled: !!userId })
 
   const coffeeIDs = reviewsData?.reviews?.map((review) => review?.coffee.id)
   const reviewMap = reviewsData?.reviews?.reduce((acc, review) => { acc[review?.coffee.id] = review; return acc }, {}) || {}

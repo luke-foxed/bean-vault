@@ -1,5 +1,5 @@
 /* eslint-disable no-useless-catch */
-import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, serverTimestamp, updateDoc } from 'firebase/firestore'
+import { addDoc, collection, deleteDoc, doc, getCountFromServer, getDoc, getDocs, serverTimestamp, updateDoc } from 'firebase/firestore'
 import { db } from '../config'
 import { uploadImageToCloudinary } from '../../cloudinary/api'
 
@@ -64,4 +64,10 @@ export const firebaseDeleteRoaster = async (roasterId) => {
   } catch (error) {
     throw error
   }
+}
+
+export const firebaseFetchRoasterCount = async () => {
+  const roasterRef = collection(db, 'roasters')
+  const roasterSnap = await getCountFromServer(roasterRef)
+  return roasterSnap.data().count
 }
