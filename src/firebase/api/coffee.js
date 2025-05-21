@@ -3,14 +3,7 @@ import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, serverTimestamp, u
 import { db } from '../config'
 import { uploadImageToCloudinary } from '../../cloudinary/api'
 import { buildCoffeeQuery } from '../helpers'
-
-export const firebaseFetchRegions = async () => {
-  const regionsDocRef = doc(db, 'regions', 'all')
-  const regionsDoc = await getDoc(regionsDocRef)
-
-  const regionsArray = regionsDoc.data().regions.map((region) => ({ ...region, id: region.id.toString() })) || []
-  return regionsArray
-}
+import { firebaseFetchRegions } from './regions'
 
 export const firebaseFetchCoffees = async (queryParams) => {
   try {

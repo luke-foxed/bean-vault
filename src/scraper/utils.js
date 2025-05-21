@@ -1,5 +1,5 @@
 import { firebaseAddCoffee } from '../firebase/api/coffee'
-import { firebaseFetchRegions } from '../firebase/api/coffee'
+import { firebaseFetchRegions } from '../firebase/api/regions'
 import { firebaseFetchRoaster } from '../firebase/api/roasters'
 
 export const prepareScrapedCoffeesForPreview = async (products, roasterId) => {

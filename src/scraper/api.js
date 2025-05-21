@@ -6,12 +6,37 @@ const LISTING_PROMPT = `
 `
 
 const PRODUCT_PROMPT = `
-  Go through all coffee beans listed on the page. For each bean, extract the following information: name, description,roaster, region, the image url, and 
-  tasting notes. Return the information in a JSON array. Regions should be country only, where each country is a string in the array. Ignore the 
-  'You may also like' or anything similar to a 'related products' section for each page. Only extract information from the main product section of the 
-  page. Flavour notes should be kept to 5 at max, looking for food related notes mainly. 
-  
-  Each JSON object should have the following fields: name, description, roaster, region (array of strings), image, tasting_notes (array of strings).
+Extract coffee bean information from the page and return it as a JSON array. Follow these instructions carefully:
+
+1. SCOPE:
+   - Focus only on the main product section
+   - Ignore 'You may also like' or 'related products' sections
+   - Process all coffee beans listed on the page
+
+2. REQUIRED FIELDS for each coffee bean:
+   {
+     "name": "string (in title case)",
+     "description": "string",
+     "roaster": "string",
+     "region": ["string"], // Array of countries only
+     "image": "string (full-size image URL, not thumbnail)",
+     "tasting_notes": ["string"] // Max 5 food-related notes
+   }
+
+3. DATA PROCESSING RULES:
+   - Convert any uppercase text to title case for: name, region, description
+   - For regions: extract only country names, store as array of strings
+   - For tasting notes: prioritize food-related notes, limit to 5 maximum
+   - For images: use full-size product image URL, not the listing thumbnail
+
+4. ERROR HANDLING:
+   - If region is not found on first attempt, try a second time
+   - If any field cannot be found, include it as null in the JSON
+
+5. OUTPUT FORMAT:
+   - Return a JSON array of objects
+   - Each object must contain all specified fields
+   - Maintain consistent structure across all entries
 `
 
 const makeScrapeRequest = async (url, prompt) => {

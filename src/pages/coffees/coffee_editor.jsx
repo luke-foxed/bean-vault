@@ -18,7 +18,7 @@ import {
   Text,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { firebaseAddCoffee, firebaseFetchCoffeeForEdit, firebaseFetchRegions, firebaseUpdateCoffee } from '../../firebase/api/coffee'
+import { firebaseAddCoffee, firebaseFetchCoffeeForEdit, firebaseUpdateCoffee } from '../../firebase/api/coffee'
 import { useMemo, useState } from 'react'
 import { IconCirclePlus, IconEditCircle, IconWand } from '@tabler/icons-react'
 import { useNotify } from '../../providers/notifcation_provider'
@@ -29,6 +29,7 @@ import { useMediaQuery } from '@mantine/hooks'
 import Heading from '../../components/heading'
 import { firebaseFetchRoasters } from '../../firebase/api/roasters'
 import { optimizeCoffeeDescription } from '../../firebase/api/cloud_functions'
+import { firebaseFetchRegions } from '../../firebase/api/regions'
 
 const FileInputValue = ({ value }) => {
   if (!value) return null
@@ -66,7 +67,7 @@ export default function CoffeeEditor() {
       form.setFieldValue('about', optimizedDescription)
       notify('success', 'Description optimized successfully!')
     },
-    onError: (error) => notify('error', error.message || 'Failed to optimize description'),
+    onError: () => notify('error', 'Failed to optimize description'),
   })
 
   const regionOptions = useMemo(() => {

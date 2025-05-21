@@ -1,14 +1,22 @@
-/* eslint-disable no-useless-catch */
+import { getFunctions, httpsCallable } from 'firebase/functions'
+import { firebaseFetchRegionsByIds } from './regions'
+
+const functions = (() => {
+  const functions = getFunctions()
+  return functions
+})()
+
+const optimizeDescription = httpsCallable(functions, 'optimizeCoffeeDescription')
 
 export const optimizeCoffeeDescription = async (coffee) => {
   try {
-    const { getFunctions, httpsCallable } = await import('firebase/functions')
-    const functions = getFunctions()
-    const optimizeDescription = httpsCallable(functions, 'optimizeCoffeeDescription')
-    const result = await optimizeDescription({ coffee })
+    // fetch the region as a name
+    const regions = await firebaseFetchRegionsByIds(coffee.regions)
+    const result = await optimizeDescription({ coffee: { ...coffee, regions } })
     return result.data.optimizedDescription
+  // eslint-disable-next-line no-unused-vars
   } catch (error) {
-    throw error
+    throw new Error('Error optimizing coffee description')
   }
 }
 

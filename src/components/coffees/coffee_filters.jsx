@@ -3,7 +3,7 @@ import { useQuery } from 'react-query'
 import { IconSortAscending, IconSortDescending } from '@tabler/icons-react'
 import { useState } from 'react'
 import { firebaseFetchRoasters } from '../../firebase/api/roasters'
-import { firebaseFetchRegions } from '../../firebase/api/coffee'
+import { firebaseFetchRegions } from '../../firebase/api/regions'
 
 const SORT_OPTIONS = [
   { label: 'Name', value: 'name' },
