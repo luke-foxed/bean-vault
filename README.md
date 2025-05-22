@@ -2,8 +2,6 @@
 
 Bean Vault is a modern web application for coffee enthusiasts to discover, track, and review their favorite coffees. Built with React, Firebase, and Mantine UI.
 
-## Screenshots
-
 | | |
 |:---:|:---:|
 | [![Home Page](screenshots/home.png)](screenshots/home.png) | [![Coffee Collection](screenshots/coffees.png)](screenshots/coffees.png) |
