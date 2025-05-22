@@ -120,15 +120,15 @@ export const firebaseAddCoffee = async (coffeeData) => {
 
 export const firebaseUpdateCoffee = async (coffeeData) => {
   try {
-    const { date_added, image, id, ...coffee } = coffeeData
-    let imageUrl = image
+    const { date_added, image, id, refresh_image, ...coffee } = coffeeData
 
-    if (imageUrl instanceof File) {
-      imageUrl = await uploadImageToCloudinary(imageUrl, 'coffee_upload')
+    if (refresh_image) {
+      const imageUrl = await uploadImageToCloudinary(image, 'coffee_upload')
+      coffee.image = imageUrl
     }
 
     const coffeeRef = doc(db, 'coffee', id)
-    const coffeeWithUpdate = { ...coffee, image: imageUrl }
+    const coffeeWithUpdate = { ...coffee }
 
     await updateDoc(coffeeRef, coffeeWithUpdate)
 

@@ -16,11 +16,14 @@ import {
   Textarea,
   TextInput,
   Text,
+  SegmentedControl,
+  ActionIcon,
+  Tooltip,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { firebaseAddCoffee, firebaseFetchCoffeeForEdit, firebaseUpdateCoffee } from '../../firebase/api/coffee'
 import { useMemo, useState } from 'react'
-import { IconCirclePlus, IconEditCircle, IconWand } from '@tabler/icons-react'
+import { IconCirclePlus, IconEditCircle, IconWand, IconRotate } from '@tabler/icons-react'
 import { useNotify } from '../../providers/notifcation_provider'
 import { useNavigate, useParams } from 'react-router-dom'
 import newCoffeeForm from '../../forms/new_coffee_form'
@@ -46,11 +49,15 @@ export default function CoffeeEditor() {
   const form = useForm(newCoffeeForm)
   const isMobile = useMediaQuery('(max-width: 50em)')
   const [imagePreview, setImagePreview] = useState(null)
+  const [uploadMethod, setUploadMethod] = useState('file')
 
   const { data: regions, isLoading: loadingRegions } = useQuery(['regions'], firebaseFetchRegions)
   const { data: roasters, isLoading: loadingRoasters } = useQuery(['roasters'], firebaseFetchRoasters)
 
-  const { isLoading: loadingCoffee } = useQuery([`coffee-${id}`], () => firebaseFetchCoffeeForEdit(id), { onSuccess: form.setValues, enabled: !!id })
+  const { data: coffee, isLoading: loadingCoffee } = useQuery([`coffee-${id}`], () => firebaseFetchCoffeeForEdit(id), {
+    onSuccess: form.setValues,
+    enabled: !!id,
+  })
   const { mutate: saveCoffee, isLoading: loadingSave } = useMutation(
     id ? ['update-coffee'] : ['add-coffee'],
     id ? firebaseUpdateCoffee : firebaseAddCoffee,
@@ -80,14 +87,17 @@ export default function CoffeeEditor() {
 
   const handleSubmit = async (submittedCoffee) => {
     if (!id) return saveCoffee(submittedCoffee)
-    saveCoffee({ ...submittedCoffee })
-
+    // if the image has changed, we need to upload the new one
+    if (submittedCoffee.image !== coffee.image) {
+      submittedCoffee.refresh_image = true
+    }
+    saveCoffee(submittedCoffee)
   }
 
   const handleAddNote = (event) => {
     // fun one, gboard on android/ios won't show correct event keys/key codes so we need to check for commas manually
     // https://issues.chromium.org/issues/41368867
-    if (event.key === ','  || event.type === 'blur' || event.target.value.endsWith(',')) {
+    if (event.key === ',' || event.type === 'blur' || event.target.value.endsWith(',')) {
       const note = event.target.value.trim().replace(',', '')
       if (note && !form.getValues().flavour_notes.includes(note)) {
         form.setFieldValue('flavour_notes', [...form.getValues().flavour_notes, note])
@@ -110,21 +120,43 @@ export default function CoffeeEditor() {
     setImagePreview(objectURL)
   }
 
+  const handleUrlChange = (url) => {
+    if (!url) {
+      form.setFieldValue('image', null)
+      return setImagePreview(null)
+    }
+    form.setFieldValue('image', url)
+    setImagePreview(url)
+  }
+
+  const handleUploadMethodChange = (method) => {
+    setUploadMethod(method)
+    form.setFieldValue('image', null)
+    setImagePreview(null)
+  }
+
+  const handleResetImage = () => {
+    if (!coffee?.image) return
+    form.setFieldValue('image', coffee.image)
+    setImagePreview(coffee.image)
+    setUploadMethod('file')
+  }
+
   return (
     <Stack align="center" mt="150">
       <Heading icon={id ? IconEditCircle : IconCirclePlus} title={`${id ? 'EDIT' : 'NEW'} COFFEE`} />
 
-      <Paper radius="lg" shadow="md" w={isMobile ? '92%' : '75%'} h="30%" mah="30%">
+      <Paper radius="lg" shadow="md" w={isMobile ? '92%' : 1400} h="30%" mah="30%" mb="md">
         <LoadingOverlay visible={(Boolean(id) && loadingCoffee) || loadingSave} />
 
         <SimpleGrid cols={{ sm: 1, md: 2 }} spacing={0}>
-          <Center>
+          <Center h="100%">
             <Image
               style={{ borderRadius: isMobile ? '16px 16px 0px 0px' : '16px 0px 0px 16px' }}
               h="100%"
-              mah="640px"
+              w="100%"
               fit="cover"
-              fallbackSrc="https://placehold.co/520x520?text=Coffee+Image"
+              fallbackSrc="https://placehold.co/820x520?text=Coffee+Image"
               src={imagePreview ?? form.getValues().image}
             />
           </Center>
@@ -138,12 +170,19 @@ export default function CoffeeEditor() {
                 {...form.getInputProps('name')}
               />
               <Group justify="space-between" align="center" mt="md">
-                <Text size="sm" fw={500}>About</Text>
+                <Text size="sm" fw={500} withAsterisk>
+                  About <Text span c="red">*</Text>
+                </Text>
                 <Button
                   variant="subtle"
                   leftSection={<IconWand size={16} />}
                   onClick={() => optimizeDescription(form.getValues())}
-                  disabled={!form.getValues().name || !form.getValues().regions?.length || !form.getValues().flavour_notes?.length || isOptimizing}
+                  disabled={
+                    !form.getValues().name ||
+                    !form.getValues().regions?.length ||
+                    !form.getValues().flavour_notes?.length ||
+                    isOptimizing
+                  }
                   size="compact-sm"
                   fw={500}
                   loading={isOptimizing}
@@ -209,17 +248,77 @@ export default function CoffeeEditor() {
                 {...form.getInputProps('regions')}
               />
 
-              <FileInput
-                accept="image/*"
-                mt="md"
-                label="Image"
-                withAsterisk
-                key={form.key('image')}
-                {...form.getInputProps('image')}
-                onChange={handleFileChange}
-                valueComponent={FileInputValue}
-                clearable
-              />
+              <Stack mt="md" gap={0}>
+                <Group justify="space-between" align="center">
+                  <Text size="sm" fw={500}>
+                    Image <Text span c="red">*</Text>
+                  </Text>
+                  <Group gap="xs">
+                    {id && coffee?.image && (
+                      <Tooltip label="Reset image">
+                        <ActionIcon
+                          variant="subtle"
+                          color="gray"
+                          onClick={handleResetImage}
+                        >
+                          <IconRotate size={16} />
+                        </ActionIcon>
+                      </Tooltip>
+                    )}
+                    <SegmentedControl
+                      size="xs"
+                      value={uploadMethod}
+                      onChange={handleUploadMethodChange}
+                      data={[
+                        { label: 'Upload File', value: 'file' },
+                        { label: 'Image URL', value: 'url' },
+                      ]}
+                      styles={{
+                        root: {
+                          border: '1px solid var(--mantine-color-gray-4)',
+                          borderBottom: 'none',
+                          borderTopLeftRadius: '4px',
+                          borderTopRightRadius: '4px',
+                          borderBottomRightRadius: 0,
+                          borderBottomLeftRadius: 0,
+                        },
+                      }}
+                    />
+                  </Group>
+                </Group>
+                {uploadMethod === 'file' ? (
+                  <FileInput
+                    accept="image/*"
+                    withAsterisk
+                    placeholder="Upload image"
+                    key={form.key('image')}
+                    {...form.getInputProps('image')}
+                    onChange={handleFileChange}
+                    valueComponent={FileInputValue}
+                    clearable
+                    styles={{
+                      input: {
+                        borderTopRightRadius: 0,
+                      },
+                    }}
+                  />
+                ) : (
+                  <TextInput
+                    placeholder="Enter image URL"
+                    withAsterisk
+                    key={form.key('image')}
+                    {...form.getInputProps('image')}
+                    onChange={(event) => handleUrlChange(event.currentTarget.value)}
+                    clearable
+                    styles={{
+                      input: {
+                        borderTopRightRadius: 0,
+                      },
+                    }}
+                  />
+                )}
+              </Stack>
+
               <Group justify="flex-end" mt="xl">
                 <Button type="submit">Submit</Button>
               </Group>

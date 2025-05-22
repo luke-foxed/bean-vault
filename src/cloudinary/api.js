@@ -2,10 +2,22 @@
 
 const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
 
+const imageUrlToImageBlob = async (url) => {
+  const response = await fetch(url)
+  const blob = await response.blob()
+  return blob
+}
+
 export const uploadImageToCloudinary = async (file, preset) => {
   try {
     const formData = new FormData()
-    formData.append('file', file)
+    let imageFile = file
+
+    if (typeof file === 'string') {
+      imageFile = await imageUrlToImageBlob(file)
+    }
+
+    formData.append('file', imageFile)
     formData.append('upload_preset', preset)
     formData.append('cloud_name', cloudName)
     formData.append('api_key', import.meta.env.VITE_CLOUDINARY_API_KEY)

@@ -1,5 +1,14 @@
 import { hasLength, isInRange, isNotEmpty } from '@mantine/form'
 
+const isValidURL = (value) => {
+  try {
+    new URL(value)
+    return true
+  } catch {
+    return false
+  }
+}
+
 const newCoffeeForm = {
   mode: 'uncontrolled',
   initialValues: {
@@ -19,7 +28,11 @@ const newCoffeeForm = {
     score: isInRange({ min: 1, max: 10 }, 'Score must be between 1 and 10'),
     flavour_notes: isNotEmpty('Enter a flavour notes'),
     about: hasLength({ min: 10 }, 'About section must have a minimum of 10 characters'),
-    image: isNotEmpty('Enter an image file'),
+    image: (value) => {
+      if (!value) return 'Enter an image file or URL'
+      if (value instanceof File) return null
+      if (typeof value === 'string' && !isValidURL(value)) return 'Enter a valid image URL'
+    },
   },
 }
 
