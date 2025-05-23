@@ -44,21 +44,20 @@ function NavItem({ label, path, disabled, onClick = () => {} }) {
 }
 
 export default function Navbar() {
-  const [opened, { toggle }] = useDisclosure()
+  const [navOpened, { toggle: toggleNav }] = useDisclosure()
   const navigate = useNavigate()
   const { isAdmin, currentUser } = useAuth()
-  const [, { toggle: toggleUserPopover }] = useDisclosure()
-  const [, { toggle: toggleMobileUserPopover }] = useDisclosure()
   const { colorScheme } = useMantineColorScheme()
+
   return (
     <AppShell
       header={{ height: 70 }}
-      navbar={{ width: 300, breakpoint: 'sm', collapsed: { desktop: true, mobile: !opened } }}
+      navbar={{ width: 300, breakpoint: 'sm', collapsed: { desktop: true, mobile: !navOpened } }}
       padding="md"
     >
       <AppShell.Header>
         <Group h="100%" px="md" justify="space-between">
-          <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
+          <Burger opened={navOpened} onClick={toggleNav} hiddenFrom="sm" size="sm" />
 
           <Group visibleFrom="sm" style={{ flex: 1 }} justify="space-between">
             <UnstyledButton onClick={() => navigate('/')}>
@@ -73,7 +72,7 @@ export default function Navbar() {
               <NavItem path="/coffees" label="Coffees" />
               <NavItem path="/roasters" label="Roasters" />
               <NavItem disabled={!isAdmin} path="/admin/coffee" label="Admin" />
-              <User key="desktop" currentUser={currentUser} toggle={toggleUserPopover} />
+              <User key="desktop" />
             </Group>
           </Group>
 
@@ -86,7 +85,7 @@ export default function Navbar() {
           </UnstyledButton>
 
           <Box hiddenFrom="sm">
-            <User currentUser={currentUser} toggle={toggleMobileUserPopover} />
+            <User currentUser={currentUser} />
           </Box>
         </Group>
       </AppShell.Header>
@@ -97,10 +96,10 @@ export default function Navbar() {
             BeanVault
           </Text>
 
-          <NavItem path="/" label="Home" onClick={toggle} />
-          <NavItem path="/coffees" label="Coffees" onClick={toggle} />
-          <NavItem path="/roasters" label="Roasters" onClick={toggle} />
-          <NavItem disabled={!isAdmin} path="/admin/coffee" label="Admin" onClick={toggle} />
+          <NavItem path="/" label="Home" onClick={toggleNav} />
+          <NavItem path="/coffees" label="Coffees" onClick={toggleNav} />
+          <NavItem path="/roasters" label="Roasters" onClick={toggleNav} />
+          <NavItem disabled={!isAdmin} path="/admin/coffee" label="Admin" onClick={toggleNav} />
         </Stack>
       </AppShell.Navbar>
     </AppShell>

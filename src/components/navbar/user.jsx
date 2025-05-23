@@ -5,24 +5,32 @@ import ColorSchemeToggle from './color_scheme_toggle'
 import { useHover } from '@mantine/hooks'
 import { useNavigate } from 'react-router-dom'
 import { IconList } from '@tabler/icons-react'
+import { useState } from 'react'
 
-function User({ currentUser, toggle }) {
-  const { logout } = useAuth()
+function User() {
+  const { logout, currentUser } = useAuth()
   const { hovered, ref } = useHover()
   const { colorScheme } = useMantineColorScheme()
   const navigate = useNavigate()
+  const [opened, setOpened] = useState(false)
 
   return (
-    <Popover position="bottom-end" withArrow closeOnClickOutside={true} onClose={toggle} withinPortal={false}>
+    <Popover
+      position="bottom-end"
+      withArrow
+      closeOnClickOutside={true}
+      opened={opened}
+      onChange={setOpened}
+      withinPortal={false}
+    >
       <Popover.Target ref={ref}>
         <Button bg="transparent" p={0} h="100%">
           <Avatar
             style={{ cursor: 'pointer' }}
-            // yeah nested ternary, fight me
             bg={hovered ? (colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)') : 'transparent'}
             color="initials"
             name={currentUser?.name}
-            onClick={toggle}
+            onClick={() => setOpened(!opened)}
           />
         </Button>
       </Popover.Target>
@@ -40,7 +48,7 @@ function User({ currentUser, toggle }) {
             leftSection={<IconList size={16} />}
             w="100%"
             onClick={() => {
-              toggle()
+              setOpened(false)
               navigate(`/${currentUser.uid}/coffees`)
             }}
           >

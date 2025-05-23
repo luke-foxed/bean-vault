@@ -20,7 +20,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import newRoasterForm from '../../forms/new_roaster_form'
 import { useMutation, useQuery } from 'react-query'
 import { useMediaQuery } from '@mantine/hooks'
-import Heading from '../../components/heading'
+import { Heading } from '../../components/layout'
 
 const FileInputValue = ({ value }) => {
   if (!value) return null

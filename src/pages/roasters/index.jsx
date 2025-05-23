@@ -2,10 +2,10 @@ import { Center, Group, Loader, Stack, Transition } from '@mantine/core'
 import { useQuery } from 'react-query'
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import Heading from '../../components/heading'
 import { IconCooker } from '@tabler/icons-react'
 import { firebaseFetchRoaster, firebaseFetchRoasters } from '../../firebase/api/roasters'
 import { RoasterCard, RoasterModal } from '../../components/roasters'
+import { Heading } from '../../components/layout'
 
 export default function Roasters() {
   const [mounted, setMounted] = useState(false)

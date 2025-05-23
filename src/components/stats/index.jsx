@@ -5,7 +5,7 @@ import { firebaseFetchReviewCount } from '../../firebase/api/review'
 import { firebaseFetchRoasterCount } from '../../firebase/api/roasters'
 import { SimpleGrid, Paper, Stack, Text, Title, ThemeIcon, Group, Loader, Transition, useMantineColorScheme, useMantineTheme, alpha } from '@mantine/core'
 import { IconCoffee, IconCooker, IconStar, IconUsers, IconChartBar } from '@tabler/icons-react'
-import Heading from '../heading'
+import { Heading } from '../layout'
 import { useState } from 'react'
 
 const getAllStats = async () => {

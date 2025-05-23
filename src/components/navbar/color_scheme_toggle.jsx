@@ -6,14 +6,12 @@ export default function ColorSchemeToggle() {
   const isDarkMode = colorScheme === 'dark'
 
   return (
-    <>
-      <Switch
-        size="md"
-        color="gray"
-        onLabel={<IconSun size={16} stroke={2.5} color="var(--mantine-color-yellow-4)" />}
-        onChange={() => setColorScheme(isDarkMode ? 'light' : 'dark')}
-        offLabel={<IconMoonStars size={16} stroke={2.5} color="var(--mantine-color-blue-6)" />}
-      />
-    </>
+    <Switch
+      size="md"
+      color="gray"
+      onChange={() => setColorScheme(isDarkMode ? 'light' : 'dark')}
+      onLabel={<IconSun style={{ cursor: 'pointer' }} size={16} stroke={2.5} color="var(--mantine-color-yellow-4)" />}
+      offLabel={<IconMoonStars style={{ cursor: 'pointer' }} size={16} stroke={2.5} color="var(--mantine-color-blue-6)" />}
+    />
   )
 }

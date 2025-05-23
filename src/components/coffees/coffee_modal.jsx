@@ -10,7 +10,6 @@ import {
   Title,
   Divider,
   Center,
-  Blockquote,
   ActionIcon,
   RemoveScroll,
   Loader,
@@ -35,6 +34,7 @@ import { useNotify } from '../../providers/notifcation_provider'
 import { useState } from 'react'
 import { firebaseFetchReview, firebaseRemoveReview, firebaseAddReview } from '../../firebase/api/review'
 import { useNavigate } from 'react-router-dom'
+import { Segment } from '../layout'
 
 export default function CoffeeModal({ opened, onClose, coffee, loading }) {
   const isMobile = useMediaQuery('(max-width: 50em)')
@@ -174,88 +174,80 @@ export default function CoffeeModal({ opened, onClose, coffee, loading }) {
 
             <Divider />
 
-            <Blockquote color="blue" cite={`- ${coffee.roaster.name}`} icon={<IconQuote />} mt="xl">
-              {coffee.about}
-            </Blockquote>
+            <Segment color="blue" icon={IconQuote} title="About">
+              <Text mah={200} style={{ overflow: 'scroll' }}>
+                {coffee.about}
+              </Text>
+            </Segment>
 
-            <Group gap="5px">
-              <ThemeIcon color="gray" size="sm" variant="transparent">
-                <IconGlobe />
-              </ThemeIcon>
-              <Title order={4}>Origin</Title>
-            </Group>
-
-            <Group gap="10px">
-              {coffee.regions.map((region) => (
-                <Badge size="lg" key={region.name} w="max-content" variant="light" color={region.color}>
-                  {region.name}
-                </Badge>
-              ))}
-            </Group>
-
-            <Group gap="5px">
-              <ThemeIcon color="gray" size="sm" variant="transparent">
-                <IconIceCream2 />
-              </ThemeIcon>
-              <Title order={4}>Flavours</Title>
-            </Group>
-            <Group gap="10px">
-              {coffee.flavour_notes.map((flavour) => (
-                <Badge size="lg" variant="dot" key={flavour} w="max-content">
-                  {flavour}
-                </Badge>
-              ))}
-            </Group>
-
-            <Divider my="sm" />
-
-            <Group gap="5px">
-              <ThemeIcon color="gray" size="sm" variant="transparent">
-                <IconStar />
-              </ThemeIcon>
-              <Title order={4}>Review This Coffee</Title>
-            </Group>
-
-            <Stack gap="md">
-              <Group align="center" w="100%">
-                <Slider
-                  value={score}
-                  onChange={(score) => setScore(score)}
-                  thumbChildren={<IconStar size={16} />}
-                  thumbSize={22}
-                  styles={{ thumb: { borderWidth: 2, padding: 3 } }}
-                  min={1}
-                  max={10}
-                  step={1}
-                  marks={Array.from({ length: 10 }, (_, i) => ({ value: i + 1, label: i + 1 }))}
-                  style={{ flex: 1 }}
-                />
-                <Group gap="xs">
-                  <ActionIcon
-                    variant="light"
-                    color="blue"
-                    size="lg"
-                    onClick={() => updateReview(score)}
-                    loading={isUpdating}
-                    disabled={isDeleting || isUpdating}
-                  >
-                    <IconCheck size={16} />
-                  </ActionIcon>
-                </Group>
-                {userReview && (
-                  <ActionIcon
-                    variant="light"
-                    color="red"
-                    size="lg"
-                    onClick={() => deleteReview()}
-                    loading={isDeleting}
-                    disabled={isDeleting || isUpdating}
-                  >
-                    <IconTrash size={16} />
-                  </ActionIcon>
-                )}
+            <Segment color="green" icon={IconGlobe} title="Origin">
+              <Group gap="5px">
+                {coffee.regions.map((region) => (
+                  <Badge size="lg" key={region.name} w="max-content" variant="dot" color="green">
+                    {region.name}
+                  </Badge>
+                ))}
               </Group>
-            </Stack>
+            </Segment>
+
+            <Segment color="red" icon={IconIceCream2} title="Flavours">
+              <Group gap="10px">
+                {coffee.flavour_notes.map((flavour) => (
+                  <Badge size="lg" variant="dot" key={flavour} w="max-content" color="red">
+                    {flavour}
+                  </Badge>
+                ))}
+              </Group>
+            </Segment>
+
+            <Segment color="yellow" icon={IconStar} title="Review This Coffee">
+              <Stack gap="md">
+                <Group align="center" w="100%">
+                  <Slider
+                    value={score}
+                    color="yellow"
+                    onChange={(score) => setScore(score)}
+                    thumbChildren={
+                      <ThemeIcon color="yellow" size="sm" variant="transparent">
+                        <IconStar size={16} />
+                      </ThemeIcon>
+                    }
+                    thumbSize={22}
+                    styles={{ thumb: { borderWidth: 2, padding: 3 } }}
+                    min={1}
+                    max={10}
+                    step={1}
+                    marks={Array.from({ length: 10 }, (_, i) => ({ value: i + 1, label: i + 1 }))}
+                    style={{ flex: 1 }}
+                  />
+                  <Group gap="xs">
+                    <ActionIcon
+                      variant="light"
+                      color="yellow"
+                      c="yellow"
+                      size="lg"
+                      onClick={() => updateReview(score)}
+                      loading={isUpdating}
+                      disabled={isDeleting || isUpdating}
+                    >
+                      <IconCheck size={16} />
+                    </ActionIcon>
+                  </Group>
+                  {userReview && (
+                    <ActionIcon
+                      variant="light"
+                      color="red"
+                      size="lg"
+                      onClick={() => deleteReview()}
+                      loading={isDeleting}
+                      disabled={isDeleting || isUpdating}
+                    >
+                      <IconTrash size={16} />
+                    </ActionIcon>
+                  )}
+                </Group>
+              </Stack>
+            </Segment>
           </Stack>
         </SimpleGrid>
       )}
