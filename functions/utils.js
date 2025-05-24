@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 const MAX_INPUT_LENGTHS = {
   name: 100,
-  about: 1000,
+  about: 1200,
   region: 50,
   flavourNote: 30,
 }
@@ -10,6 +10,7 @@ module.exports.validateResponse = (response) => {
   if (!response || !response.choices?.[0]?.message?.content) {
     throw new Error('Invalid AI response format')
   }
+  return response.choices[0].message.content
 }
 
 // sanatize the shit out of the input so people don't misuse my openai token and cost me a fortune :(

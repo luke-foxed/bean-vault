@@ -7,6 +7,7 @@ const functions = (() => {
 })()
 
 const optimizeDescription = httpsCallable(functions, 'optimizeCoffeeDescription')
+const generateBrewTips = httpsCallable(functions, 'generateCoffeeBrewTips')
 
 export const optimizeCoffeeDescription = async (coffee) => {
   try {
@@ -17,6 +18,17 @@ export const optimizeCoffeeDescription = async (coffee) => {
   // eslint-disable-next-line no-unused-vars
   } catch (error) {
     throw new Error('Error optimizing coffee description')
+  }
+}
+
+export const generateCoffeeBrewTips = async (coffee) => {
+  try {
+    const regions = await firebaseFetchRegionsByIds(coffee.regions)
+    const result = await generateBrewTips({ coffee: { ...coffee, regions } })
+    return result.data.brewTips
+    // eslint-disable-next-line no-unused-vars
+  } catch (error) {
+    throw new Error('Error generating coffee brew tips')
   }
 }
 

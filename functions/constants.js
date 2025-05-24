@@ -20,7 +20,8 @@ module.exports.COFFEE_BREW_TIPS_SYSTEM_PROMPT =
 
 module.exports.COFFEE_BREW_TIPS_INSTRUCTIONS = [
   'Write a helpful guide coffee brew tips',
-  'Include a list of tips e.g. brewing ratios, temperature, etc.',
+  'Include a list of tips e.g. brewing ratios, dosing size (in grams), temperature (celcius), pull time, etc.',
+  'Tips should be focused on the coffee itself rather than your equipment settings.',
   'Tips should be tailored towards brewing espresso, but can include general brewing tips.',
   'Only use information provided in the input.',
   'Keep it professional and coffee-focused.',

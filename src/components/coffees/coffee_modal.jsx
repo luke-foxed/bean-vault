@@ -14,6 +14,10 @@ import {
   RemoveScroll,
   Loader,
   Slider,
+  Button,
+  Transition,
+  Collapse,
+  Paper,
 } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 import {
@@ -27,6 +31,7 @@ import {
   IconCheck,
   IconTrash,
   IconEdit,
+  IconFlask2,
 } from '@tabler/icons-react'
 import { useAuth } from '../../providers/auth_provider'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
@@ -41,6 +46,7 @@ export default function CoffeeModal({ opened, onClose, coffee, loading }) {
   const { currentUser, isAdmin } = useAuth()
   const navigate = useNavigate()
   const { notify } = useNotify()
+  const [showBrewTips, setShowBrewTips] = useState(false)
   const queryClient = useQueryClient()
   const [score, setScore] = useState(1)
 
@@ -94,6 +100,34 @@ export default function CoffeeModal({ opened, onClose, coffee, loading }) {
 
       {coffee && (
         <SimpleGrid cols={{ sm: 1, md: 2 }} spacing="xl">
+          <Paper
+            visibleFrom="sm"
+            w={showBrewTips ? '50%' : '10%'}
+            pos="absolute"
+            top={0}
+            left="50%"
+            bottom={0}
+            opacity={showBrewTips ? 1 : 0}
+            style={{ transition: 'all 0.3s ease-in-out', transform: 'translateX(-100%)' }}
+            shadow="sm"
+            radius={0}
+          >
+            <Transition transition="fade-left" duration={300} mounted={showBrewTips} enterDelay={200} exitDelay={0}>
+              {(transitionStyles) => (
+                <Stack p="md" style={transitionStyles} h="100%">
+                  <Segment
+                    color="orange"
+                    icon={IconFlask2}
+                    title="Brew Tips"
+                    fullContainer
+                    onClose={() => setShowBrewTips(false)}
+                  >
+                    <pre style={{ whiteSpace: 'pre-wrap', fontFamily: 'Gowun Dodum' }}>{coffee.brew_tips}</pre>
+                  </Segment>
+                </Stack>
+              )}
+            </Transition>
+          </Paper>
           <Image
             style={isMobile ? {} : { borderRadius: '16px 0px 0px 16px' }}
             h="100%"
@@ -164,9 +198,13 @@ export default function CoffeeModal({ opened, onClose, coffee, loading }) {
                 <Text size="lg" fw={500}>
                   {userReview?.score?.toFixed(1) || 'N/A'}
                 </Text>
-                {userReview?.created_at && (
+                {userReview?.created_at ? (
                   <Text size="sm" c="dimmed">
                     (Added {new Date(userReview.created_at).toLocaleDateString()})
+                  </Text>
+                ) : (
+                  <Text size="sm" c="dimmed">
+                    (No review yet)
                   </Text>
                 )}
               </Stack>
@@ -199,6 +237,24 @@ export default function CoffeeModal({ opened, onClose, coffee, loading }) {
                 ))}
               </Group>
             </Segment>
+
+            {coffee?.brew_tips && (
+              <Segment color="orange" icon={IconFlask2} title="Brew Tips">
+                <Button
+                  variant="light"
+                  size="sm"
+                  color="orange"
+                  onClick={() => {
+                    setShowBrewTips(!showBrewTips)
+                  }}
+                >
+                  CLICK TO VIEW BREW TIPS
+                </Button>
+                <Collapse hiddenFrom="sm" in={showBrewTips}>
+                  <pre style={{ whiteSpace: 'pre-wrap', fontFamily: 'Gowun Dodum' }}>{coffee.brew_tips}</pre>
+                </Collapse>
+              </Segment>
+            )}
 
             <Segment color="yellow" icon={IconStar} title="Review This Coffee">
               <Stack gap="md">
