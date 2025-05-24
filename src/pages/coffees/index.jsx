@@ -4,9 +4,9 @@ import { CoffeeModal, CoffeeFilters } from '../../components/coffees'
 import { useQuery } from 'react-query'
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import Heading from '../../components/heading'
 import { IconCoffee, IconFilter } from '@tabler/icons-react'
 import { useDisclosure, useMediaQuery } from '@mantine/hooks'
+import { Heading } from '../../components/layout'
 import CoffeeGrid from '../../components/coffees/coffee_grid'
 
 export default function Coffees() {

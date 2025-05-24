@@ -7,10 +7,15 @@ const { validateResponse, sanitizeInput } = require('./utils')
 const { COFFEE_DESCRIPTION_SYSTEM_PROMPT, COFFEE_DESCRIPTION_INSTRUCTIONS, COFFEE_BREW_TIPS_SYSTEM_PROMPT, COFFEE_BREW_TIPS_INSTRUCTIONS } = require('./constants')
 const openaiApiKey = defineSecret('OPENAI_API_KEY')
 
+/**
+ * Optimizes a coffee description using OpenAI's GPT-3.5-turbo model.
+ * @param {Object} request - The request object containing the coffee data.
+ * @param {Object} request.data - The coffee data.
+ * @param {Object} request.auth - The authentication object.
+ * @returns {Promise<Object>} The optimized coffee description.
+ */
 exports.optimizeCoffeeDescription = onCall({ maxInstances: 10, secrets: [openaiApiKey] }, async (request) => {
-  if (!request.auth) {
-    throw new Error('Must be authenticated to use this function')
-  }
+  if (!request.auth) throw new Error('Must be authenticated to use this function')
 
   try {
     const sanitizedCoffee = sanitizeInput(request.data.coffee)
@@ -35,20 +40,22 @@ exports.optimizeCoffeeDescription = onCall({ maxInstances: 10, secrets: [openaiA
 
     const validatedResponse = validateResponse(response)
 
-    return {
-      optimizedDescription: validatedResponse,
-    }
+    return { optimizedDescription: validatedResponse }
   } catch (error) {
     console.error('Error optimizing description:', error)
-    // Don't expose internal error details to the client
     throw new Error('Failed to optimize coffee description. Please try again later.')
   }
 })
 
+/**
+ * Generates coffee brew tips using OpenAI's GPT-3.5-turbo model.
+ * @param {Object} request - The request object containing the coffee data.
+ * @param {Object} request.data - The coffee data.
+ * @param {Object} request.auth - The authentication object.
+ * @returns {Promise<Object>} The generated coffee brew tips.
+ */
 exports.generateCoffeeBrewTips = onCall({ maxInstances: 10, secrets: [openaiApiKey] }, async (request) => {
-  if (!request.auth) {
-    throw new Error('Must be authenticated to use this function')
-  }
+  if (!request.auth) throw new Error('Must be authenticated to use this function')
   try {
     const sanitizedCoffee = sanitizeInput(request.data.coffee)
 
@@ -72,9 +79,7 @@ exports.generateCoffeeBrewTips = onCall({ maxInstances: 10, secrets: [openaiApiK
 
     const validatedResponse = validateResponse(response)
 
-    return {
-      brewTips: validatedResponse,
-    }
+    return { brewTips: validatedResponse }
   } catch (error) {
     console.error('Error generating coffee brew tips:', error)
     throw new Error('Failed to generate coffee brew tips. Please try again later.')

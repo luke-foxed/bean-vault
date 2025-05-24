@@ -1,19 +1,20 @@
 /* eslint-disable max-len */
 const MAX_INPUT_LENGTHS = {
   name: 100,
-  about: 500,
+  about: 1200,
   region: 50,
   flavourNote: 30,
 }
 
-export const validateResponse = (response) => {
+module.exports.validateResponse = (response) => {
   if (!response || !response.choices?.[0]?.message?.content) {
     throw new Error('Invalid AI response format')
   }
+  return response.choices[0].message.content
 }
 
 // sanatize the shit out of the input so people don't misuse my openai token and cost me a fortune :(
-export const sanitizeInput = (coffee) => {
+module.exports.sanitizeInput = (coffee) => {
   if (!coffee || typeof coffee !== 'object') throw new Error('Invalid input: coffee object is required')
   if (!coffee.name || !coffee.about) throw new Error('Invalid input: name and about are required')
   if (coffee.name.length > MAX_INPUT_LENGTHS.name) throw new Error(`Name must be less than ${MAX_INPUT_LENGTHS.name} characters, received ${coffee.name}`)

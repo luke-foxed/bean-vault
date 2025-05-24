@@ -5,7 +5,7 @@ import { firebaseFetchReviewCount } from '../../firebase/api/review'
 import { firebaseFetchRoasterCount } from '../../firebase/api/roasters'
 import { SimpleGrid, Paper, Stack, Text, Title, ThemeIcon, Group, Loader, Transition, useMantineColorScheme, useMantineTheme, alpha } from '@mantine/core'
 import { IconCoffee, IconCooker, IconStar, IconUsers, IconChartBar } from '@tabler/icons-react'
-import Heading from '../heading'
+import { Heading } from '../layout'
 import { useState } from 'react'
 
 const getAllStats = async () => {
@@ -22,11 +22,11 @@ const getAllStats = async () => {
 const StatCard = ({ title, value, icon: Icon, color, transitionStyles }) => {
   const theme = useMantineTheme()
   const { colorScheme } = useMantineColorScheme()
-  const baseColor = colorScheme === 'dark' ? theme.colors[color][6] : theme.colors[color][2]
-  const borderColor = alpha(baseColor, 0.3)
+  const baseColor = colorScheme === 'dark' ? theme.colors[color][6] : theme.colors[color][3]
+  const borderColor = alpha(baseColor, 0.4)
 
   return (
-    <Paper bd={`2px solid ${borderColor}`} shadow="md" radius="lg" p="xl" withBorder h={200} w="100%" style={transitionStyles}>
+    <Paper bd={`4px solid ${borderColor}`} shadow="md" radius="lg" p="xl" withBorder h={200} w="100%" style={transitionStyles}>
       <Stack align="center" justify="center" h="100%" gap="xs">
         <ThemeIcon size={60} radius="md" variant="light" color={color}>
           <Icon size={32} />

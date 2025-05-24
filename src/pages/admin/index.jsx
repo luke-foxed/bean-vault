@@ -5,7 +5,7 @@ import AdminCoffees from './admin_coffees'
 import AdminUsers from './admin_users'
 import AdminRoasters from './admin_roasters'
 import AdminScraper from './admin_scraper'
-import Heading from '../../components/heading'
+import { Heading } from '../../components/layout'
 import { useAuth } from '../../providers/auth_provider'
 
 export default function Admin() {

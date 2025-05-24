@@ -29,9 +29,9 @@ import { useNavigate, useParams } from 'react-router-dom'
 import newCoffeeForm from '../../forms/new_coffee_form'
 import { useMutation, useQuery } from 'react-query'
 import { useMediaQuery } from '@mantine/hooks'
-import Heading from '../../components/heading'
+import { Heading } from '../../components/layout'
 import { firebaseFetchRoasters } from '../../firebase/api/roasters'
-import { optimizeCoffeeDescription } from '../../firebase/api/cloud_functions'
+import { generateCoffeeBrewTips, optimizeCoffeeDescription } from '../../firebase/api/cloud_functions'
 import { firebaseFetchRegions } from '../../firebase/api/regions'
 
 const FileInputValue = ({ value }) => {
@@ -75,6 +75,13 @@ export default function CoffeeEditor() {
       notify('success', 'Description optimized successfully!')
     },
     onError: () => notify('error', 'Failed to optimize description'),
+  })
+
+  const { mutate: generateBrewTips, isLoading: isGeneratingBrewTips } = useMutation(['generate-brew-tips'], generateCoffeeBrewTips, {
+    onSuccess: (brewTips) => {
+      form.setFieldValue('brew_tips', brewTips)
+      notify('success', 'Brew tips generated successfully!')
+    },
   })
 
   const regionOptions = useMemo(() => {
@@ -142,6 +149,8 @@ export default function CoffeeEditor() {
     setUploadMethod('file')
   }
 
+  const aiDisabled = !form.getValues().name || !form.getValues().regions?.length || !form.getValues().flavour_notes?.length || isOptimizing || isGeneratingBrewTips
+
   return (
     <Stack align="center" mt="150">
       <Heading icon={id ? IconEditCircle : IconCirclePlus} title={`${id ? 'EDIT' : 'NEW'} COFFEE`} />
@@ -177,12 +186,7 @@ export default function CoffeeEditor() {
                   variant="subtle"
                   leftSection={<IconWand size={16} />}
                   onClick={() => optimizeDescription(form.getValues())}
-                  disabled={
-                    !form.getValues().name ||
-                    !form.getValues().regions?.length ||
-                    !form.getValues().flavour_notes?.length ||
-                    isOptimizing
-                  }
+                  disabled={aiDisabled}
                   size="compact-sm"
                   fw={500}
                   loading={isOptimizing}
@@ -246,6 +250,31 @@ export default function CoffeeEditor() {
                 mt="md"
                 key={form.key('regions')}
                 {...form.getInputProps('regions')}
+              />
+
+              <Group justify="space-between" align="center" mt="md">
+                <Text size="sm" fw={500} withAsterisk>
+                  Brew Tips <Text span c="dimmed">(Optional)</Text>
+                </Text>
+                <Button
+                  variant="subtle"
+                  leftSection={<IconWand size={16} />}
+                  onClick={() => generateBrewTips(form.getValues())}
+                  disabled={aiDisabled}
+                  size="compact-sm"
+                  fw={500}
+                  loading={isGeneratingBrewTips}
+                >
+                  Generate
+                </Button>
+              </Group>
+              <Textarea
+                resize="vertical"
+                minRows={4}
+                placeholder="Brew tips"
+                withAsterisk
+                key={form.key('brew_tips')}
+                {...form.getInputProps('brew_tips')}
               />
 
               <Stack mt="md" gap={0}>
