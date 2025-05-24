@@ -14,6 +14,7 @@ import { useNotify } from './notifcation_provider'
 const AuthContext = createContext({
   currentUser: null,
   isAdmin: false,
+  isSuperAdmin: false,
   isBlocked: false,
   loading: false,
   signup: async () => {},

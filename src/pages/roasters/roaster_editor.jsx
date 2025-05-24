@@ -1,11 +1,9 @@
 import {
   Button,
-  FileInput,
   Group,
   Image,
   LoadingOverlay,
   Paper,
-  Pill,
   SimpleGrid,
   Stack,
   Textarea,
@@ -21,15 +19,7 @@ import newRoasterForm from '../../forms/new_roaster_form'
 import { useMutation, useQuery } from 'react-query'
 import { useMediaQuery } from '@mantine/hooks'
 import { Heading } from '../../components/layout'
-
-const FileInputValue = ({ value }) => {
-  if (!value) return null
-
-  // if in the 'edit' flow, the value is gonna be a cloudinary url so take the 'name' bit of the url
-  const name = typeof value === 'string' ? value.split('/').pop() : value.name
-
-  return <Pill maw="75%">{name}</Pill>
-}
+import ImageUpload from '../../components/image_upload'
 
 export default function RoasterEditor() {
   const { notify } = useNotify()
@@ -38,7 +28,7 @@ export default function RoasterEditor() {
   const form = useForm(newRoasterForm)
   const isMobile = useMediaQuery('(max-width: 50em)')
   const [imagePreview, setImagePreview] = useState(null)
-  const { isLoading: loadingCoffee } = useQuery([`roaster-${id}`], () => firebaseFetchRoaster(id), { onSuccess: form.setValues, enabled: !!id })
+  const { data: roaster, isLoading: loadingRoaster } = useQuery([`roaster-${id}`], () => firebaseFetchRoaster(id), { onSuccess: form.setValues, enabled: !!id })
   const { mutate: saveRoaster, isLoading: loadingSave } = useMutation(
     id ? ['update-roaster'] : ['add-roaster'],
     id ? firebaseUpdateRoaster : firebaseAddRoaster,
@@ -55,20 +45,12 @@ export default function RoasterEditor() {
     saveRoaster({ ...submittedRoaster })
   }
 
-  const handleFileChange = (file) => {
-    if (!file) return form.setFieldValue('image', null)
-
-    form.setFieldValue('image', file)
-    const objectURL = URL.createObjectURL(file)
-    setImagePreview(objectURL)
-  }
-
   return (
     <Stack align="center" mt="150">
       <Heading icon={id ? IconEditCircle : IconCirclePlus} title={`${id ? 'EDIT' : 'NEW'} ROASTER`} />
 
       <Paper radius="lg" shadow="md" w={isMobile ? '92%' : '75%'} h="30%" mah="30%">
-        <LoadingOverlay visible={(Boolean(id) && loadingCoffee) || loadingSave} />
+        <LoadingOverlay visible={(Boolean(id) && loadingRoaster) || loadingSave} />
 
         <SimpleGrid cols={{ sm: 1, md: 2 }} spacing={0}>
           <Image
@@ -115,17 +97,7 @@ export default function RoasterEditor() {
                 {...form.getInputProps('website')}
               />
 
-              <FileInput
-                accept="image/*"
-                mt="md"
-                label="Image"
-                withAsterisk
-                key={form.key('image')}
-                {...form.getInputProps('image')}
-                onChange={handleFileChange}
-                valueComponent={FileInputValue}
-                clearable
-              />
+              <ImageUpload form={form} onUpdateImage={(url) => setImagePreview(url)} originalImage={roaster?.image} />
 
               <Group justify="flex-end" mt="xl">
                 <Button type="submit">Submit</Button>

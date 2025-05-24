@@ -97,7 +97,15 @@ export const firebaseLogout = async () => {
 
 // firestore based endpoints
 export const firebaseFetchUser = async (userUID) => {
-  return (await getDoc(doc(db, 'users', userUID))).data()
+  const user = await getDoc(doc(db, 'users', userUID))
+  return user.data()
+}
+
+export const firebaseFetchCurrentUser = async () => {
+  const authUser = auth.currentUser
+  if (!authUser) throw new Error('No user logged in')
+  const dbUser = await firebaseFetchUser(authUser.uid)
+  return { ...authUser, ...dbUser }
 }
 
 export const firebaseFetchUserCount = async () => {

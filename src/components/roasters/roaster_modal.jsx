@@ -13,13 +13,16 @@ import {
   RemoveScroll,
   Loader,
   Button,
+  Group,
 } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks';
-import { IconCooker, IconGlobe, IconListSearch, IconQuote, IconX } from '@tabler/icons-react'
+import { IconCooker, IconGlobe, IconListSearch, IconQuote, IconX, IconEdit } from '@tabler/icons-react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../providers/auth_provider'
 
 export default function RoasterModal({ opened, onClose, roaster, loading }) {
   const navigate = useNavigate()
+  const { isAdmin } = useAuth()
   const isMobile = useMediaQuery('(max-width: 50em)')
 
   return (
@@ -51,14 +54,27 @@ export default function RoasterModal({ opened, onClose, roaster, loading }) {
           </ActionIcon>
           <Stack gap="10px" p="30px">
             <Center>
-              <Stack gap="10px">
+              <Stack gap="10px" align="center">
                 <Badge h="max-content" leftSection={<IconCooker />}>
                   <Title order={3} style={{ textAlign: 'center' }}>
                     {roaster.name}
                   </Title>
                 </Badge>
 
-                <Text ta="center">{roaster.location}</Text>
+                <Group gap="5px" justify="center">
+                  <Text ta="center">{roaster.location}</Text>
+
+                  {isAdmin && (
+                    <ActionIcon
+                      variant="light"
+                      color="blue"
+                      size="sm"
+                      onClick={() => navigate(`/roaster/edit/${roaster.id}`)}
+                    >
+                      <IconEdit />
+                    </ActionIcon>
+                  )}
+                </Group>
               </Stack>
               <ActionIcon hiddenFrom="sm" pos="absolute" top="30px" right="20px" variant="white" onClick={onClose}>
                 <IconX color="black" />
@@ -76,14 +92,26 @@ export default function RoasterModal({ opened, onClose, roaster, loading }) {
             </Center>
 
             <SimpleGrid cols={{ sm: 1, md: 2 }} spacing="md">
-              <Button variant="outline" fullWidth size="compact-lg" leftSection={<IconGlobe />} component="a" href={roaster.website} target="_blank">
+              <Button
+                variant="outline"
+                fullWidth
+                size="compact-lg"
+                leftSection={<IconGlobe />}
+                component="a"
+                href={roaster.website}
+                target="_blank"
+              >
                 Visit Website
               </Button>
-              <Button fullWidth size="compact-lg" leftSection={<IconListSearch />} onClick={() => navigate(`/coffees?roaster=${roaster.id}`)}>
+              <Button
+                fullWidth
+                size="compact-lg"
+                leftSection={<IconListSearch />}
+                onClick={() => navigate(`/coffees?roaster=${roaster.id}`)}
+              >
                 Explore Coffees
               </Button>
             </SimpleGrid>
-
           </Stack>
         </SimpleGrid>
       )}

@@ -1,7 +1,6 @@
 import {
   Button,
   Center,
-  FileInput,
   Group,
   Image,
   Loader,
@@ -16,14 +15,12 @@ import {
   Textarea,
   TextInput,
   Text,
-  SegmentedControl,
-  ActionIcon,
   Tooltip,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { firebaseAddCoffee, firebaseFetchCoffeeForEdit, firebaseUpdateCoffee } from '../../firebase/api/coffee'
 import { useMemo, useState } from 'react'
-import { IconCirclePlus, IconEditCircle, IconWand, IconRotate } from '@tabler/icons-react'
+import { IconCirclePlus, IconEditCircle, IconWand } from '@tabler/icons-react'
 import { useNotify } from '../../providers/notifcation_provider'
 import { useNavigate, useParams } from 'react-router-dom'
 import newCoffeeForm from '../../forms/new_coffee_form'
@@ -33,23 +30,17 @@ import { Heading } from '../../components/layout'
 import { firebaseFetchRoasters } from '../../firebase/api/roasters'
 import { generateCoffeeBrewTips, optimizeCoffeeDescription } from '../../firebase/api/cloud_functions'
 import { firebaseFetchRegions } from '../../firebase/api/regions'
-
-const FileInputValue = ({ value }) => {
-  if (!value) return null
-  // if in the 'edit' flow, the value is gonna be a cloudinary url so take the 'name' bit of the url
-  const name = typeof value === 'string' ? value.split('/').pop() : value.name
-
-  return <Pill maw="75%">{name}</Pill>
-}
+import { useAuth } from '../../providers/auth_provider'
+import ImageUpload from '../../components/image_upload'
 
 export default function CoffeeEditor() {
   const { notify } = useNotify()
   const navigate = useNavigate()
+  const { isAdmin } = useAuth()
   const { id } = useParams()
   const form = useForm(newCoffeeForm)
   const isMobile = useMediaQuery('(max-width: 50em)')
   const [imagePreview, setImagePreview] = useState(null)
-  const [uploadMethod, setUploadMethod] = useState('file')
 
   const { data: regions, isLoading: loadingRegions } = useQuery(['regions'], firebaseFetchRegions)
   const { data: roasters, isLoading: loadingRoasters } = useQuery(['roasters'], firebaseFetchRoasters)
@@ -70,16 +61,16 @@ export default function CoffeeEditor() {
   )
 
   const { mutate: optimizeDescription, isLoading: isOptimizing } = useMutation(['optimize-description'], optimizeCoffeeDescription, {
-    onSuccess: (optimizedDescription) => {
-      form.setFieldValue('about', optimizedDescription)
+    onSuccess: (data) => {
+      form.setFieldValue('about', data.optimizedDescription)
       notify('success', 'Description optimized successfully!')
     },
     onError: () => notify('error', 'Failed to optimize description'),
   })
 
   const { mutate: generateBrewTips, isLoading: isGeneratingBrewTips } = useMutation(['generate-brew-tips'], generateCoffeeBrewTips, {
-    onSuccess: (brewTips) => {
-      form.setFieldValue('brew_tips', brewTips)
+    onSuccess: (data) => {
+      form.setFieldValue('brew_tips', data.brewTips)
       notify('success', 'Brew tips generated successfully!')
     },
   })
@@ -119,36 +110,6 @@ export default function CoffeeEditor() {
     form.setFieldValue('flavour_notes', updatedNotes)
   }
 
-  const handleFileChange = (file) => {
-    if (!file) return form.setFieldValue('image', null)
-
-    form.setFieldValue('image', file)
-    const objectURL = URL.createObjectURL(file)
-    setImagePreview(objectURL)
-  }
-
-  const handleUrlChange = (url) => {
-    if (!url) {
-      form.setFieldValue('image', null)
-      return setImagePreview(null)
-    }
-    form.setFieldValue('image', url)
-    setImagePreview(url)
-  }
-
-  const handleUploadMethodChange = (method) => {
-    setUploadMethod(method)
-    form.setFieldValue('image', null)
-    setImagePreview(null)
-  }
-
-  const handleResetImage = () => {
-    if (!coffee?.image) return
-    form.setFieldValue('image', coffee.image)
-    setImagePreview(coffee.image)
-    setUploadMethod('file')
-  }
-
   const aiDisabled = !form.getValues().name || !form.getValues().regions?.length || !form.getValues().flavour_notes?.length || isOptimizing || isGeneratingBrewTips
 
   return (
@@ -180,19 +141,24 @@ export default function CoffeeEditor() {
               />
               <Group justify="space-between" align="center" mt="md">
                 <Text size="sm" fw={500} withAsterisk>
-                  About <Text span c="red">*</Text>
+                  About{' '}
+                  <Text span c="red">
+                    *
+                  </Text>
                 </Text>
-                <Button
-                  variant="subtle"
-                  leftSection={<IconWand size={16} />}
-                  onClick={() => optimizeDescription(form.getValues())}
-                  disabled={aiDisabled}
-                  size="compact-sm"
-                  fw={500}
-                  loading={isOptimizing}
-                >
-                  Optimize
-                </Button>
+                <Tooltip opened={!isAdmin} label="Only admins can optimize descriptions">
+                  <Button
+                    variant="subtle"
+                    leftSection={<IconWand size={16} />}
+                    onClick={() => optimizeDescription(form.getValues())}
+                    disabled={aiDisabled || !isAdmin}
+                    size="compact-sm"
+                    fw={500}
+                    loading={isOptimizing}
+                  >
+                    Optimize
+                  </Button>
+                </Tooltip>
               </Group>
               <Textarea
                 resize="vertical"
@@ -254,19 +220,24 @@ export default function CoffeeEditor() {
 
               <Group justify="space-between" align="center" mt="md">
                 <Text size="sm" fw={500} withAsterisk>
-                  Brew Tips <Text span c="dimmed">(Optional)</Text>
+                  Brew Tips{' '}
+                  <Text span c="dimmed">
+                    (Optional)
+                  </Text>
                 </Text>
-                <Button
-                  variant="subtle"
-                  leftSection={<IconWand size={16} />}
-                  onClick={() => generateBrewTips(form.getValues())}
-                  disabled={aiDisabled}
-                  size="compact-sm"
-                  fw={500}
-                  loading={isGeneratingBrewTips}
-                >
-                  Generate
-                </Button>
+                <Tooltip opened={!isAdmin} label="Only admins can generate brew tips">
+                  <Button
+                    variant="subtle"
+                    leftSection={<IconWand size={16} />}
+                    onClick={() => generateBrewTips(form.getValues())}
+                    disabled={aiDisabled || !isAdmin}
+                    size="compact-sm"
+                    fw={500}
+                    loading={isGeneratingBrewTips}
+                  >
+                    Generate
+                  </Button>
+                </Tooltip>
               </Group>
               <Textarea
                 resize="vertical"
@@ -277,76 +248,7 @@ export default function CoffeeEditor() {
                 {...form.getInputProps('brew_tips')}
               />
 
-              <Stack mt="md" gap={0}>
-                <Group justify="space-between" align="center">
-                  <Text size="sm" fw={500}>
-                    Image <Text span c="red">*</Text>
-                  </Text>
-                  <Group gap="xs">
-                    {id && coffee?.image && (
-                      <Tooltip label="Reset image">
-                        <ActionIcon
-                          variant="subtle"
-                          color="gray"
-                          onClick={handleResetImage}
-                        >
-                          <IconRotate size={16} />
-                        </ActionIcon>
-                      </Tooltip>
-                    )}
-                    <SegmentedControl
-                      size="xs"
-                      value={uploadMethod}
-                      onChange={handleUploadMethodChange}
-                      data={[
-                        { label: 'Upload File', value: 'file' },
-                        { label: 'Image URL', value: 'url' },
-                      ]}
-                      styles={{
-                        root: {
-                          border: '1px solid var(--mantine-color-gray-4)',
-                          borderBottom: 'none',
-                          borderTopLeftRadius: '4px',
-                          borderTopRightRadius: '4px',
-                          borderBottomRightRadius: 0,
-                          borderBottomLeftRadius: 0,
-                        },
-                      }}
-                    />
-                  </Group>
-                </Group>
-                {uploadMethod === 'file' ? (
-                  <FileInput
-                    accept="image/*"
-                    withAsterisk
-                    placeholder="Upload image"
-                    key={form.key('image')}
-                    {...form.getInputProps('image')}
-                    onChange={handleFileChange}
-                    valueComponent={FileInputValue}
-                    clearable
-                    styles={{
-                      input: {
-                        borderTopRightRadius: 0,
-                      },
-                    }}
-                  />
-                ) : (
-                  <TextInput
-                    placeholder="Enter image URL"
-                    withAsterisk
-                    key={form.key('image')}
-                    {...form.getInputProps('image')}
-                    onChange={(event) => handleUrlChange(event.currentTarget.value)}
-                    clearable
-                    styles={{
-                      input: {
-                        borderTopRightRadius: 0,
-                      },
-                    }}
-                  />
-                )}
-              </Stack>
+              <ImageUpload form={form} originalImage={coffee?.image} onUpdateImage={(url) => setImagePreview(url)} />
 
               <Group justify="flex-end" mt="xl">
                 <Button type="submit">Submit</Button>

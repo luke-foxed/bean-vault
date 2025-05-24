@@ -41,6 +41,7 @@ async function addRegionDocuments() {
     { id: 22, name: 'Hawaii', color: 'pink' },
     { id: 23, name: 'Vietnam', color: 'blue' },
     { id: 24, name: 'Uganda', color: 'grape' },
+    { id: 25, name: 'Myanmar', color: 'indigo' },
   ]
 
   const regionsDocRef = doc(db, 'regions', 'all')

@@ -140,7 +140,7 @@ export default function CoffeeModal({ opened, onClose, coffee, loading }) {
           </ActionIcon>
           <Stack gap="10px" p="30px">
             <Center>
-              <Stack gap="10px">
+              <Stack gap="10px" align="center">
                 <Badge h="max-content" leftSection={<IconCoffee />}>
                   <Title order={3} style={{ textAlign: 'center' }}>
                     {coffee.name}
@@ -272,7 +272,7 @@ export default function CoffeeModal({ opened, onClose, coffee, loading }) {
                     styles={{ thumb: { borderWidth: 2, padding: 3 } }}
                     min={1}
                     max={10}
-                    step={1}
+                    step={0.5}
                     marks={Array.from({ length: 10 }, (_, i) => ({ value: i + 1, label: i + 1 }))}
                     style={{ flex: 1 }}
                   />

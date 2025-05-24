@@ -18,11 +18,6 @@ import { db } from '../config'
 
 export const firebaseAddReview = async (userId, coffeeId, score) => {
   try {
-    // Validate score is between 1 and 10
-    if (score < 1 || score > 10 || !Number.isInteger(score)) {
-      throw new Error('Score must be a whole number between 1 and 10')
-    }
-
     const reviewId = `${userId}_${coffeeId}`
     const reviewRef = doc(db, 'reviews', reviewId)
     const coffeeRef = doc(db, 'coffee', coffeeId)
